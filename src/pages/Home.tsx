@@ -5,7 +5,15 @@ import {
   Calendar, 
   MapPin,
   Mail,
-  Phone
+  Phone,
+  Bot,
+  FileText,
+  Zap,
+  TrendingUp,
+  Headphones,
+  CheckCircle2,
+  ArrowRight,
+  Cpu
 } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import { Card } from '../components/common/Card';
@@ -33,6 +41,45 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
     return true;
   });
 
+  const aiCapabilities = [
+    {
+      icon: <TrendingUp className="text-[#D4AF37]" size={22} />,
+      title: 'Pay-Per-Appointment Solar Acquisition',
+      subtitle: 'Verified Decision-Maker Pipeline',
+      description: 'A pure performance acquisition engine delivering vetted commercial rooftop owners and industrial decision-makers directly to project schedules. Zero ad-spend risk—pricing applies strictly to confirmed, qualified consultations.'
+    },
+    {
+      icon: <FileText className="text-[#A855F7]" size={22} />,
+      title: 'Automated Solar Document Intelligence',
+      subtitle: 'Instant Scope & Proposal Generation',
+      description: 'Proprietary AI systems that instantly extract property dimensions, historical grid tariffs, and engineering quotes to draft client-ready solar proposals, ROI forecasts, and PPA contracts in seconds.'
+    },
+    {
+      icon: <Bot className="text-[#10B981]" size={22} />,
+      title: '24/7 Conversational AI & WhatsApp Bots',
+      subtitle: 'Sub-Minute Lead Qualification',
+      description: 'Dynamic conversational agents embedded across Web and WhatsApp. Vets prospect roof area, structural fit, and power consumption within natural, context-aware dialogues and synchronizes calendar bookings 24/7.'
+    },
+    {
+      icon: <Headphones className="text-[#38BDF8]" size={22} />,
+      title: 'Human-Grade AI Voice Agents',
+      subtitle: 'Zero-Latency Inbound & Outbound Calling',
+      description: 'Inbound answering with zero unanswered lines, database reactivation for legacy commercial inquiries, and proactive quote follow-up sequences that accelerate contract closures without staffing a call center.'
+    },
+    {
+      icon: <Zap className="text-[#F59E0B]" size={22} />,
+      title: 'Autonomous Solar Appointment Setters',
+      subtitle: 'Speed-to-Lead in Seconds',
+      description: 'Multi-channel booking pipeline designed to take raw property inquiries across forms and ads and turn them into confirmed on-site or virtual audits within seconds via automated SMS, WhatsApp, and call workflows.'
+    },
+    {
+      icon: <Cpu className="text-[#EC4899]" size={22} />,
+      title: 'End-to-End Business Process Automation',
+      subtitle: 'Frictionless Milestone Tracking',
+      description: 'Deep architectural integrations connecting CRM pipelines, automated contract generation, DISCOM grid interconnect tracking, and milestone notifications directly to leadership channels.'
+    }
+  ];
+
   return (
     <div className="relative min-h-screen">
       {/* 1. HERO SECTION */}
@@ -54,17 +101,17 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
             <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full border border-[#A855F7]/40 bg-[#3B0764]/40 mb-8 backdrop-blur-md shadow-[0_0_25px_rgba(168,85,247,0.25)]">
               <VittorisIcon size={24} />
               <span className="text-xs md:text-sm tracking-[0.3em] uppercase text-[#E9D5FF] font-bold">
-                AI VITTORIS • CLEAN ENERGY PLATFORM
+                AI VITTORIS • ENTERING CLEAN ENERGY & SOLAR ARCHITECTURE
               </span>
             </div>
           </Reveal>
 
           <Reveal direction="up" delay={0.3}>
             <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-serif text-white font-normal mb-8 leading-[1.12] tracking-tight max-w-5xl">
-              Architecting Sunlight.{' '}
+              Outcome-Driven AI Systems.{' '}
               <br />
               <span className="italic font-light text-[#D4AF37] gold-gradient-text">
-                Powering Legacies.
+                Now Powering Solar Energy.
               </span>
             </h1>
           </Reveal>
@@ -75,74 +122,67 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
 
           <Reveal direction="up" delay={0.5}>
             <p className="text-sm md:text-base lg:text-lg text-white/80 font-light max-w-2xl leading-relaxed mb-6">
-              Curated visibility platform for premier solar panel technologies. Connect directly with asset owner <strong className="text-white font-medium">Udayveer Singh</strong> (Founder, Vittoris) for architectural consultations, commercial rooftop feasibility, and clean power solutions.
+              Vittoris unites enterprise-grade AI automation, automated feasibility pipelines, and 24/7 intelligent screening to provide unmatched visibility for modern solar panel installations. Connect directly with founder <strong className="text-white font-medium">Udayveer Singh</strong> for clean power solutions.
             </p>
           </Reveal>
 
-          {/* Direct Contact Bar in Hero */}
-          <Reveal direction="up" delay={0.55}>
-            <div className="flex flex-wrap items-center justify-center gap-3 mb-8 p-2.5 rounded-full bg-black/60 border border-white/10 backdrop-blur-md text-xs">
-              <a
-                href="tel:+919015920523"
-                className="flex items-center gap-1.5 text-white/90 hover:text-[#D4AF37] px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 font-mono transition-colors"
-                title="Call Owner"
-              >
-                <Phone size={12} className="text-[#D4AF37]" />
-                <span>+91 90159 20523</span>
-              </a>
-              <a
-                href="https://wa.me/919015920523?text=Hi%20Udayveer%2C%20I%20am%20interested%20in%20consulting%20regarding%20solar%20panels."
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-[#10B981] hover:underline px-3.5 py-1.5 rounded-full bg-[#10B981]/10 border border-[#10B981]/30 font-medium transition-colors"
-              >
-                <span>WhatsApp</span>
-              </a>
-              <a
-                href="mailto:udayveer@vittoris.in"
-                className="flex items-center gap-1.5 text-white/80 hover:text-[#D4AF37] px-3 py-1.5 transition-colors"
-              >
-                <Mail size={12} className="text-[#D4AF37]" />
-                <span>udayveer@vittoris.in</span>
-              </a>
-            </div>
-          </Reveal>
-
+          {/* Direct CTA Buttons */}
           <Reveal direction="up" delay={0.6}>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
-              <Link to="/projects" className="w-full sm:w-auto">
-                <Button variant="gold" size="lg" fullWidth>
-                  View Solar Panel Photos
-                </Button>
-              </Link>
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <a
+                href="mailto:info@vittoris.com?subject=Solar%20Panel%20%26%20Clean%20Energy%20Inquiry%20-%20Vittoris"
+                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full border border-[#D4AF37]/60 bg-[#D4AF37]/15 hover:bg-[#D4AF37]/25 hover:border-[#D4AF37] text-white transition-all text-xs font-semibold font-mono tracking-wider shadow-[0_0_20px_rgba(212,175,55,0.25)]"
+              >
+                <Mail size={15} className="text-[#D4AF37]" />
+                <span>info@vittoris.com</span>
+              </a>
+
               <Button
-                variant="outline"
+                variant="gold"
                 size="lg"
                 onClick={() => onOpenConsultation(ownersData[0])}
-                icon={<Calendar size={15} />}
-                fullWidth
+                icon={<Calendar size={16} />}
               >
-                Consult with Udayveer
+                Schedule Solar Consultation
               </Button>
+
+              <a
+                href="#ai-systems"
+                className="inline-flex items-center gap-2 px-5 py-3.5 rounded-full border border-white/20 bg-white/5 hover:bg-white/10 text-white transition-all text-xs font-medium uppercase tracking-wider"
+              >
+                <Cpu size={14} className="text-[#A855F7]" />
+                <span>Our AI Architecture</span>
+              </a>
             </div>
           </Reveal>
-        </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 select-none pointer-events-none">
-          <span className="text-[9px] tracking-[0.35em] uppercase text-white/40">
-            SCROLL TO DISCOVER
-          </span>
-          <div className="w-[1px] h-10 bg-white/20 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1/2 bg-[#D4AF37] animate-bounce" style={{ animationDuration: '2s' }} />
-          </div>
+          {/* Quick Direct Founder Hotline & WhatsApp */}
+          <Reveal direction="up" delay={0.7}>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3 text-xs">
+              <a
+                href="tel:+919015920523"
+                className="flex items-center gap-2 px-4 py-2 rounded-full bg-black/60 border border-white/15 text-white/90 hover:text-[#D4AF37] hover:border-[#D4AF37]/40 transition-colors font-mono"
+              >
+                <Phone size={13} className="text-[#D4AF37]" />
+                <span>Call Owner: +91 90159 20523</span>
+              </a>
+              <a
+                href="https://wa.me/919015920523?text=Hi%20Udayveer%2C%20I%20would%20like%20to%20consult%20regarding%20solar%20panels."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#10B981]/15 border border-[#10B981]/40 text-[#10B981] hover:bg-[#10B981]/25 transition-colors font-medium"
+              >
+                <span>WhatsApp Owner Directly →</span>
+              </a>
+            </div>
+          </Reveal>
         </div>
       </section>
 
       {/* 2. TELEMETRY NUMERICAL COUNTER STATS */}
       <TelemetryStats />
 
-      {/* 3. HERITAGE & VISION (Exact Prapti style layout) */}
+      {/* 3. HERITAGE & VISION (AI + Solar Convergence) */}
       <section className="relative py-24 lg:py-36 px-6 lg:px-16 overflow-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
           {/* Left Large Visual */}
@@ -163,7 +203,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
                 <span className="text-white/60">Tier-1 Certified</span>
               </div>
               <p className="text-xs text-white/80 font-light">
-                Zero visible cabling, high-efficiency black cell matrix, and non-penetrative architectural clamps.
+                Zero visible cabling, high-efficiency black cell matrix, and non-penetrative architectural mounts.
               </p>
             </div>
           </div>
@@ -178,124 +218,163 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
 
             <Reveal direction="up" delay={0.2}>
               <h2 className="text-3xl md:text-5xl font-serif text-white font-normal leading-tight mb-6">
-                Where Solar Engineering Meets Architectural Elegance.
+                Where AI Automation Meets Clean Energy Excellence.
               </h2>
             </Reveal>
 
             <Reveal direction="up" delay={0.3}>
               <p className="text-sm md:text-base leading-relaxed font-light mb-6" style={{ color: 'var(--text-muted)' }}>
-                Traditional solar installations often sacrifice structural beauty for utility. AI Vittoris bridges this divide by providing high-visibility showcases of cutting-edge photovoltaic estates, BIPV architectural glass, and industrial microgrids.
+                Traditional solar installations often suffer from slow manual feasibility reviews, clerical quoting delays, and opaque matchmaking. Vittoris is entering the solar space to change this permanently.
               </p>
             </Reveal>
 
             <Reveal direction="up" delay={0.4}>
               <p className="text-sm md:text-base leading-relaxed font-light mb-8" style={{ color: 'var(--text-muted)' }}>
-                We empower estate owners, commercial property developers, and institutional solar plant owners to convene directly—fostering transparent site audits, co-development agreements, and clean power independence.
+                By deploying our proprietary AI growth engines, conversational voice agents, and automated document intelligence, we provide elite visibility for premium photovoltaic estates, BIPV solar glass, and commercial rooftop microgrids.
               </p>
             </Reveal>
 
             <Reveal direction="up" delay={0.5}>
-              <div className="flex flex-wrap items-center gap-6">
+              <div className="flex flex-wrap items-center gap-4">
+                <a
+                  href="mailto:info@vittoris.com?subject=Solar%20Panel%20Inquiry%20-%20Vittoris"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-[#D4AF37]/50 bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 text-[#D4AF37] text-xs font-mono font-medium transition-colors"
+                >
+                  <Mail size={14} />
+                  <span>Email info@vittoris.com</span>
+                </a>
                 <Button variant="outline" onClick={() => onOpenConsultation(ownersData[0])}>
-                  Consult with Udayveer
+                  Consult with Founder
                 </Button>
-                <div className="h-[1px] w-12 bg-white/20" />
-                <span className="text-xs tracking-widest text-[#D4AF37] uppercase font-semibold">
-                  100% CLEAN GENERATION
-                </span>
               </div>
             </Reveal>
           </div>
         </div>
       </section>
 
-      {/* 4. CURATED DEVELOPMENTS & INSTALLATIONS (Filtered Showcase) */}
-      <section className="relative py-24 lg:py-36 px-6 lg:px-16 border-t border-b" style={{ borderColor: 'var(--border-divider)', backgroundColor: 'var(--bg-section-muted)' }}>
+      {/* 4. NEW: VITTORIS AI SYSTEMS SHOWCASE (Directly from Corporate PDF) */}
+      <section id="ai-systems" className="relative py-24 lg:py-36 px-6 lg:px-16 border-t border-b overflow-hidden" style={{ borderColor: 'var(--border-divider)', backgroundColor: 'var(--bg-section-muted)' }}>
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <Reveal direction="up" delay={0.1}>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#A855F7]/30 bg-[#3B0764]/30 text-xs tracking-[0.25em] uppercase text-[#C084FC] mb-4 font-semibold backdrop-blur-md">
+                <Cpu size={14} />
+                THE VITTORIS PORTFOLIO • AI OPERATIONAL INFRASTRUCTURE
+              </div>
+            </Reveal>
+
+            <Reveal direction="up" delay={0.2}>
+              <h2 className="text-3xl md:text-5xl font-serif text-white font-normal mb-6 leading-tight">
+                AI-Powered Growth and Automation Systems for Modern Businesses.
+              </h2>
+            </Reveal>
+
+            <Reveal direction="up" delay={0.3}>
+              <p className="text-sm md:text-base font-light leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                Vittoris is an outcome-driven growth and automation company engineered for one clear objective: generating pre-qualified client pipeline while eliminating operational drag. Now adapted to accelerate solar panel adoption and commercial clean energy projects.
+              </p>
+            </Reveal>
+          </div>
+
+          {/* AI Capabilities 6-Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            {aiCapabilities.map((item, idx) => (
+              <Reveal key={item.title} direction="up" delay={0.1 * idx}>
+                <Card className="p-8 h-full flex flex-col justify-between group hover:border-[#D4AF37]/50 transition-all border border-white/10 bg-white/[0.02]">
+                  <div>
+                    <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                      {item.icon}
+                    </div>
+                    <span className="text-[10px] tracking-[0.2em] uppercase text-[#D4AF37] font-semibold block mb-2">
+                      {item.subtitle}
+                    </span>
+                    <h3 className="text-xl font-serif text-white mb-3 group-hover:text-[#D4AF37] transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-xs font-light leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                      {item.description}
+                    </p>
+                  </div>
+                  <div className="pt-6 mt-6 border-t border-white/5 flex items-center justify-between text-[11px] text-white/50">
+                    <span className="flex items-center gap-1.5 text-[#10B981]">
+                      <CheckCircle2 size={12} />
+                      Zero Operational Drag
+                    </span>
+                    <span className="font-mono text-[10px]">Vittoris Proprietary</span>
+                  </div>
+                </Card>
+              </Reveal>
+            ))}
+          </div>
+
+          {/* High-Impact Engagement Banner */}
+          <Reveal direction="up" delay={0.4}>
+            <div className="p-8 md:p-10 rounded-2xl border border-[#D4AF37]/30 bg-gradient-to-r from-black/80 via-[#1b082e]/60 to-black/80 flex flex-col lg:flex-row items-center justify-between gap-6 backdrop-blur-md">
+              <div className="text-center lg:text-left">
+                <span className="text-[10px] tracking-[0.25em] uppercase text-[#D4AF37] font-bold block mb-1">
+                  OFFICIAL INTAKE CHANNEL
+                </span>
+                <h3 className="text-2xl md:text-3xl font-serif text-white mb-2">
+                  Ready to deploy Vittoris AI or enter into solar consultation?
+                </h3>
+                <p className="text-xs md:text-sm text-white/70 font-light max-w-xl">
+                  Customers, property owners, and commercial partners can email our direct advisory desk anytime. We guarantee rapid, professional evaluation.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
+                <a
+                  href="mailto:info@vittoris.com?subject=Vittoris%20AI%20%26%20Solar%20Inquiry"
+                  className="px-6 py-3.5 rounded-xl bg-[#D4AF37] text-black font-semibold text-xs tracking-wider uppercase hover:bg-[#e5c158] transition-all flex items-center gap-2 shadow-lg"
+                >
+                  <Mail size={14} />
+                  <span>Email info@vittoris.com</span>
+                </a>
+                <Button variant="outline" onClick={() => onOpenConsultation(ownersData[0])}>
+                  Book Discovery Session
+                </Button>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* 5. CURATED DEVELOPMENTS & INSTALLATIONS (Filtered Showcase of 6 Solar Panel Types) */}
+      <section className="relative py-24 lg:py-36 px-6 lg:px-16">
         <div className="max-w-7xl mx-auto">
           {/* Header & Filter Bar */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
             <div>
               <Reveal direction="up" delay={0.1}>
-                <div className="text-xs tracking-[0.3em] uppercase text-[#D4AF37] mb-3 font-semibold">
-                  PHOTO SHOWCASE & SPECIFICATIONS
-                </div>
+                <span className="text-xs tracking-[0.25em] text-[#D4AF37] uppercase font-semibold block mb-2">
+                  SOLAR PANEL ARCHITECTURE
+                </span>
               </Reveal>
               <Reveal direction="up" delay={0.2}>
-                <h2 className="text-3xl md:text-5xl font-serif font-normal text-white">
-                  Types of Solar Panels.
+                <h2 className="text-3xl md:text-5xl font-serif text-white font-normal">
+                  6 Types of Solar Panel Technologies.
                 </h2>
               </Reveal>
             </div>
 
             {/* Filter Tabs */}
-            <Reveal direction="up" delay={0.3}>
-              <div className="flex flex-wrap gap-2 border-b pb-3" style={{ borderColor: 'var(--border-divider)' }}>
-                {['All', 'Monocrystalline', 'BIPV Glass', 'Bifacial', 'Commercial', 'Roof Shingles'].map(tab => (
-                  <button
-                    key={tab}
-                    onClick={() => setFilterCategory(tab)}
-                    className={`text-xs tracking-[0.2em] uppercase transition-all duration-300 pb-2 px-3 border-b-2 cursor-pointer ${
-                      filterCategory === tab
-                        ? 'border-[#D4AF37] text-[#D4AF37] font-semibold'
-                        : 'border-transparent text-white/60 hover:text-white'
-                    }`}
-                  >
-                    {tab}
-                  </button>
-                ))}
-              </div>
-            </Reveal>
-          </div>
-
-          {/* Owner Detail Banner directly over the solar panels */}
-          <Reveal direction="up" delay={0.15}>
-            <div className="mb-10 p-5 md:p-6 rounded-2xl border bg-gradient-to-r from-black/80 via-[#1b082e]/40 to-black/80 backdrop-blur-md flex flex-col sm:flex-row items-center justify-between gap-5 shadow-xl" style={{ borderColor: 'var(--border-card)' }}>
-              <div className="flex items-center gap-4 text-center sm:text-left">
-                <div className="relative shrink-0">
-                  <div className="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-[#D4AF37] via-[#A855F7] to-[#D4AF37] shadow-[0_0_15px_rgba(212,175,55,0.3)]">
-                    <img
-                      src={ownersData[0].avatar}
-                      alt={ownersData[0].name}
-                      className="w-full h-full rounded-full object-cover"
-                    />
-                  </div>
-                  <div className="absolute -bottom-1 -right-1 bg-[#D4AF37] text-black p-0.5 rounded-full shadow">
-                    <ShieldCheck size={11} />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                    <span className="text-base font-serif text-white font-medium">{ownersData[0].name}</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30 font-semibold tracking-wider uppercase">
-                      Solar Asset Owner
-                    </span>
-                    <span className="text-[10px] text-white/50 font-mono">Founder • Vittoris</span>
-                  </div>
-                  <p className="text-xs text-white/70 font-light mt-0.5">
-                    Curating and advising on all photovoltaic technologies. Direct consultations without intermediaries.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center justify-center gap-3 text-xs shrink-0">
-                <a
-                  href="tel:+919015920523"
-                  className="flex items-center gap-1.5 font-mono text-[#D4AF37] bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 px-3.5 py-1.5 rounded-full border border-[#D4AF37]/30 transition-colors font-medium"
-                  title="Direct Phone Line"
+            <div className="flex flex-wrap gap-2">
+              {['All', 'Monocrystalline', 'BIPV Glass', 'Bifacial', 'Commercial', 'Roof Shingles'].map(category => (
+                <button
+                  key={category}
+                  onClick={() => setFilterCategory(category)}
+                  className={`px-4 py-2 rounded-full text-xs tracking-wider uppercase transition-all duration-300 ${
+                    filterCategory === category
+                      ? 'bg-[#D4AF37] text-black font-medium shadow-[0_0_15px_rgba(212,175,55,0.4)]'
+                      : 'bg-white/5 border border-white/10 text-white/70 hover:border-white/30'
+                  }`}
                 >
-                  <Phone size={12} />
-                  <span>+91 90159 20523</span>
-                </a>
-                <a
-                  href="mailto:udayveer@vittoris.in"
-                  className="text-white/90 hover:text-[#D4AF37] flex items-center gap-1.5 bg-white/5 hover:bg-white/10 px-3.5 py-1.5 rounded-full border border-white/10 transition-colors"
-                >
-                  <Mail size={12} />
-                  <span>udayveer@vittoris.in</span>
-                </a>
-              </div>
+                  {category}
+                </button>
+              ))}
             </div>
-          </Reveal>
+          </div>
 
           {/* Solar Panel Types Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -383,9 +462,9 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
                           <span>Call</span>
                         </a>
                         <a
-                          href={`mailto:${ownersData[0].email}`}
+                          href={`mailto:info@vittoris.com?subject=${encodeURIComponent(`Solar Panel Inquiry: ${project.title}`)}`}
                           className="text-[11px] text-[#D4AF37] hover:underline flex items-center gap-1 bg-[#D4AF37]/10 px-2 py-1 rounded border border-[#D4AF37]/20"
-                          title="Direct Founder Email"
+                          title="Email info@vittoris.com"
                         >
                           <Mail size={11} />
                           <span>Email</span>
@@ -402,52 +481,40 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
                         onClick={() => onOpenConsultation(ownersData[0], project)}
                         icon={<Calendar size={13} />}
                       >
-                        Consult on this Panel
+                        Consult with Udayveer
                       </Button>
-                      <a
-                        href={`https://wa.me/919015920523?text=${encodeURIComponent(`Hi Udayveer, I am interested in consulting regarding the ${project.title} solar panels.`)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="py-2 px-3 rounded-lg bg-[#10B981]/15 hover:bg-[#10B981]/25 border border-[#10B981]/30 text-[#10B981] font-semibold text-xs transition-colors shrink-0 flex items-center gap-1"
-                        title="WhatsApp Udayveer"
-                      >
-                        <span>WhatsApp</span>
-                      </a>
+                      <Link to={`/projects/${project.id}`}>
+                        <Button variant="outline" size="sm" icon={<ArrowRight size={13} />}>
+                          Specs
+                        </Button>
+                      </Link>
                     </div>
                   </div>
                 </Card>
               </Reveal>
             ))}
           </div>
-
-          <div className="mt-16 text-center">
-            <Link to="/projects">
-              <Button variant="outline" size="lg">
-                View All Solar Developments
-              </Button>
-            </Link>
-          </div>
         </div>
       </section>
 
-      {/* 5. VERIFIED SOLAR ASSET OWNER */}
-      <section className="relative py-24 lg:py-36 px-6 lg:px-16 overflow-hidden">
+      {/* 6. VERIFIED SOLAR ASSET OWNER SPOTLIGHT */}
+      <section className="relative py-24 lg:py-36 px-6 lg:px-16 overflow-hidden border-t" style={{ borderColor: 'var(--border-divider)', backgroundColor: 'var(--bg-section-muted)' }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <Reveal direction="up" delay={0.1}>
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 text-xs tracking-[0.3em] uppercase text-[#D4AF37] mb-4 font-semibold">
                 <ShieldCheck size={14} />
-                DIRECT OWNER VISIBILITY
+                DIRECT FOUNDER & OWNER VISIBILITY
               </div>
             </Reveal>
             <Reveal direction="up" delay={0.2}>
               <h2 className="text-3xl md:text-5xl font-serif text-white font-normal mb-4">
-                Meet the Solar Asset Owner.
+                Meet the Founder & Solar Asset Owner.
               </h2>
             </Reveal>
             <Reveal direction="up" delay={0.3}>
               <p className="text-xs md:text-sm font-light leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                This site is engineered exclusively for solar panel project visibility. Connect directly with the asset owner for site audits, commercial rooftop co-development, and clean energy matchmaking without intermediaries.
+                This site is engineered for clean energy visibility and direct matchmaking. Connect directly with Udayveer Singh, Founder of Vittoris, for site audits, commercial rooftop co-development, and custom AI systems without intermediaries.
               </p>
             </Reveal>
           </div>
@@ -467,7 +534,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
                       />
                       <div className="absolute bottom-2 right-2 px-3 py-1 rounded-full bg-[#D4AF37] text-black font-bold text-xs flex items-center gap-1 shadow-lg">
                         <ShieldCheck size={14} />
-                        Verified Owner
+                        Verified Founder
                       </div>
                     </div>
                     <span className="text-[11px] tracking-[0.25em] uppercase text-[#D4AF37] font-semibold">
@@ -502,15 +569,15 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
                       </div>
                       <div>
                         <span className="text-[10px] text-white/40 uppercase block tracking-wider font-medium">Pricing</span>
-                        <span className="font-serif text-sm md:text-base text-white font-semibold">Contact</span>
+                        <span className="font-serif text-sm md:text-base text-white font-semibold">Direct Desk</span>
                       </div>
                       <div>
-                        <span className="text-[10px] text-white/40 uppercase block tracking-wider font-medium">Access</span>
-                        <span className="font-serif text-sm md:text-base text-[#10B981] font-semibold">Direct Desk</span>
+                        <span className="text-[10px] text-white/40 uppercase block tracking-wider font-medium">Inquiry Desk</span>
+                        <span className="font-serif text-xs md:text-sm text-[#10B981] font-mono font-semibold">info@vittoris.com</span>
                       </div>
                     </div>
 
-                    {/* Direct Contact Desk Box with Phone & Email */}
+                    {/* Direct Contact Desk Box with Phone & Official Email */}
                     <div className="p-4 rounded-xl border bg-black/40 space-y-2.5 text-xs" style={{ borderColor: 'var(--border-card)' }}>
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <span className="text-white/50 uppercase tracking-wider text-[10px] font-semibold">Direct Phone Line</span>
@@ -523,72 +590,39 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
                         </a>
                       </div>
                       <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/5">
-                        <span className="text-white/50 uppercase tracking-wider text-[10px] font-semibold">Official Emails</span>
+                        <span className="text-white/50 uppercase tracking-wider text-[10px] font-semibold">Official Corporate Inbox</span>
                         <div className="flex flex-wrap items-center gap-2.5">
                           <a
-                            href="mailto:udayveer@vittoris.in"
-                            className="text-white/90 hover:text-[#D4AF37] font-medium flex items-center gap-1"
+                            href="mailto:info@vittoris.com?subject=Solar%20Panel%20Consultation%20-%20Vittoris"
+                            className="text-[#D4AF37] hover:underline font-mono font-semibold flex items-center gap-1"
                           >
-                            <Mail size={12} className="text-[#D4AF37]" />
-                            <span>udayveer@vittoris.in</span>
+                            <Mail size={12} />
+                            <span>info@vittoris.com</span>
                           </a>
                           <span className="text-white/20">•</span>
-                          <a
-                            href="mailto:contact@vittoris.in"
-                            className="text-white/60 hover:text-white"
-                          >
-                            contact@vittoris.in
-                          </a>
+                          <span className="text-white/50 text-[11px]">Primary Intake</span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Services Tags from Profile */}
-                    {ownersData[0].services && (
-                      <div>
-                        <span className="text-[10px] tracking-wider uppercase text-white/40 block mb-2 font-semibold">
-                          Services & Expertise:
-                        </span>
-                        <div className="flex flex-wrap gap-1.5">
-                          {ownersData[0].services.map(srv => (
-                            <span
-                              key={srv}
-                              className="text-[11px] px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-white/80"
-                            >
-                              {srv}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Consultation CTAs */}
-                    <div className="pt-2 flex flex-wrap items-center gap-3">
-                      <a
-                        href="tel:+919015920523"
-                        className="flex-1 min-w-[150px]"
+                    {/* Direct Buttons */}
+                    <div className="pt-2 flex flex-wrap gap-3">
+                      <Button
+                        variant="gold"
+                        size="md"
+                        onClick={() => onOpenConsultation(ownersData[0])}
+                        icon={<Calendar size={15} />}
                       >
-                        <Button variant="gold" size="md" fullWidth icon={<Phone size={14} />}>
-                          Call +91 90159 20523
-                        </Button>
-                      </a>
+                        Book Calendar Consultation
+                      </Button>
                       <a
                         href="https://wa.me/919015920523?text=Hi%20Udayveer%2C%20I%20would%20like%20to%20consult%20regarding%20solar%20panels."
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 min-w-[140px] py-2.5 px-4 rounded-lg bg-[#10B981] hover:bg-[#059669] text-white font-medium text-xs flex items-center justify-center gap-2 transition-colors shadow-lg"
+                        className="text-xs px-5 py-3 rounded-xl bg-[#10B981] hover:bg-[#059669] text-white font-semibold transition-all flex items-center justify-center gap-2 shadow-lg"
                       >
                         <span>WhatsApp Udayveer</span>
                       </a>
-                      <Button
-                        variant="outline"
-                        size="md"
-                        onClick={() => onOpenConsultation(ownersData[0])}
-                        icon={<Calendar size={14} />}
-                        className="w-full sm:w-auto"
-                      >
-                        Schedule Meeting
-                      </Button>
                     </div>
                   </div>
                 </div>
@@ -598,7 +632,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
         </div>
       </section>
 
-      {/* 6. CLEAN DIRECT CONSULTATION & ADVISORY BANNER */}
+      {/* 7. CLEAN DIRECT CONSULTATION & ADVISORY BANNER */}
       <section className="relative py-24 px-6 lg:px-16 text-center border-t border-b overflow-hidden" style={{ borderColor: 'var(--border-divider)', backgroundColor: 'var(--bg-section-muted)' }}>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-[#D4AF37]/10 blur-[140px] rounded-full pointer-events-none" />
         <div className="max-w-4xl mx-auto relative z-10">
@@ -622,18 +656,18 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
           <Reveal direction="up" delay={0.35}>
             <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
               <a
-                href="tel:+919015920523"
-                className="flex items-center gap-2 py-2 px-5 rounded-full bg-black/60 border border-[#D4AF37]/40 text-[#D4AF37] font-mono text-sm font-semibold hover:bg-[#D4AF37]/10 transition-colors"
+                href="mailto:info@vittoris.com?subject=Solar%20Panel%20Consultation%20Inquiry%20-%20Vittoris"
+                className="flex items-center gap-2 py-2 px-5 rounded-full bg-black/60 border border-[#D4AF37]/50 text-[#D4AF37] font-mono text-sm font-semibold hover:bg-[#D4AF37]/10 transition-colors"
               >
-                <Phone size={14} />
-                <span>+91 90159 20523</span>
+                <Mail size={14} />
+                <span>info@vittoris.com</span>
               </a>
               <a
-                href="mailto:udayveer@vittoris.in"
-                className="flex items-center gap-2 py-2 px-5 rounded-full bg-black/60 border border-white/15 text-white hover:text-[#D4AF37] transition-colors text-sm"
+                href="tel:+919015920523"
+                className="flex items-center gap-2 py-2 px-5 rounded-full bg-black/60 border border-white/15 text-white hover:text-[#D4AF37] transition-colors text-sm font-mono"
               >
-                <Mail size={14} className="text-[#D4AF37]" />
-                <span>udayveer@vittoris.in</span>
+                <Phone size={14} className="text-[#D4AF37]" />
+                <span>+91 90159 20523</span>
               </a>
             </div>
           </Reveal>

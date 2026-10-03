@@ -260,7 +260,7 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({ onOpenConsultation
                     <span>WhatsApp</span>
                   </a>
                   <a
-                    href={`mailto:udayveer@vittoris.in?subject=${encodeURIComponent(`Consultation: ${project.title}`)}`}
+                    href={`mailto:info@vittoris.com?subject=${encodeURIComponent(`Consultation: ${project.title}`)}`}
                     className="py-2 px-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white text-xs font-medium transition-colors flex items-center justify-center gap-1"
                   >
                     <Mail size={13} />

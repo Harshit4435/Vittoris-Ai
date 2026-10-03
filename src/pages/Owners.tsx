@@ -135,20 +135,7 @@ export const Owners: React.FC<OwnersProps> = ({ onOpenConsultation }) => {
                     >
                       Book Calendar Consultation
                     </Button>
-                    <a
-                      href="mailto:udayveer@vittoris.in"
-                      className="text-xs px-4 py-3 rounded-xl border border-white/20 text-white hover:border-[#D4AF37] hover:text-[#D4AF37] transition-all flex items-center justify-center gap-2"
-                    >
-                      <Mail size={13} className="text-[#D4AF37]" />
-                      <span>udayveer@vittoris.in</span>
-                    </a>
-                    <a
-                      href="mailto:contact@vittoris.in"
-                      className="text-xs px-4 py-3 rounded-xl border border-white/20 text-white/80 hover:border-white hover:text-white transition-all flex items-center justify-center gap-2"
-                    >
-                      <Mail size={13} />
-                      <span>contact@vittoris.in</span>
-                    </a>
+                    <a href="mailto:info@vittoris.com?subject=Solar%20Panel%20Consultation%20-%20Vittoris" className="text-xs px-5 py-3 rounded-xl border border-[#D4AF37]/50 text-white hover:border-[#D4AF37] hover:text-[#D4AF37] bg-[#D4AF37]/10 transition-all flex items-center justify-center gap-2 font-mono font-medium"><Mail size={14} className="text-[#D4AF37]" /><span>info@vittoris.com</span></a>
                   </div>
                 </div>
               </div>

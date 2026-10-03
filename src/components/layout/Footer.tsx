@@ -142,11 +142,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenConsultation }) => {
               </div>
               <div className="flex items-center gap-2">
                 <Mail size={14} className="text-[#D4AF37] shrink-0" />
-                <a href="mailto:contact@vittoris.in" className="hover:text-[#D4AF37] transition-colors">contact@vittoris.in</a>
-              </div>
-              <div className="flex items-center gap-2">
-                <Mail size={14} className="text-[#D4AF37] shrink-0" />
-                <a href="mailto:udayveer@vittoris.in" className="hover:text-[#D4AF37] transition-colors">udayveer@vittoris.in</a>
+                <a href="mailto:info@vittoris.com?subject=Solar%20Panel%20%26%20Clean%20Energy%20Inquiry%20-%20Vittoris" className="hover:text-[#D4AF37] font-mono text-white font-medium transition-colors">info@vittoris.com</a>
               </div>
             </div>
           </div>

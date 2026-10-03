@@ -108,8 +108,7 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
                   </div>
                   <div>
                     <h4 className="text-sm font-serif text-white mb-1">Electronic Correspondence</h4>
-                    <a href="mailto:udayveer@vittoris.in" className="block text-white hover:text-[#D4AF37] transition-colors">udayveer@vittoris.in</a>
-                    <a href="mailto:contact@vittoris.in" className="block text-white/80 hover:text-[#D4AF37] transition-colors mt-0.5">contact@vittoris.in</a>
+                    <a href="mailto:info@vittoris.com?subject=Solar%20Panel%20%26%20Clean%20Energy%20Inquiry%20-%20Vittoris" className="block text-white hover:text-[#D4AF37] font-mono font-semibold transition-colors text-sm">info@vittoris.com</a><span className="block text-white/50 text-[11px] mt-0.5">Monitored 24/7 by Vittoris AI Dispatch</span>
                   </div>
                 </div>
               </Card>

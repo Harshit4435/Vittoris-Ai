@@ -185,7 +185,7 @@ export const MeetOwnerModal: React.FC<MeetOwnerModalProps> = ({
                         <span>WhatsApp</span>
                       </a>
                       <a
-                        href="mailto:udayveer@vittoris.in"
+                        href="mailto:info@vittoris.com?subject=Solar%20Panel%20Consultation%20Inquiry%20-%20Vittoris"
                         className="flex items-center gap-1 text-white/80 hover:text-white bg-white/5 hover:bg-white/10 px-2.5 py-1 rounded border border-white/10 transition-colors"
                       >
                         <Mail size={12} />
