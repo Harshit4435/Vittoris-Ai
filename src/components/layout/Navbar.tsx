@@ -88,7 +88,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <a
               href="tel:+919015920523"
               className="flex items-center gap-2 text-xs text-white/80 hover:text-white px-3 py-1.5 rounded-full border border-white/10 bg-white/5 transition-colors font-mono"
-              title="Call Owner Udayveer Singh"
+              title="Call the Team of Udayveer Singh"
             >
               <Phone size={12} className="text-white/60" />
               <span>+91 90159 20523</span>
@@ -188,7 +188,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 }}
                 icon={<Calendar size={15} />}
               >
-                Consult Owner (Udayveer)
+                Consult the Team of Udayveer
               </Button>
             </div>
           </nav>

@@ -22,7 +22,7 @@ export const Owners: React.FC<OwnersProps> = ({ onOpenConsultation }) => {
         badge="VERIFIED SOLAR ASSET OWNER"
         subtitle="AI VITTORIS • SOLAR PANEL PROJECT VISIBILITY"
         title="Direct Stakeholder & Asset Owner Matchmaking."
-        description="Connect directly with Udayveer Singh, Founder at Vittoris. This platform exists for transparent visibility of solar panel technologies, commercial rooftop solarization, and clean energy matchmaking without intermediaries."
+        description="Connect directly with the team of Udayveer Singh, Founder at Vittoris. This platform exists for transparent visibility of solar panel technologies, commercial rooftop solarization, and clean energy matchmaking without intermediaries."
       />
 
       <div className="max-w-7xl mx-auto px-6 lg:px-16 pt-12">

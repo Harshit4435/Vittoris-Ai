@@ -30,7 +30,7 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
         badge="DIRECT ENGAGEMENT"
         subtitle="AI VITTORIS ADVISORY DESK"
         title="Schedule a Private Solar Consultation."
-        description="Connect directly with Udayveer Singh, Founder at Vittoris. Whether you are an estate proprietor evaluating solar panel types or a commercial host seeking direct clean power matchmaking."
+        description="Connect directly with the team of Udayveer Singh, Founder at Vittoris. Whether you are an estate proprietor evaluating solar panel types or a commercial host seeking direct clean power matchmaking."
       />
 
       <div className="max-w-7xl mx-auto px-6 lg:px-16 pt-12">
@@ -58,7 +58,7 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
                 Let Us Evaluate Your Solar Potential.
               </h2>
               <p className="text-xs md:text-sm font-light leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                Directly communicate with Udayveer Singh, Founder at Vittoris. We honor strict mutual non-disclosure agreements for all solar panel evaluations and commercial rooftop leaseholds.
+                Directly communicate with the team of Udayveer Singh, Founder at Vittoris. We honor strict mutual non-disclosure agreements for all solar panel evaluations and commercial rooftop leaseholds.
               </p>
             </Reveal>
 

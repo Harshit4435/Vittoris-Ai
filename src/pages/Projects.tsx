@@ -47,7 +47,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenConsultation }) => {
         badge="SOLAR PANEL SHOWCASE"
         subtitle="PHOTO SHOWCASE & TECHNOLOGY SPECIFICATIONS"
         title="Types of Solar Panels."
-        description="Explore leading solar panel categories—including Monocrystalline TOPCon cells, Building-Integrated Photovoltaic Glass (BIPV), Bifacial dual-glass arrays, commercial rooftop systems, and architectural solar shingles. Connect directly with Udayveer Singh to evaluate the best fit for your property."
+        description="Explore leading solar panel categories—including Monocrystalline TOPCon cells, Building-Integrated Photovoltaic Glass (BIPV), Bifacial dual-glass arrays, commercial rooftop systems, and architectural solar shingles. Connect directly with the team of Udayveer Singh to evaluate the best fit for your property."
       />
 
       {/* Verified Asset Owner Spotlight Banner Over the Showcase */}

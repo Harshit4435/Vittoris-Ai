@@ -122,7 +122,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
 
           <Reveal direction="up" delay={0.5}>
             <p className="text-sm md:text-base lg:text-lg text-white/80 font-light max-w-2xl leading-relaxed mb-6">
-              Vittoris unites enterprise-grade AI automation, automated feasibility pipelines, and 24/7 intelligent screening to provide unmatched visibility for modern solar panel installations. Connect directly with founder <strong className="text-white font-medium">Udayveer Singh</strong> for clean power solutions.
+              Vittoris unites enterprise-grade AI automation, automated feasibility pipelines, and 24/7 intelligent screening to provide unmatched visibility for modern solar panel installations. Connect directly with the team of founder <strong className="text-white font-medium">Udayveer Singh</strong> for clean power solutions.
             </p>
           </Reveal>
 
@@ -514,7 +514,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
             </Reveal>
             <Reveal direction="up" delay={0.3}>
               <p className="text-xs md:text-sm font-light leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                This site is engineered for clean energy visibility and direct matchmaking. Connect directly with Udayveer Singh, Founder of Vittoris, for site audits, commercial rooftop co-development, and custom AI systems without intermediaries.
+                This site is engineered for clean energy visibility and direct matchmaking. Connect directly with the team of Udayveer Singh, Founder of Vittoris, for site audits, commercial rooftop co-development, and custom AI systems without intermediaries.
               </p>
             </Reveal>
           </div>
@@ -648,7 +648,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
           </Reveal>
           <Reveal direction="up" delay={0.3}>
             <p className="text-sm md:text-base font-light max-w-2xl mx-auto mb-8 leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-              Direct advisory with Udayveer Singh. Consult on Monocrystalline TOPCon, BIPV architectural glass, bifacial modules, and commercial rooftop solarization.
+              Direct advisory with the team of Udayveer Singh. Consult on Monocrystalline TOPCon, BIPV architectural glass, bifacial modules, and commercial rooftop solarization.
             </p>
           </Reveal>
 
