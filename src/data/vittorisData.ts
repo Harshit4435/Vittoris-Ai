@@ -945,7 +945,7 @@ export const WHY_CHOOSE_VITTORIS = [
 
 export const COMPANY_CONTACT_DETAILS = {
   brandName: "VITTORIS",
-  tagline: "AI-Powered Growth and Automation Systems for Modern Businesses",
+  tagline: "AI-Powered Growth and AI Services for Modern Businesses",
   primaryEmail: "info@vittoris.com",
   email: "info@vittoris.com",
   secondaryEmail: "contact@vittoris.in",
@@ -953,5 +953,5 @@ export const COMPANY_CONTACT_DETAILS = {
   phone: "+91 90159 20523",
   phoneRaw: "+919015920523",
   directSupport: "+91 90159 20523",
-  whatsAppUrl: "https://wa.me/919015920523?text=Hello%20Vittoris%20team,%20I%20would%20like%20to%20learn%20more%20about%20your%20AI%20growth%20and%20automation%20systems."
+  whatsAppUrl: "https://wa.me/919015920523?text=Hello%20Vittoris%20team,%20I%20would%20like%20to%20learn%20more%20about%20your%20growth%20and%20ai%20services."
 };

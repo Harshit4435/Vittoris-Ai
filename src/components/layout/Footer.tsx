@@ -55,7 +55,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenConsultation }) => {
               <VittorisLogo size="md" />
             </Link>
             <p className="text-xs text-slate-400 leading-relaxed max-w-sm font-light">
-              Vittoris is an outcome-driven growth and automation company. We unite performance-based client acquisition with bespoke AI operational infrastructure, deploying permanent enterprise business equity rather than rented black boxes.
+              Vittoris is an outcome-driven growth and AI services company. We unite performance-based client acquisition with bespoke AI operational infrastructure, deploying permanent enterprise business equity rather than rented black boxes.
             </p>
 
             <div className="pt-2 space-y-2 text-xs">
@@ -162,7 +162,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenConsultation }) => {
         {/* Bottom Commercial Integrity Notice & Copyright */}
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-slate-500 font-light">
           <div>
-            © {new Date().getFullYear()} VITTORIS. All rights reserved. AI-Powered Growth and Automation Systems.
+            © {new Date().getFullYear()} VITTORIS. All rights reserved. AI-Powered Growth and AI Services.
           </div>
 
           <div className="text-center md:text-right text-[10px] text-slate-500 max-w-xl">

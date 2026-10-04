@@ -30,7 +30,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
           {/* Eyebrow badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C7A86D]/10 border border-[#C7A86D]/30 text-[#C7A86D] text-[10px] font-medium tracking-[0.25em] uppercase">
             <Sparkles className="w-3.5 h-3.5 text-[#E5C788]" />
-            <span>AI-Powered Growth and Automation Systems for Modern Businesses</span>
+            <span>AI-Powered Growth and AI Services for Modern Businesses</span>
           </div>
 
           {/* Main Title in Playfair Display serif */}

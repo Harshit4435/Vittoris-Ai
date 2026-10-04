@@ -19,7 +19,7 @@ export const About: React.FC<AboutProps> = ({ onOpenConsultation }) => {
           Engineered for <span className="italic text-[#C7A86D]">Measurable Booked Revenue</span>
         </h1>
         <p className="text-base sm:text-lg text-stone-300 font-light leading-relaxed max-w-2xl mx-auto">
-          Vittoris is an outcome-driven growth and automation company engineered for one clear objective: generating pre-qualified client pipeline while eliminating the operational drag of chasing cold leads.
+          Vittoris is an outcome-driven growth and AI services company engineered for one clear objective: generating pre-qualified client pipeline while eliminating the operational drag of chasing cold leads.
         </p>
       </div>
 

@@ -57,7 +57,7 @@ export const VittorisIcon: React.FC<{ className?: string; size?: number; useReal
 export const VittorisLogo: React.FC<VittorisLogoProps> = ({
   size = 'md',
   showSubtitle = true,
-  subtitleText = 'Growth & Automation Systems',
+  subtitleText = 'Growth & AI Services',
   className = '',
   useRealImage = true
 }) => {
