@@ -13,6 +13,7 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { VITTORIS_SERVICES, VITTORIS_ENGAGEMENT_PHASES } from '../data/vittorisData';
+import emblemImg from '../assets/branding/vittoris-emblem.png';
 
 interface HomeProps {
   onOpenConsultation: () => void;
@@ -27,6 +28,18 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
         <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-[#C7A86D]/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="text-center max-w-4xl mx-auto relative z-10 space-y-6">
+          {/* Official Emblem Mark with ambient glow */}
+          <div className="flex justify-center mb-1">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-[#7F56D9]/25 rounded-full blur-2xl group-hover:bg-[#7F56D9]/45 transition-all duration-500 scale-125 pointer-events-none" />
+              <img 
+                src={emblemImg} 
+                alt="Vittoris Official Emblem" 
+                className="relative z-10 w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-[0_8px_24px_rgba(127,86,217,0.45)] transition-transform duration-300 group-hover:scale-105"
+              />
+            </div>
+          </div>
+
           {/* Eyebrow badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C7A86D]/10 border border-[#C7A86D]/30 text-[#C7A86D] text-[10px] font-medium tracking-[0.25em] uppercase">
             <Sparkles className="w-3.5 h-3.5 text-[#E5C788]" />
@@ -88,7 +101,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
             {/* Header bar of console */}
             <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-[#C7A86D]/15 relative z-10">
               <div className="flex items-center gap-3">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#C7A86D] animate-pulse" />
+                <img src={emblemImg} alt="Vittoris" className="w-7 h-7 object-contain drop-shadow-[0_2px_8px_rgba(127,86,217,0.4)] shrink-0" />
                 <div>
                   <span className="text-xs font-mono font-medium text-white tracking-[0.18em] uppercase block">
                     VITTORIS AUTONOMOUS PIPELINE ARCHITECTURE
