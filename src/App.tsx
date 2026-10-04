@@ -3,13 +3,16 @@ import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-route
 import Lenis from 'lenis';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
-import { MeetOwnerModal } from './components/modals/MeetOwnerModal';
+import { DiscoveryCallModal } from './components/modals/DiscoveryCallModal';
 import { Home } from './pages/Home';
-import { Projects } from './pages/Projects';
-import { ProjectDetail } from './pages/ProjectDetail';
-import { Owners } from './pages/Owners';
+import { Services } from './pages/Services';
+import { ServiceDetail } from './pages/ServiceDetail';
+import { Solutions } from './pages/Solutions';
+import { Industries } from './pages/Industries';
+import { HowItWorks } from './pages/HowItWorks';
+import { Demos } from './pages/Demos';
+import { About } from './pages/About';
 import { Contact } from './pages/Contact';
-import type { SolarOwner, SolarProject } from './types/solar';
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -24,9 +27,8 @@ function ScrollToTop() {
 
 function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-  const [isConsultationOpen, setIsConsultationOpen] = useState(false);
-  const [targetOwner, setTargetOwner] = useState<SolarOwner | undefined>(undefined);
-  const [targetProject, setTargetProject] = useState<SolarProject | undefined>(undefined);
+  const [isDiscoveryOpen, setIsDiscoveryOpen] = useState(false);
+  const [selectedServiceSlug, setSelectedServiceSlug] = useState<string | undefined>(undefined);
 
   // Initialize smooth scrolling with Lenis
   useEffect(() => {
@@ -61,22 +63,21 @@ function App() {
     }
   };
 
-  const handleOpenConsultation = (owner?: SolarOwner, project?: SolarProject) => {
-    setTargetOwner(owner);
-    setTargetProject(project);
-    setIsConsultationOpen(true);
+  const handleOpenDiscovery = (serviceSlug?: string) => {
+    setSelectedServiceSlug(serviceSlug);
+    setIsDiscoveryOpen(true);
   };
 
-  const handleCloseConsultation = () => {
-    setIsConsultationOpen(false);
+  const handleCloseDiscovery = () => {
+    setIsDiscoveryOpen(false);
   };
 
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <ScrollToTop />
-      <div className="min-h-screen flex flex-col bg-[var(--bg-body)] text-[var(--text-body)] transition-colors duration-500">
+      <div className="min-h-screen flex flex-col bg-[#06080F] text-[#F3F4F6] transition-colors duration-500 font-sans selection:bg-blue-600 selection:text-white">
         <Navbar
-          onOpenConsultation={() => handleOpenConsultation()}
+          onOpenConsultation={() => handleOpenDiscovery()}
           theme={theme}
           onToggleTheme={toggleTheme}
         />
@@ -85,43 +86,62 @@ function App() {
           <Routes>
             <Route
               path="/"
-              element={<Home onOpenConsultation={handleOpenConsultation} />}
+              element={<Home onOpenConsultation={() => handleOpenDiscovery()} />}
             />
             <Route
-              path="/projects"
-              element={<Projects onOpenConsultation={handleOpenConsultation} />}
+              path="/services"
+              element={<Services onOpenConsultation={handleOpenDiscovery} />}
             />
             <Route
-              path="/projects/:id"
-              element={<ProjectDetail onOpenConsultation={handleOpenConsultation} />}
+              path="/services/:slug"
+              element={<ServiceDetail onOpenConsultation={handleOpenDiscovery} />}
             />
             <Route
-              path="/owners"
-              element={<Owners onOpenConsultation={handleOpenConsultation} />}
+              path="/solutions"
+              element={<Solutions onOpenConsultation={() => handleOpenDiscovery()} />}
             />
             <Route
-              path="/impact"
-              element={<Navigate to="/projects" replace />}
+              path="/industries"
+              element={<Industries onOpenConsultation={() => handleOpenDiscovery()} />}
+            />
+            <Route
+              path="/how-it-works"
+              element={<HowItWorks onOpenConsultation={() => handleOpenDiscovery()} />}
+            />
+            <Route
+              path="/demos"
+              element={<Demos onOpenConsultation={() => handleOpenDiscovery()} />}
+            />
+            <Route
+              path="/about"
+              element={<About onOpenConsultation={() => handleOpenDiscovery()} />}
             />
             <Route
               path="/contact"
-              element={<Contact onOpenConsultation={() => handleOpenConsultation()} />}
+              element={<Contact onOpenConsultation={() => handleOpenDiscovery()} />}
             />
+
+            {/* Seamless backward compatibility redirects */}
+            <Route path="/projects" element={<Navigate to="/services" replace />} />
+            <Route path="/projects/*" element={<Navigate to="/services" replace />} />
+            <Route path="/owners" element={<Navigate to="/about" replace />} />
+            <Route path="/impact" element={<Navigate to="/how-it-works" replace />} />
+
+            {/* Fallback route */}
             <Route
               path="*"
-              element={<Home onOpenConsultation={handleOpenConsultation} />}
+              element={<Home onOpenConsultation={() => handleOpenDiscovery()} />}
             />
           </Routes>
         </main>
 
-        <Footer onOpenConsultation={() => handleOpenConsultation()} />
+        <Footer onOpenConsultation={() => handleOpenDiscovery()} />
 
-        {/* Global Matchmaking Meeting Modal */}
-        <MeetOwnerModal
-          isOpen={isConsultationOpen}
-          onClose={handleCloseConsultation}
-          targetOwner={targetOwner}
-          targetProject={targetProject}
+        {/* Global Discovery Call Modal */}
+        <DiscoveryCallModal
+          isOpen={isDiscoveryOpen}
+          onClose={handleCloseDiscovery}
+          initialServiceSlug={selectedServiceSlug}
         />
       </div>
     </BrowserRouter>

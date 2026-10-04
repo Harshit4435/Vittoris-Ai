@@ -20,7 +20,7 @@ export const VittorisIcon: React.FC<{ className?: string; size?: number; useReal
   if (useRealImage) {
     return (
       <div 
-        className={`rounded-xl bg-white flex items-center justify-center p-1.5 shadow-[0_4px_20px_rgba(139,92,246,0.25)] border border-white/30 transition-transform duration-300 group-hover:scale-105 overflow-hidden select-none shrink-0 ${className}`}
+        className={`rounded-xl bg-gradient-to-tr from-white/95 to-white/80 flex items-center justify-center p-1.5 shadow-[0_4px_20px_rgba(59,130,246,0.3)] border border-white/40 transition-transform duration-300 group-hover:scale-105 overflow-hidden select-none shrink-0 ${className}`}
         style={style}
       >
         <img 
@@ -42,26 +42,26 @@ export const VittorisIcon: React.FC<{ className?: string; size?: number; useReal
     >
       <defs>
         <linearGradient id="vittorisLeftPetal" x1="10%" y1="10%" x2="90%" y2="90%">
-          <stop offset="0%" stopColor="#3B0764" />
-          <stop offset="60%" stopColor="#240046" />
-          <stop offset="100%" stopColor="#190028" />
+          <stop offset="0%" stopColor="#1E3A8A" />
+          <stop offset="60%" stopColor="#1E40AF" />
+          <stop offset="100%" stopColor="#0F172A" />
         </linearGradient>
 
         <linearGradient id="vittorisCenterPetal" x1="30%" y1="0%" x2="70%" y2="100%">
-          <stop offset="0%" stopColor="#A855F7" />
-          <stop offset="50%" stopColor="#8B5CF6" />
-          <stop offset="100%" stopColor="#581C87" />
+          <stop offset="0%" stopColor="#60A5FA" />
+          <stop offset="50%" stopColor="#3B82F6" />
+          <stop offset="100%" stopColor="#1D4ED8" />
         </linearGradient>
 
         <linearGradient id="vittorisRightPetal" x1="10%" y1="20%" x2="90%" y2="80%">
-          <stop offset="0%" stopColor="#2E0854" />
-          <stop offset="50%" stopColor="#4A154B" />
-          <stop offset="100%" stopColor="#7E22CE" />
+          <stop offset="0%" stopColor="#7C3AED" />
+          <stop offset="50%" stopColor="#6D28D9" />
+          <stop offset="100%" stopColor="#4C1D95" />
         </linearGradient>
 
         <linearGradient id="vittorisBase" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#C084FC" />
-          <stop offset="100%" stopColor="#7E22CE" />
+          <stop offset="0%" stopColor="#93C5FD" />
+          <stop offset="100%" stopColor="#3B82F6" />
         </linearGradient>
       </defs>
 
@@ -79,7 +79,7 @@ export const VittorisIcon: React.FC<{ className?: string; size?: number; useReal
       />
       <path
         d="M 50 16 C 54 26 55 46 50 72 C 46 54 47 30 50 16 Z"
-        fill="#C084FC"
+        fill="#93C5FD"
         opacity="0.3"
       />
       <path
@@ -93,16 +93,16 @@ export const VittorisIcon: React.FC<{ className?: string; size?: number; useReal
 export const VittorisLogo: React.FC<VittorisLogoProps> = ({
   size = 'md',
   showSubtitle = true,
-  subtitleText = 'Solar Estates & Clean Energy',
-  showAiPrefix = true,
+  subtitleText = 'Growth & Automation Systems',
+  showAiPrefix = false,
   className = '',
   useRealImage = true
 }) => {
   const iconPixelSizes = {
-    sm: 32,
-    md: 42,
-    lg: 52,
-    xl: 64
+    sm: 30,
+    md: 40,
+    lg: 50,
+    xl: 62
   };
 
   const textSizes = {
@@ -113,27 +113,27 @@ export const VittorisLogo: React.FC<VittorisLogoProps> = ({
   };
 
   return (
-    <div className={`flex items-center gap-3.5 group select-none ${className}`}>
-      {/* Real Brand Logo Mark from Company Graphic */}
+    <div className={`flex items-center gap-3 group select-none ${className}`}>
+      {/* Real Brand Logo Mark */}
       <div className="relative flex-shrink-0">
-        <div className="absolute inset-0 bg-[#8B5CF6]/30 rounded-2xl blur-md group-hover:bg-[#8B5CF6]/50 transition-all duration-300 pointer-events-none" />
+        <div className="absolute inset-0 bg-blue-500/20 rounded-2xl blur-md group-hover:bg-blue-500/40 transition-all duration-300 pointer-events-none" />
         <VittorisIcon size={iconPixelSizes[size]} useRealImage={useRealImage} />
       </div>
 
       {/* Official Typography */}
       <div className="flex flex-col justify-center">
-        <div className="flex items-baseline gap-2 leading-none">
+        <div className="flex items-baseline gap-1.5 leading-none">
           {showAiPrefix && (
-            <span className="text-[#C084FC] font-sans font-extrabold tracking-[0.2em] text-sm md:text-base group-hover:text-[#E9D5FF] transition-colors">
+            <span className="text-blue-400 font-sans font-extrabold tracking-[0.2em] text-xs md:text-sm group-hover:text-blue-300 transition-colors">
               AI
             </span>
           )}
-          <span className={`font-serif font-bold tracking-[0.18em] text-white group-hover:text-[#C084FC] transition-colors ${textSizes[size]}`}>
+          <span className={`font-serif font-bold tracking-[0.16em] text-white group-hover:text-blue-400 transition-colors ${textSizes[size]}`}>
             VITTORIS
           </span>
         </div>
         {showSubtitle && (
-          <span className="text-[7.5px] md:text-[8.5px] tracking-[0.28em] uppercase text-white/50 font-medium mt-1.5 leading-none">
+          <span className="text-[7.5px] md:text-[8px] tracking-[0.22em] uppercase text-slate-400 font-semibold mt-1 leading-none">
             {subtitleText}
           </span>
         )}

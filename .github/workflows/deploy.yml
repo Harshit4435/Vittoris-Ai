@@ -1,4 +1,4 @@
-name: Deploy Solis-Lux to GitHub Pages
+name: Deploy VITTORIS AI Platform to GitHub Pages
 
 on:
   push:
