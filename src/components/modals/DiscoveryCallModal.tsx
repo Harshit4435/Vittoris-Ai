@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, Clock, CheckCircle2, ArrowRight, ShieldCheck, Sparkles, Building, Mail, User, Globe, FileText } from 'lucide-react';
+import { X, CheckCircle2, ArrowRight, ShieldCheck, Sparkles, Building, Mail, User, Globe, FileText, ExternalLink } from 'lucide-react';
 import { VITTORIS_SERVICES, COMPANY_CONTACT_DETAILS } from '../../data/vittorisData';
 
 interface DiscoveryCallModalProps {
@@ -29,28 +29,40 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
     selectedTime: '10:00 AM EST',
     notes: '',
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Time slots for demo calendar
-  const timeSlots = [
-    '09:00 AM EST',
-    '10:30 AM EST',
-    '01:00 PM EST',
-    '02:30 PM EST',
-    '04:00 PM EST',
-  ];
+  const getCalendlyUrl = () => {
+    const raw = COMPANY_CONTACT_DETAILS.calendlyUrl || 'https://calendly.com/udayzayn';
+    try {
+      const url = new URL(raw);
+      url.searchParams.set('hide_landing_page_details', '1');
+      url.searchParams.set('hide_gdpr_banner', '1');
+      url.searchParams.set('background_color', '0e0e0e');
+      url.searchParams.set('text_color', 'ffffff');
+      url.searchParams.set('primary_color', 'c7a86d');
+      if (formData.fullName.trim()) {
+        url.searchParams.set('name', formData.fullName.trim());
+      }
+      if (formData.businessEmail.trim()) {
+        url.searchParams.set('email', formData.businessEmail.trim());
+      }
+      return url.toString();
+    } catch {
+      return raw;
+    }
+  };
+
+  useEffect(() => {
+    const handleCalendlyMessage = (e: MessageEvent) => {
+      if (e.data && typeof e.data.event === 'string' && e.data.event.indexOf('calendly.event_scheduled') === 0) {
+        setStep(3);
+      }
+    };
+    window.addEventListener('message', handleCalendlyMessage);
+    return () => window.removeEventListener('message', handleCalendlyMessage);
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setStep(3);
-    }, 700);
   };
 
   const handleReset = () => {
@@ -77,7 +89,7 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
           initial={{ opacity: 0, scale: 0.96, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.96, y: 15 }}
-          className="relative w-full max-w-2xl bg-[#0F0F0F] border border-[#C7A86D]/30 rounded-3xl shadow-2xl shadow-black/90 overflow-hidden z-10 my-8"
+          className={`relative w-full ${step === 2 ? 'max-w-4xl' : 'max-w-2xl'} bg-[#0F0F0F] border border-[#C7A86D]/30 rounded-3xl shadow-2xl shadow-black/90 overflow-hidden z-10 my-8 transition-all duration-300`}
         >
           {/* Header Gold Line */}
           <div className="h-1 w-full bg-gradient-to-r from-transparent via-[#C7A86D] to-transparent" />
@@ -272,81 +284,41 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
               </form>
             )}
 
-            {/* Step 2: Time Selection */}
+            {/* Step 2: Live Calendly Scheduling */}
             {step === 2 && (
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="bg-[#141414] border border-white/10 rounded-2xl p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-serif font-bold uppercase tracking-wider text-[#C7A86D] flex items-center gap-1.5">
-                      <Calendar className="w-4 h-4 text-[#C7A86D]" /> Consultation Date
-                    </span>
-                    <span className="text-[11px] text-slate-400">Select preferred slot</span>
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3.5 rounded-2xl bg-[#141414] border border-[#C7A86D]/20 text-xs">
+                  <div className="flex items-center gap-2 text-stone-300">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                    <span>Owner Live Calendar Sync • Displays real-time availability</span>
                   </div>
-
-                  <div className="grid grid-cols-3 gap-2 mb-4">
-                    {['2026-10-07 (Wed)', '2026-10-08 (Thu)', '2026-10-09 (Fri)'].map((dateLabel, idx) => {
-                      const dateVal = dateLabel.split(' ')[0];
-                      const isDateSelected = formData.selectedDate === dateVal;
-                      return (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => setFormData(prev => ({ ...prev, selectedDate: dateVal }))}
-                          className={`py-2 px-3 text-xs rounded-xl border text-center font-medium transition-all cursor-pointer ${
-                            isDateSelected
-                              ? 'bg-[#C7A86D]/20 border-[#C7A86D] text-[#E5C788]'
-                              : 'bg-[#0B0B0B] border-white/10 text-slate-300 hover:border-white/20'
-                          }`}
-                        >
-                          {dateLabel}
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  <label className="block text-xs font-medium text-slate-300 mb-2 flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-[#C7A86D]" /> Available Time Slot (EST)
-                  </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {timeSlots.map((slot) => {
-                      const isSlotPicked = formData.selectedTime === slot;
-                      return (
-                        <button
-                          key={slot}
-                          type="button"
-                          onClick={() => setFormData(prev => ({ ...prev, selectedTime: slot }))}
-                          className={`py-2 px-3 rounded-xl border text-xs font-mono transition-all text-center cursor-pointer ${
-                            isSlotPicked
-                              ? 'bg-[#C7A86D] text-black font-semibold border-[#C7A86D] shadow-md shadow-[#C7A86D]/25'
-                              : 'bg-[#0B0B0B] border-white/10 text-slate-300 hover:border-white/20'
-                          }`}
-                        >
-                          {slot}
-                        </button>
-                      );
-                    })}
-                  </div>
+                  <a
+                    href={getCalendlyUrl()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-[11px] text-[#C7A86D] hover:text-[#E5C788] underline underline-offset-2 shrink-0 font-medium"
+                  >
+                    <span>Open in new tab</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5 uppercase tracking-wider">
-                    Preferred Session Delivery
-                  </label>
-                  <select
-                    name="preferredChannel"
-                    value={formData.preferredChannel}
-                    onChange={handleInputChange}
-                    className="w-full bg-[#141414] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#C7A86D] transition-colors"
-                  >
-                    <option value="Email">Email Calendar Invite (Google Meet / Zoom)</option>
-                    <option value="Virtual Diagnostic">Executive Virtual Briefing</option>
-                  </select>
+                {/* Embedded Calendly Frame */}
+                <div className="w-full rounded-2xl overflow-hidden border border-white/10 bg-[#0E0E0E] relative shadow-inner">
+                  <iframe
+                    src={getCalendlyUrl()}
+                    width="100%"
+                    height="620"
+                    frameBorder="0"
+                    title="Owner Calendly Scheduling"
+                    className="w-full bg-[#0E0E0E]"
+                  />
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-[#C7A86D]/10 border border-[#C7A86D]/25 text-xs text-slate-300 flex items-start gap-2">
                   <ShieldCheck className="w-4 h-4 text-[#C7A86D] shrink-0 mt-0.5" />
                   <span>
-                    <strong>Vittoris Commitment:</strong> We strictly review operational fit, qualification criteria, and commercial economics prior to confirmation.
+                    <strong>Instant Booking:</strong> Selecting a slot immediately creates the calendar event with the owner and emails your meeting link (Google Meet / Zoom).
                   </span>
                 </div>
 
@@ -356,28 +328,19 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                     onClick={() => setStep(1)}
                     className="px-4 py-2 text-xs font-medium text-slate-400 hover:text-white transition-colors cursor-pointer"
                   >
-                    Back to Details
+                    ← Back to Scoping
                   </button>
 
                   <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-[#C7A86D] via-[#D4AF37] to-[#B39355] text-black font-semibold text-xs uppercase tracking-wider transition-all duration-300 shadow-lg shadow-[#C7A86D]/25 hover:brightness-110 disabled:opacity-50 cursor-pointer"
+                    type="button"
+                    onClick={() => setStep(3)}
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-[#C7A86D] via-[#D4AF37] to-[#B39355] text-black font-semibold text-xs uppercase tracking-wider transition-all duration-300 shadow-lg shadow-[#C7A86D]/25 hover:brightness-110 cursor-pointer"
                   >
-                    {isSubmitting ? (
-                      <>
-                        <div className="w-3.5 h-3.5 border-2 border-black/40 border-t-black rounded-full animate-spin" />
-                        <span>Verifying...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Confirm Discovery Call</span>
-                        <CheckCircle2 className="w-4 h-4" />
-                      </>
-                    )}
+                    <span>I've Scheduled on Calendly</span>
+                    <CheckCircle2 className="w-4 h-4" />
                   </button>
                 </div>
-              </form>
+              </div>
             )}
 
             {/* Step 3: Success Confirmation */}
@@ -389,8 +352,8 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
 
                 <div>
                   <h4 className="text-2xl font-serif text-white">Discovery Diagnostic Reserved</h4>
-                  <p className="text-xs sm:text-sm text-slate-300 mt-1 font-light">
-                    A calendar reservation placeholder has been generated for <strong>{formData.selectedDate} at {formData.selectedTime}</strong>.
+                  <p className="text-xs sm:text-sm text-slate-300 mt-1 font-light max-w-lg mx-auto">
+                    Your session is coordinated directly with the owner's Calendly. A calendar invitation and video link have been dispatched to your email. If the owner reschedules or updates times, alerts arrive in your inbox automatically.
                   </p>
                 </div>
 

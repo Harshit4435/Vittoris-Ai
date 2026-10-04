@@ -950,5 +950,6 @@ export const COMPANY_CONTACT_DETAILS = {
   email: "company@vittoris.com",
   primaryEmail: "company@vittoris.com",
   ownerEmail: "udayzayn@gmail.com",
-  secondaryEmail: "udayzayn@gmail.com"
+  secondaryEmail: "udayzayn@gmail.com",
+  calendlyUrl: "https://calendly.com/udayzayn"
 };
