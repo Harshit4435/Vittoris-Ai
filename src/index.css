@@ -2,140 +2,109 @@
 
 @layer base {
   :root {
-    --bg-body: #06080f;
-    --bg-card: rgba(11, 15, 30, 0.72);
-    --bg-card-hover: rgba(18, 24, 46, 0.85);
-    --bg-section-muted: #090c17;
-    --text-body: #f8fafc;
-    --text-muted: #94a3b8;
-    --border-card: rgba(255, 255, 255, 0.08);
-    --border-card-hover: rgba(59, 130, 246, 0.3);
-    --border-divider: rgba(255, 255, 255, 0.07);
-    --brand-blue: #3b82f6;
-    --brand-blue-light: #60a5fa;
-    --brand-cyan: #06b6d4;
-    --brand-violet: #8b5cf6;
-    --brand-violet-light: #a78bfa;
-    --luxury-gold: #d4af37;
-    --brand-emerald: #10b981;
+    --bg-body: #0b0b0b;
+    --text-body: #ffffff;
+    --bg-card: rgba(17, 17, 17, 0.72);
+    --bg-card-hover: rgba(26, 26, 26, 0.88);
+    --border-card: rgba(255, 255, 255, 0.06);
+    --border-card-hover: rgba(199, 168, 109, 0.35);
+    --text-muted: rgba(236, 236, 236, 0.65);
+    --border-nav: rgba(199, 168, 109, 0.12);
+    --bg-nav: rgba(11, 11, 11, 0.85);
+    --bg-section-muted: rgba(255, 255, 255, 0.02);
+    --border-divider: rgba(255, 255, 255, 0.06);
+    
+    /* Luxury Gold Palette inspired by Prapti Luxe */
+    --gold-primary: #c7a86d;
+    --gold-bright: #e5c788;
+    --gold-deep: #a38347;
+    --gold-glow: rgba(199, 168, 109, 0.2);
   }
 
   .light-mode {
-    --bg-body: #f8fafc;
-    --bg-card: rgba(255, 255, 255, 0.92);
-    --bg-card-hover: rgba(241, 245, 249, 0.98);
-    --bg-section-muted: #f1f5f9;
-    --text-body: #0f172a;
-    --text-muted: #475569;
-    --border-card: rgba(0, 0, 0, 0.08);
-    --border-card-hover: rgba(59, 130, 246, 0.35);
-    --border-divider: rgba(0, 0, 0, 0.07);
+    --bg-body: #f8f8f8;
+    --text-body: #0b0b0b;
+    --bg-card: rgba(255, 255, 255, 0.85);
+    --bg-card-hover: rgba(245, 245, 245, 0.95);
+    --border-card: rgba(11, 11, 11, 0.08);
+    --border-card-hover: rgba(199, 168, 109, 0.45);
+    --text-muted: rgba(11, 11, 11, 0.65);
+    --border-nav: rgba(199, 168, 109, 0.18);
+    --bg-nav: rgba(248, 248, 248, 0.9);
+    --bg-section-muted: rgba(0, 0, 0, 0.02);
+    --border-divider: rgba(0, 0, 0, 0.06);
   }
 
   body {
     background-color: var(--bg-body);
     color: var(--text-body);
-    font-family: 'Plus Jakarta Sans', 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.4s ease, color 0.4s ease;
   }
 
-  h1, h2, h3, .font-serif {
+  h1, h2, h3, h4, .font-serif {
     font-family: 'Playfair Display', Georgia, serif;
-  }
-
-  .font-sans-display {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: -0.01em;
   }
 }
 
-/* Custom smooth scrollbar */
+/* Custom Luxury Gold Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #06080f;
+  background: #0b0b0b;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(59, 130, 246, 0.3);
-  border-radius: 3px;
+  background: rgba(199, 168, 109, 0.35);
+  border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(59, 130, 246, 0.6);
+  background: rgba(199, 168, 109, 0.65);
 }
 
-/* Glass Panels & Surfaces */
-.glass-panel {
-  background: var(--bg-card);
-  border: 1px solid var(--border-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+/* Luxury Gold Glow & Hover Effects */
+.gold-glow {
+  box-shadow: 0 0 35px rgba(199, 168, 109, 0.15);
 }
 
-.glass-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-card);
+.gold-glow-hover:hover {
+  border-color: #c7a86d;
+  box-shadow: 0 0 45px rgba(199, 168, 109, 0.25);
+}
+
+/* Gold Gradient Divider Rule */
+.gold-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(199, 168, 109, 0.35), transparent);
+}
+
+/* Gold Metallic Text */
+.gold-text-gradient {
+  background: linear-gradient(135deg, #fef08a 0%, #c7a86d 50%, #a38347 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Glass Panels with subtle luxury warmth */
+.luxury-card {
+  background: rgba(17, 17, 17, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.glass-card:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--border-card-hover);
+.luxury-card:hover {
+  background: rgba(23, 23, 23, 0.9);
+  border-color: rgba(199, 168, 109, 0.35);
 }
 
-/* Subtle glow effects */
-.glow-blue {
-  box-shadow: 0 0 35px -5px rgba(59, 130, 246, 0.2);
-}
-
-.glow-violet {
-  box-shadow: 0 0 35px -5px rgba(139, 92, 246, 0.2);
-}
-
-.glow-cyan {
-  box-shadow: 0 0 35px -5px rgba(6, 182, 212, 0.2);
-}
-
-.glow-gold {
-  box-shadow: 0 0 35px -5px rgba(212, 175, 55, 0.18);
-}
-
-/* Gradient Text */
-.gradient-text-blue {
-  background: linear-gradient(135deg, #ffffff 0%, #93c5fd 50%, #3b82f6 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.gradient-text-violet {
-  background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 50%, #8b5cf6 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.gradient-text-cyan {
-  background: linear-gradient(135deg, #ffffff 0%, #67e8f9 50%, #06b6d4 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.gradient-text-gold {
-  background: linear-gradient(135deg, #fef08a 0%, #d4af37 60%, #a16207 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* Ambient Radial Mesh Backgrounds */
-.mesh-ambient {
+/* Subtle gold ambient mesh */
+.gold-ambient-mesh {
   background-image: 
-    radial-gradient(at 10% 20%, rgba(59, 130, 246, 0.08) 0px, transparent 50%),
-    radial-gradient(at 90% 10%, rgba(139, 92, 246, 0.08) 0px, transparent 50%),
-    radial-gradient(at 50% 80%, rgba(6, 182, 212, 0.06) 0px, transparent 50%);
-}
-
-.grid-matrix-bg {
-  background-size: 40px 40px;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    radial-gradient(at 15% 15%, rgba(199, 168, 109, 0.05) 0px, transparent 45%),
+    radial-gradient(at 85% 20%, rgba(212, 175, 55, 0.04) 0px, transparent 45%),
+    radial-gradient(at 50% 85%, rgba(163, 131, 71, 0.04) 0px, transparent 50%);
 }

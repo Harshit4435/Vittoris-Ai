@@ -74,7 +74,7 @@ function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <ScrollToTop />
-      <div className="min-h-screen flex flex-col bg-[#06080F] text-[#F3F4F6] transition-colors duration-500 font-sans selection:bg-blue-600 selection:text-white">
+      <div className="min-h-screen flex flex-col bg-[#0B0B0B] text-[#F5F2EB] transition-colors duration-500 font-sans selection:bg-[#C7A86D] selection:text-black">
         <Navbar
           onOpenConsultation={() => handleOpenDiscovery()}
           theme={theme}

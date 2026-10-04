@@ -76,17 +76,17 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
   };
 
   return (
-    <div className="pt-28 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-20">
-      {/* Header */}
+    <div className="pt-32 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-20">
+      {/* Editorial Luxury Header */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-wider">
-          <Mail className="w-3.5 h-3.5 text-cyan-400" />
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C7A86D]/10 border border-[#C7A86D]/30 text-[#C7A86D] text-[10px] font-medium uppercase tracking-[0.25em]">
+          <Mail className="w-3.5 h-3.5 text-[#E5C788]" />
           <span>Operational & Pipeline Scoping</span>
         </div>
-        <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
-          Initiate a Strategic AI Architecture Review
+        <h1 className="text-3xl sm:text-5xl font-serif font-normal text-white tracking-tight">
+          Initiate a Strategic <span className="italic text-[#C7A86D]">AI Architecture Review</span>
         </h1>
-        <p className="text-sm sm:text-base text-slate-300 font-light leading-relaxed">
+        <p className="text-sm sm:text-base text-stone-300 font-light leading-relaxed max-w-2xl mx-auto">
           Submit your commercial parameters below for an operational audit or schedule an exploratory diagnostic directly with our systems architects.
         </p>
       </div>
@@ -94,44 +94,47 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
       {/* Main Grid: Form vs Direct Channels */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
         {/* Form Column */}
-        <div className="lg:col-span-7 bg-[#0B0F1E] border border-blue-900/30 rounded-3xl p-6 sm:p-10 shadow-2xl space-y-6">
-          <div>
-            <h2 className="text-xl font-bold text-white">System Scoping & Inquiry Form</h2>
-            <p className="text-xs text-slate-400 mt-1">
+        <div className="lg:col-span-7 luxury-card rounded-3xl p-6 sm:p-10 shadow-2xl space-y-6 relative overflow-hidden">
+          {/* Ambient Glow */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-[#C7A86D]/5 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="relative z-10">
+            <h2 className="text-2xl font-serif font-normal text-white">System Scoping & Inquiry Form</h2>
+            <p className="text-xs text-stone-400 font-light mt-1">
               Provide your baseline metrics so we can review qualification criteria before our call.
             </p>
           </div>
 
           {isSubmitted ? (
-            <div className="py-8 text-center space-y-4">
-              <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto">
+            <div className="py-8 text-center space-y-4 relative z-10">
+              <div className="w-14 h-14 rounded-full bg-[#C7A86D]/10 border border-[#C7A86D]/30 text-[#E5C788] flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h3 className="text-xl font-bold text-white">Scoping Parameters Received</h3>
-              <p className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto">
-                Thank you, <strong>{formData.fullName}</strong>. Your parameters for <strong>{formData.selectedService}</strong> have been recorded in our demo intake registry.
+              <h3 className="text-2xl font-serif font-normal text-white">Scoping Parameters Received</h3>
+              <p className="text-xs sm:text-sm text-stone-300 font-light max-w-md mx-auto">
+                Thank you, <strong className="text-white font-medium">{formData.fullName}</strong>. Your parameters for <strong className="text-[#E5C788] font-medium">{formData.selectedService}</strong> have been recorded in our demo intake registry.
               </p>
 
-              <div className="p-4 rounded-xl bg-blue-950/20 border border-blue-900/40 text-xs text-slate-300 text-left max-w-lg mx-auto space-y-2">
-                <div className="font-semibold text-blue-300">Integration Notice:</div>
-                <p className="text-[11px] text-slate-400 leading-relaxed">
+              <div className="p-4 rounded-xl bg-[#0E0E0E] border border-[#C7A86D]/20 text-xs text-stone-300 font-light text-left max-w-lg mx-auto space-y-2">
+                <div className="font-medium text-[#E5C788]">Integration Notice:</div>
+                <p className="text-[11px] text-stone-400 leading-relaxed">
                   This form currently runs in front-end preview mode. To route submissions to your production CRM (HubSpot, Salesforce, or webhook), configure your API gateway endpoint in the environment settings.
                 </p>
-                <div className="text-[11px] text-cyan-300">
-                  Direct inquiries can be sent to <strong>{COMPANY_CONTACT_DETAILS.email}</strong> or <strong>{COMPANY_CONTACT_DETAILS.phone}</strong>.
+                <div className="text-[11px] text-stone-300 pt-1 font-mono">
+                  Direct inquiries can be sent to <strong className="text-[#E5C788]">{COMPANY_CONTACT_DETAILS.email}</strong> or <strong className="text-[#E5C788]">{COMPANY_CONTACT_DETAILS.phone}</strong>.
                 </div>
               </div>
 
-              <div className="pt-2 flex justify-center gap-3">
+              <div className="pt-3 flex justify-center gap-3">
                 <button
                   onClick={() => setIsSubmitted(false)}
-                  className="px-5 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold"
+                  className="px-5 py-2.5 rounded-full border border-[#C7A86D]/30 hover:border-[#C7A86D] text-stone-300 hover:text-white text-xs font-medium tracking-wider uppercase transition-all"
                 >
                   Submit Another Inquiry
                 </button>
                 <button
                   onClick={onOpenConsultation}
-                  className="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center gap-1.5"
+                  className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#C7A86D] via-[#D4AF37] to-[#B39355] text-black text-xs font-semibold tracking-wider uppercase flex items-center gap-1.5 shadow-[0_2px_15px_rgba(199,168,109,0.3)]"
                 >
                   <Zap className="w-3.5 h-3.5" />
                   <span>Open Calendar Picker</span>
@@ -139,10 +142,10 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
               </div>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">
+                  <label className="block text-xs font-medium text-stone-300 mb-1">
                     Full Name *
                   </label>
                   <input
@@ -151,13 +154,13 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
                     value={formData.fullName}
                     onChange={handleInputChange}
                     placeholder="e.g., Victoria Adams"
-                    className={`w-full bg-[#070A14] border ${errors.fullName ? 'border-rose-500' : 'border-slate-700'} rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500`}
+                    className={`w-full bg-[#0E0E0E] border ${errors.fullName ? 'border-rose-500' : 'border-[#C7A86D]/20 focus:border-[#C7A86D]'} rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-stone-600 focus:outline-none transition-colors`}
                   />
                   {errors.fullName && <p className="text-[10px] text-rose-400 mt-1">{errors.fullName}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">
+                  <label className="block text-xs font-medium text-stone-300 mb-1">
                     Corporate Email *
                   </label>
                   <input
@@ -166,7 +169,7 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
                     value={formData.businessEmail}
                     onChange={handleInputChange}
                     placeholder="victoria@enterprise.com"
-                    className={`w-full bg-[#070A14] border ${errors.businessEmail ? 'border-rose-500' : 'border-slate-700'} rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500`}
+                    className={`w-full bg-[#0E0E0E] border ${errors.businessEmail ? 'border-rose-500' : 'border-[#C7A86D]/20 focus:border-[#C7A86D]'} rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-stone-600 focus:outline-none transition-colors`}
                   />
                   {errors.businessEmail && <p className="text-[10px] text-rose-400 mt-1">{errors.businessEmail}</p>}
                 </div>
@@ -174,7 +177,7 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">
+                  <label className="block text-xs font-medium text-stone-300 mb-1">
                     Company Name *
                   </label>
                   <input
@@ -183,13 +186,13 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
                     value={formData.companyName}
                     onChange={handleInputChange}
                     placeholder="Acme Global Ltd"
-                    className={`w-full bg-[#070A14] border ${errors.companyName ? 'border-rose-500' : 'border-slate-700'} rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500`}
+                    className={`w-full bg-[#0E0E0E] border ${errors.companyName ? 'border-rose-500' : 'border-[#C7A86D]/20 focus:border-[#C7A86D]'} rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-stone-600 focus:outline-none transition-colors`}
                   />
                   {errors.companyName && <p className="text-[10px] text-rose-400 mt-1">{errors.companyName}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">
+                  <label className="block text-xs font-medium text-stone-300 mb-1">
                     Website or LinkedIn URL
                   </label>
                   <input
@@ -198,21 +201,21 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
                     value={formData.website}
                     onChange={handleInputChange}
                     placeholder="https://company.com"
-                    className="w-full bg-[#070A14] border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-[#0E0E0E] border border-[#C7A86D]/20 focus:border-[#C7A86D] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-stone-600 focus:outline-none transition-colors"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">
+                  <label className="block text-xs font-medium text-stone-300 mb-1">
                     Service Architecture of Interest *
                   </label>
                   <select
                     name="selectedService"
                     value={formData.selectedService}
                     onChange={handleInputChange}
-                    className="w-full bg-[#070A14] border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-[#0E0E0E] border border-[#C7A86D]/20 focus:border-[#C7A86D] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none transition-colors"
                   >
                     {VITTORIS_SERVICES.map(srv => (
                       <option key={srv.slug} value={srv.slug}>
@@ -223,14 +226,14 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">
+                  <label className="block text-xs font-medium text-stone-300 mb-1">
                     Monthly Qualified Pipeline Target
                   </label>
                   <select
                     name="monthlyTarget"
                     value={formData.monthlyTarget}
                     onChange={handleInputChange}
-                    className="w-full bg-[#070A14] border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-[#0E0E0E] border border-[#C7A86D]/20 focus:border-[#C7A86D] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none transition-colors"
                   >
                     <option value="10 - 20 Qualified Meetings / mo">10 - 20 Qualified Meetings / mo</option>
                     <option value="20 - 50 Qualified Meetings / mo">20 - 50 Qualified Meetings / mo</option>
@@ -242,7 +245,7 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">
+                  <label className="block text-xs font-medium text-stone-300 mb-1">
                     Direct Phone / WhatsApp
                   </label>
                   <input
@@ -251,19 +254,19 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
                     value={formData.phone}
                     onChange={handleInputChange}
                     placeholder="+1 (555) 000-0000"
-                    className="w-full bg-[#070A14] border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-[#0E0E0E] border border-[#C7A86D]/20 focus:border-[#C7A86D] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-stone-600 focus:outline-none transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">
+                  <label className="block text-xs font-medium text-stone-300 mb-1">
                     Preferred Contact Channel
                   </label>
                   <select
                     name="preferredChannel"
                     value={formData.preferredChannel}
                     onChange={handleInputChange}
-                    className="w-full bg-[#070A14] border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-[#0E0E0E] border border-[#C7A86D]/20 focus:border-[#C7A86D] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none transition-colors"
                   >
                     <option value="Email">Email Calendar Link</option>
                     <option value="WhatsApp">WhatsApp Briefing</option>
@@ -273,7 +276,7 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
+                <label className="block text-xs font-medium text-stone-300 mb-1">
                   Describe Your Current Pipeline or Clerical Friction
                 </label>
                 <textarea
@@ -282,30 +285,30 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
                   value={formData.projectDescription}
                   onChange={handleInputChange}
                   placeholder="Outline your average contract value, closing cycle, or repetitive administrative bottleneck..."
-                  className="w-full bg-[#070A14] border border-slate-700 rounded-lg p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                  className="w-full bg-[#0E0E0E] border border-[#C7A86D]/20 focus:border-[#C7A86D] rounded-xl p-3 text-xs text-white placeholder-stone-600 focus:outline-none transition-colors"
                 />
               </div>
 
               <div className="pt-2 flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <div className="flex items-center gap-1.5 text-[11px] text-stone-400 font-light">
+                  <ShieldCheck className="w-4 h-4 text-[#C7A86D]" />
                   <span>Strict NDA & Data Protection</span>
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-6 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-blue-600/30 flex items-center gap-2 disabled:opacity-50"
+                  className="px-7 py-3 rounded-full bg-gradient-to-r from-[#C7A86D] via-[#D4AF37] to-[#B39355] text-black font-semibold text-xs tracking-wider uppercase transition-all shadow-[0_4px_20px_rgba(199,168,109,0.3)] hover:shadow-[0_4px_25px_rgba(199,168,109,0.5)] flex items-center gap-2 disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <>
-                      <div className="w-3.5 h-3.5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                      <div className="w-3.5 h-3.5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
                       <span>Transmitting...</span>
                     </>
                   ) : (
                     <>
                       <span>Submit Scoping Request</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <ArrowRight className="w-3.5 h-3.5 text-black" />
                     </>
                   )}
                 </button>
@@ -317,56 +320,56 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
         {/* Right Column: Direct Channels & Instant Booking */}
         <div className="lg:col-span-5 space-y-6">
           {/* Instant Discovery CTA card */}
-          <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-blue-950/60 via-[#0B0F1E] to-slate-900 border border-blue-900/50 space-y-4 shadow-xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold uppercase tracking-wider">
-              <Zap className="w-3.5 h-3.5 text-cyan-400" />
+          <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#181510] via-[#111111] to-[#0E0E0E] border border-[#C7A86D]/30 space-y-4 shadow-xl relative overflow-hidden">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C7A86D]/10 border border-[#C7A86D]/30 text-[#E5C788] text-[10px] font-medium uppercase tracking-[0.25em]">
+              <Zap className="w-3.5 h-3.5 text-[#E5C788]" />
               <span>Fastest Path</span>
             </div>
-            <h3 className="text-xl font-bold text-white">Book Directly Onto Our Calendar</h3>
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <h3 className="text-2xl font-serif font-normal text-white">Book Directly Onto Our Calendar</h3>
+            <p className="text-xs text-stone-300 font-light leading-relaxed">
               Bypass email back-and-forth. Select an available 30-minute diagnostic session with our systems architect.
             </p>
             <button
               onClick={onOpenConsultation}
-              className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2"
+              className="w-full py-3.5 px-5 rounded-full bg-gradient-to-r from-[#C7A86D] via-[#D4AF37] to-[#B39355] text-black font-semibold text-xs tracking-wider uppercase transition-all shadow-[0_4px_20px_rgba(199,168,109,0.3)] hover:shadow-[0_4px_25px_rgba(199,168,109,0.5)] flex items-center justify-center gap-2"
             >
-              <Zap className="w-4 h-4" />
+              <Zap className="w-4 h-4 text-black" />
               <span>Book a Discovery Call</span>
             </button>
           </div>
 
-          {/* Direct Contact Channels */}
-          <div className="p-6 rounded-2xl bg-[#0B0F1E] border border-blue-900/30 space-y-4">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+          {/* Direct Contact Coordinates */}
+          <div className="luxury-card rounded-2xl p-6 space-y-4">
+            <h4 className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#C7A86D]">
               Corporate Contact Coordinates
             </h4>
 
-            <div className="space-y-3 text-xs">
-              <div className="flex items-start gap-3 text-slate-300">
-                <Mail className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+            <div className="space-y-3.5 text-xs">
+              <div className="flex items-start gap-3 text-stone-300">
+                <Mail className="w-4 h-4 text-[#C7A86D] shrink-0 mt-0.5" />
                 <div>
-                  <div className="text-[10px] text-slate-500">Primary Systems Inquiry:</div>
-                  <a href={`mailto:${COMPANY_CONTACT_DETAILS.email}`} className="font-mono hover:text-blue-400">
+                  <div className="text-[10px] text-stone-500 uppercase tracking-wider">Primary Systems Inquiry:</div>
+                  <a href={`mailto:${COMPANY_CONTACT_DETAILS.email}`} className="font-mono text-[#E5C788] hover:text-white transition-colors">
                     {COMPANY_CONTACT_DETAILS.email}
                   </a>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 text-slate-300">
-                <Globe className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3 text-stone-300">
+                <Globe className="w-4 h-4 text-[#E5C788] shrink-0 mt-0.5" />
                 <div>
-                  <div className="text-[10px] text-slate-500">Secondary Desk:</div>
-                  <a href={`mailto:${COMPANY_CONTACT_DETAILS.secondaryEmail}`} className="font-mono hover:text-cyan-400">
+                  <div className="text-[10px] text-stone-500 uppercase tracking-wider">Secondary Desk:</div>
+                  <a href={`mailto:${COMPANY_CONTACT_DETAILS.secondaryEmail}`} className="font-mono text-[#E5C788] hover:text-white transition-colors">
                     {COMPANY_CONTACT_DETAILS.secondaryEmail}
                   </a>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 text-slate-300">
-                <Phone className="w-4 h-4 text-violet-400 shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3 text-stone-300">
+                <Phone className="w-4 h-4 text-[#C7A86D] shrink-0 mt-0.5" />
                 <div>
-                  <div className="text-[10px] text-slate-500">Direct Support Line:</div>
-                  <a href={`tel:${COMPANY_CONTACT_DETAILS.phone}`} className="font-mono hover:text-violet-400">
+                  <div className="text-[10px] text-stone-500 uppercase tracking-wider">Direct Support Line:</div>
+                  <a href={`tel:${COMPANY_CONTACT_DETAILS.phone}`} className="font-mono text-[#E5C788] hover:text-white transition-colors">
                     {COMPANY_CONTACT_DETAILS.phone}
                   </a>
                 </div>
@@ -377,13 +380,13 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
       </div>
 
       {/* Frequently Asked Questions Accordion */}
-      <div className="bg-[#0B0F1E] border border-blue-900/30 rounded-3xl p-8 sm:p-12 space-y-6">
+      <div className="luxury-card rounded-3xl p-8 sm:p-12 space-y-8">
         <div className="text-center max-w-xl mx-auto space-y-2">
-          <span className="text-xs font-bold uppercase tracking-wider text-cyan-400">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#C7A86D]">
             Clarity & Transparency
           </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
-            Frequently Asked Questions
+          <h2 className="text-2xl sm:text-3xl font-serif font-normal text-white">
+            Frequently Asked <span className="italic text-[#C7A86D]">Questions</span>
           </h2>
         </div>
 
@@ -393,17 +396,17 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
             return (
               <div
                 key={idx}
-                className="rounded-xl border border-slate-800 bg-[#070A14] overflow-hidden transition-all"
+                className="rounded-2xl border border-[#C7A86D]/20 bg-[#0E0E0E] overflow-hidden transition-all"
               >
                 <button
                   onClick={() => setOpenFaq(isOpen ? null : idx)}
-                  className="w-full p-4 text-left flex items-center justify-between text-xs sm:text-sm font-semibold text-white hover:text-blue-400 transition-colors"
+                  className="w-full p-4 sm:p-5 text-left flex items-center justify-between text-xs sm:text-sm font-medium text-white hover:text-[#E5C788] transition-colors"
                 >
-                  <span>{faq.q}</span>
-                  <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ml-2 ${isOpen ? 'rotate-180 text-blue-400' : ''}`} />
+                  <span className="font-serif">{faq.q}</span>
+                  <ChevronDown className={`w-4 h-4 text-[#C7A86D] transition-transform duration-200 shrink-0 ml-3 ${isOpen ? 'rotate-180 text-[#E5C788]' : ''}`} />
                 </button>
                 {isOpen && (
-                  <div className="px-4 pb-4 text-xs text-slate-300 leading-relaxed border-t border-slate-800/60 pt-3">
+                  <div className="px-4 sm:px-5 pb-5 text-xs text-stone-300 font-light leading-relaxed border-t border-[#C7A86D]/10 pt-3">
                     {faq.a}
                   </div>
                 )}
