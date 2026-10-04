@@ -10,7 +10,6 @@ import { ServiceDetail } from './pages/ServiceDetail';
 import { Solutions } from './pages/Solutions';
 import { Industries } from './pages/Industries';
 import { HowItWorks } from './pages/HowItWorks';
-import { Demos } from './pages/Demos';
 import { About } from './pages/About';
 import { Contact } from './pages/Contact';
 
@@ -109,10 +108,6 @@ function App() {
               element={<HowItWorks onOpenConsultation={() => handleOpenDiscovery()} />}
             />
             <Route
-              path="/demos"
-              element={<Demos onOpenConsultation={() => handleOpenDiscovery()} />}
-            />
-            <Route
               path="/about"
               element={<About onOpenConsultation={() => handleOpenDiscovery()} />}
             />
@@ -126,6 +121,7 @@ function App() {
             <Route path="/projects/*" element={<Navigate to="/services" replace />} />
             <Route path="/owners" element={<Navigate to="/about" replace />} />
             <Route path="/impact" element={<Navigate to="/how-it-works" replace />} />
+            <Route path="/demos" element={<Navigate to="/services" replace />} />
 
             {/* Fallback route */}
             <Route

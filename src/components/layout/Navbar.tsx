@@ -40,7 +40,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   const navLinks = [
     { name: 'Solutions', path: '/solutions' },
     { name: 'Industries', path: '/industries' },
-    { name: 'AI Labs & Demos', path: '/demos' },
     { name: 'How It Works', path: '/how-it-works' },
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight,
@@ -7,20 +7,18 @@ import {
   CheckCircle2,
   ShieldCheck,
   Cpu,
-  ChevronRight
+  ChevronRight,
+  Target,
+  Calendar,
+  MessageSquare
 } from 'lucide-react';
 import { VITTORIS_SERVICES, VITTORIS_ENGAGEMENT_PHASES } from '../data/vittorisData';
-import { LeadQualificationDemo } from '../components/demos/LeadQualificationDemo';
-import { AppointmentWorkflowDemo } from '../components/demos/AppointmentWorkflowDemo';
-import { ExecutiveDashboardDemo } from '../components/demos/ExecutiveDashboardDemo';
 
 interface HomeProps {
   onOpenConsultation: () => void;
 }
 
 export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
-  const [activeDemoTab, setActiveDemoTab] = useState<'qualification' | 'appointment' | 'roi'>('qualification');
-
   return (
     <div className="space-y-24 sm:space-y-32 pb-20 overflow-hidden">
       {/* 1. HERO SECTION */}
@@ -81,55 +79,131 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
           </div>
         </div>
 
-        {/* Hero Interactive Telemetry Illustration */}
+        {/* Hero Architectural Pipeline Graphic */}
         <div className="mt-14 relative z-10">
-          <div className="p-1 rounded-2xl bg-gradient-to-b from-blue-500/30 via-slate-800/50 to-transparent">
-            <div className="bg-[#0B0F1E] border border-blue-900/40 rounded-2xl p-6 sm:p-8 shadow-2xl">
-              <div className="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-800">
-                <div className="flex items-center gap-2">
+          <div className="p-1 rounded-3xl bg-gradient-to-b from-blue-500/30 via-slate-800/40 to-transparent">
+            <div className="bg-[#0B0F1E] border border-blue-900/40 rounded-3xl p-6 sm:p-10 shadow-2xl space-y-8">
+              {/* Header bar of console */}
+              <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-slate-800">
+                <div className="flex items-center gap-3">
                   <div className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-xs font-mono font-semibold text-slate-300">
-                    VITTORIS AUTONOMOUS PIPELINE TELEMETRY
-                  </span>
+                  <div>
+                    <span className="text-xs font-mono font-bold text-white tracking-wider uppercase block">
+                      VITTORIS AUTONOMOUS PIPELINE ARCHITECTURE
+                    </span>
+                    <span className="text-[11px] text-slate-400">
+                      End-to-End Client Acquisition & Operational Infrastructure
+                    </span>
+                  </div>
                 </div>
-                <div className="flex gap-2 text-xs">
-                  <button
-                    onClick={() => setActiveDemoTab('qualification')}
-                    className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
-                      activeDemoTab === 'qualification'
-                        ? 'bg-blue-600 text-white shadow-sm'
-                        : 'bg-slate-900 text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    AI Screening Engine
-                  </button>
-                  <button
-                    onClick={() => setActiveDemoTab('appointment')}
-                    className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
-                      activeDemoTab === 'appointment'
-                        ? 'bg-blue-600 text-white shadow-sm'
-                        : 'bg-slate-900 text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    6-Step Setter Pipeline
-                  </button>
-                  <button
-                    onClick={() => setActiveDemoTab('roi')}
-                    className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
-                      activeDemoTab === 'roi'
-                        ? 'bg-blue-600 text-white shadow-sm'
-                        : 'bg-slate-900 text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    ROI & Velocity Modeler
-                  </button>
+
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#070A14] border border-slate-800 text-xs font-mono text-cyan-400">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Strict Performance Alignment Model</span>
                 </div>
               </div>
 
-              {/* Dynamic Interactive Demo in Hero */}
-              {activeDemoTab === 'qualification' && <LeadQualificationDemo />}
-              {activeDemoTab === 'appointment' && <AppointmentWorkflowDemo />}
-              {activeDemoTab === 'roi' && <ExecutiveDashboardDemo />}
+              {/* 4 Flow Stages */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
+                {/* Stage 1 */}
+                <div className="p-5 rounded-2xl bg-[#070A14] border border-slate-800/80 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-mono text-cyan-400 font-bold">01 / Acquisition</span>
+                    <Target className="w-4 h-4 text-cyan-400" />
+                  </div>
+                  <h3 className="text-sm font-bold text-white">Targeted Multi-Channel Inbound</h3>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    Custom high-converting landers, predictive audience modeling, and intent-driven commercial discovery.
+                  </p>
+                  <div className="pt-2 border-t border-slate-800/80 text-[11px] text-slate-500 font-mono">
+                    Channels: Meta, Google, Inbound Web
+                  </div>
+                </div>
+
+                {/* Stage 2 */}
+                <div className="p-5 rounded-2xl bg-[#070A14] border border-slate-800/80 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-mono text-blue-400 font-bold">02 / Screening</span>
+                    <ShieldCheck className="w-4 h-4 text-blue-400" />
+                  </div>
+                  <h3 className="text-sm font-bold text-white">Multi-Layer AI Screening</h3>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    Strict filtration parameters verifying budget thresholds, purchase authority, project timelines, and operational fit.
+                  </p>
+                  <div className="pt-2 border-t border-slate-800/80 text-[11px] text-slate-500 font-mono">
+                    Criteria: 100% Pre-Vetted Sign-Off
+                  </div>
+                </div>
+
+                {/* Stage 3 */}
+                <div className="p-5 rounded-2xl bg-[#070A14] border border-slate-800/80 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-mono text-violet-400 font-bold">03 / Booking</span>
+                    <Calendar className="w-4 h-4 text-violet-400" />
+                  </div>
+                  <h3 className="text-sm font-bold text-white">Direct Calendar Injection</h3>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    Conversational AI setters secure the time slot and immediately inject prospect data into internal CRMs.
+                  </p>
+                  <div className="pt-2 border-t border-slate-800/80 text-[11px] text-slate-500 font-mono">
+                    Latency: Under 3 Minutes
+                  </div>
+                </div>
+
+                {/* Stage 4 */}
+                <div className="p-5 rounded-2xl bg-[#070A14] border border-slate-800/80 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-mono text-emerald-400 font-bold">04 / Attendance</span>
+                    <MessageSquare className="w-4 h-4 text-emerald-400" />
+                  </div>
+                  <h3 className="text-sm font-bold text-white">Show-Up Protection</h3>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    Coordinated omnichannel confirmations across SMS, WhatsApp, and voice protocols that eliminate no-shows.
+                  </p>
+                  <div className="pt-2 border-t border-slate-800/80 text-[11px] text-slate-500 font-mono">
+                    Show-Up Rate: 85%+ Target
+                  </div>
+                </div>
+              </div>
+
+              {/* 4 Commercial Economics Pillars from PDF */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-slate-800">
+                <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-800/60 space-y-1">
+                  <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400" /> Zero Ad-Spend Risk
+                  </span>
+                  <p className="text-[11px] text-slate-400 leading-relaxed">
+                    Capital buys concrete pipeline outcomes rather than empty marketing attempts.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-800/60 space-y-1">
+                  <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" /> Locked Acquisition Costs
+                  </span>
+                  <p className="text-[11px] text-slate-400 leading-relaxed">
+                    Fixed per-appointment pricing enables reliable financial forecasting.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-800/60 space-y-1">
+                  <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-violet-400" /> Pure Closing Focus
+                  </span>
+                  <p className="text-[11px] text-slate-400 leading-relaxed">
+                    Senior sales closers spend 100% of bandwidth negotiating with qualified buyers.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-800/60 space-y-1">
+                  <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Elastic Scale
+                  </span>
+                  <p className="text-[11px] text-slate-400 leading-relaxed">
+                    Meeting volume scales from dozens to hundreds without adding internal payroll.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

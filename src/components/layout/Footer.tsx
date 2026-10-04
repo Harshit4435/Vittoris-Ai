@@ -39,11 +39,11 @@ export const Footer: React.FC<FooterProps> = ({ onOpenConsultation }) => {
               <ArrowRight className="w-4 h-4" />
             </button>
             <Link
-              to="/demos"
+              to="/services"
               className="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2"
             >
               <Sparkles className="w-4 h-4 text-cyan-400" />
-              <span>Explore AI Labs</span>
+              <span>Explore All 10 Services</span>
             </Link>
           </div>
         </div>
@@ -136,11 +136,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenConsultation }) => {
               <span className="w-1.5 h-1.5 rounded-full bg-violet-400" /> Exploration & Terms
             </div>
             <ul className="space-y-2 text-xs">
-              <li>
-                <Link to="/demos" className="text-slate-400 hover:text-white transition-colors">
-                  Interactive AI Labs (6 Demos)
-                </Link>
-              </li>
+
               <li>
                 <Link to="/how-it-works" className="text-slate-400 hover:text-white transition-colors">
                   5-Phase Client Roadmap

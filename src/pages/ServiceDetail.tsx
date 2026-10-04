@@ -8,15 +8,13 @@ import {
   Zap,
   Sparkles,
   Workflow,
-  Target
+  Target,
+  Layers,
+  Cpu,
+  Database,
+  BarChart3
 } from 'lucide-react';
 import { VITTORIS_SERVICES } from '../data/vittorisData';
-import { LeadQualificationDemo } from '../components/demos/LeadQualificationDemo';
-import { AppointmentWorkflowDemo } from '../components/demos/AppointmentWorkflowDemo';
-import { ChatbotDemo } from '../components/demos/ChatbotDemo';
-import { VoiceAgentDemo } from '../components/demos/VoiceAgentDemo';
-import { DocumentIntelligenceDemo } from '../components/demos/DocumentIntelligenceDemo';
-import { ExecutiveDashboardDemo } from '../components/demos/ExecutiveDashboardDemo';
 
 interface ServiceDetailProps {
   onOpenConsultation: (serviceSlug?: string) => void;
@@ -47,30 +45,6 @@ export const ServiceDetail: React.FC<ServiceDetailProps> = ({ onOpenConsultation
 
   const prevService = serviceIndex > 0 ? VITTORIS_SERVICES[serviceIndex - 1] : VITTORIS_SERVICES[VITTORIS_SERVICES.length - 1];
   const nextService = serviceIndex < VITTORIS_SERVICES.length - 1 ? VITTORIS_SERVICES[serviceIndex + 1] : VITTORIS_SERVICES[0];
-
-  // Helper to render the most appropriate demo for this service
-  const renderInteractiveDemo = () => {
-    switch (service.slug) {
-      case 'pay-per-appointment':
-      case 'high-ticket-acquisition':
-        return <LeadQualificationDemo />;
-      case 'ai-appointment-setters':
-        return <AppointmentWorkflowDemo />;
-      case 'conversational-ai-agents':
-        return <ChatbotDemo />;
-      case 'ai-voice-agents':
-        return <VoiceAgentDemo />;
-      case 'custom-ai-systems':
-      case 'business-process-automation':
-        return <DocumentIntelligenceDemo />;
-      case 'ai-demand-generation':
-      case 'user-platform-acquisition':
-      case 'strategic-ai-integration':
-        return <ExecutiveDashboardDemo />;
-      default:
-        return <LeadQualificationDemo />;
-    }
-  };
 
   return (
     <div className="pt-28 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16">
@@ -136,16 +110,55 @@ export const ServiceDetail: React.FC<ServiceDetailProps> = ({ onOpenConsultation
         </div>
       </div>
 
-      {/* Embedded Relevant Interactive Demo */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="text-xs uppercase font-bold text-slate-400 tracking-wider flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-cyan-400" />
-            <span>Interactive System Demonstration</span>
+      {/* Architectural System Execution Blueprint Card */}
+      <div className="bg-[#0B0F1E] border border-blue-900/40 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
+        <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
+          <div>
+            <div className="inline-flex items-center gap-2 text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider mb-1">
+              <Layers className="w-3.5 h-3.5" /> Technical System Topology
+            </div>
+            <h3 className="text-lg font-bold text-white">How Information & Data Move Across This System</h3>
           </div>
-          <span className="text-[11px] text-slate-500 font-mono">Live Frontend Simulator</span>
+          <span className="text-xs font-mono text-slate-500">Native API & Webhook Layer</span>
         </div>
-        {renderInteractiveDemo()}
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+          <div className="p-4 rounded-xl bg-[#070A14] border border-slate-800 space-y-2">
+            <div className="text-[10px] font-mono uppercase text-blue-400 font-bold flex items-center gap-1">
+              <Cpu className="w-3.5 h-3.5" /> 1. Intake / Ingestion
+            </div>
+            <p className="text-slate-300">
+              Captures structured and unstructured data across forms, telephony, documents, or messaging channels.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-[#070A14] border border-slate-800 space-y-2">
+            <div className="text-[10px] font-mono uppercase text-cyan-400 font-bold flex items-center gap-1">
+              <Zap className="w-3.5 h-3.5" /> 2. AI Processing
+            </div>
+            <p className="text-slate-300">
+              Evaluates criteria, scores buying probability, extracts document clauses, or conducts natural dialogues.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-[#070A14] border border-slate-800 space-y-2">
+            <div className="text-[10px] font-mono uppercase text-violet-400 font-bold flex items-center gap-1">
+              <Database className="w-3.5 h-3.5" /> 3. System Sync
+            </div>
+            <p className="text-slate-300">
+              Synchronizes validated payloads directly into active CRM deals, calendars, and operational tables.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-[#070A14] border border-slate-800 space-y-2">
+            <div className="text-[10px] font-mono uppercase text-emerald-400 font-bold flex items-center gap-1">
+              <BarChart3 className="w-3.5 h-3.5" /> 4. Outcome Delivery
+            </div>
+            <p className="text-slate-300">
+              Produces booked sales meetings, signed proposals, or executive reporting without manual clerical lag.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* How It Works & Qualification Criteria */}
