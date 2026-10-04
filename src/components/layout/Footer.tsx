@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, ArrowRight, ShieldCheck, Sparkles, Globe } from 'lucide-react';
+import { Mail, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
 import { VittorisLogo } from '../common/VittorisLogo';
 import { VITTORIS_SERVICES, VITTORIS_SOLUTIONS, COMPANY_CONTACT_DETAILS } from '../../data/vittorisData';
 
@@ -61,20 +61,16 @@ export const Footer: React.FC<FooterProps> = ({ onOpenConsultation }) => {
             <div className="pt-2 space-y-2 text-xs">
               <div className="flex items-center gap-2.5 text-slate-300">
                 <Mail className="w-3.5 h-3.5 text-[#C7A86D] shrink-0" />
-                <a href={`mailto:${COMPANY_CONTACT_DETAILS.email}`} className="hover:text-[#C7A86D] transition-colors">
-                  {COMPANY_CONTACT_DETAILS.email}
+                <span className="text-slate-400">Company:</span>
+                <a href={`mailto:${COMPANY_CONTACT_DETAILS.companyEmail}`} className="hover:text-[#C7A86D] transition-colors">
+                  {COMPANY_CONTACT_DETAILS.companyEmail}
                 </a>
               </div>
               <div className="flex items-center gap-2.5 text-slate-300">
-                <Globe className="w-3.5 h-3.5 text-[#C7A86D] shrink-0" />
-                <a href={`mailto:${COMPANY_CONTACT_DETAILS.secondaryEmail}`} className="hover:text-[#C7A86D] transition-colors">
-                  {COMPANY_CONTACT_DETAILS.secondaryEmail}
-                </a>
-              </div>
-              <div className="flex items-center gap-2.5 text-slate-300">
-                <Phone className="w-3.5 h-3.5 text-[#C7A86D] shrink-0" />
-                <a href={`tel:${COMPANY_CONTACT_DETAILS.phone}`} className="hover:text-[#C7A86D] transition-colors">
-                  {COMPANY_CONTACT_DETAILS.phone}
+                <Mail className="w-3.5 h-3.5 text-[#C7A86D] shrink-0" />
+                <span className="text-slate-400">Owner:</span>
+                <a href={`mailto:${COMPANY_CONTACT_DETAILS.ownerEmail}`} className="hover:text-[#C7A86D] transition-colors">
+                  {COMPANY_CONTACT_DETAILS.ownerEmail}
                 </a>
               </div>
             </div>

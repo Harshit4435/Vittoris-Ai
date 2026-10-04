@@ -229,7 +229,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span>Book Discovery Call</span>
             </button>
             <div className="text-center text-[10px] tracking-widest uppercase text-slate-500">
-              Vittoris AI Systems • info@vittoris.com
+              Vittoris AI Systems • company@vittoris.com
             </div>
           </div>
         </div>

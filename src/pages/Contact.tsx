@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Phone, Globe, ShieldCheck, CheckCircle2, Zap, ArrowRight, ChevronDown } from 'lucide-react';
+import { Mail, ShieldCheck, CheckCircle2, Zap, ArrowRight, ChevronDown } from 'lucide-react';
 import { VITTORIS_SERVICES, COMPANY_CONTACT_DETAILS } from '../data/vittorisData';
 
 interface ContactProps {
@@ -121,7 +121,7 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
                   This form currently runs in front-end preview mode. To route submissions to your production CRM (HubSpot, Salesforce, or webhook), configure your API gateway endpoint in the environment settings.
                 </p>
                 <div className="text-[11px] text-stone-300 pt-1 font-mono">
-                  Direct inquiries can be sent to <strong className="text-[#E5C788]">{COMPANY_CONTACT_DETAILS.email}</strong> or <strong className="text-[#E5C788]">{COMPANY_CONTACT_DETAILS.phone}</strong>.
+                  Direct inquiries can be sent to <strong className="text-[#E5C788]">{COMPANY_CONTACT_DETAILS.companyEmail}</strong> or <strong className="text-[#E5C788]">{COMPANY_CONTACT_DETAILS.ownerEmail}</strong>.
                 </div>
               </div>
 
@@ -243,36 +243,19 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-medium text-stone-300 mb-1">
-                    Direct Phone / WhatsApp
-                  </label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    placeholder="+1 (555) 000-0000"
-                    className="w-full bg-[#0E0E0E] border border-[#C7A86D]/20 focus:border-[#C7A86D] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-stone-600 focus:outline-none transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-stone-300 mb-1">
-                    Preferred Contact Channel
-                  </label>
-                  <select
-                    name="preferredChannel"
-                    value={formData.preferredChannel}
-                    onChange={handleInputChange}
-                    className="w-full bg-[#0E0E0E] border border-[#C7A86D]/20 focus:border-[#C7A86D] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none transition-colors"
-                  >
-                    <option value="Email">Email Calendar Link</option>
-                    <option value="WhatsApp">WhatsApp Briefing</option>
-                    <option value="Phone">Direct Phone Call</option>
-                  </select>
-                </div>
+              <div>
+                <label className="block text-xs font-medium text-stone-300 mb-1">
+                  Preferred Contact Channel
+                </label>
+                <select
+                  name="preferredChannel"
+                  value={formData.preferredChannel}
+                  onChange={handleInputChange}
+                  className="w-full bg-[#0E0E0E] border border-[#C7A86D]/20 focus:border-[#C7A86D] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none transition-colors"
+                >
+                  <option value="Email">Email Calendar Link</option>
+                  <option value="Virtual Meeting">Executive Video Diagnostic (Google Meet / Zoom)</option>
+                </select>
               </div>
 
               <div>
@@ -348,29 +331,19 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
               <div className="flex items-start gap-3 text-stone-300">
                 <Mail className="w-4 h-4 text-[#C7A86D] shrink-0 mt-0.5" />
                 <div>
-                  <div className="text-[10px] text-stone-500 uppercase tracking-wider">Primary Systems Inquiry:</div>
-                  <a href={`mailto:${COMPANY_CONTACT_DETAILS.email}`} className="font-mono text-[#E5C788] hover:text-white transition-colors">
-                    {COMPANY_CONTACT_DETAILS.email}
+                  <div className="text-[10px] text-stone-500 uppercase tracking-wider">Company Email:</div>
+                  <a href={`mailto:${COMPANY_CONTACT_DETAILS.companyEmail}`} className="font-mono text-[#E5C788] hover:text-white transition-colors">
+                    {COMPANY_CONTACT_DETAILS.companyEmail}
                   </a>
                 </div>
               </div>
 
               <div className="flex items-start gap-3 text-stone-300">
-                <Globe className="w-4 h-4 text-[#E5C788] shrink-0 mt-0.5" />
+                <Mail className="w-4 h-4 text-[#E5C788] shrink-0 mt-0.5" />
                 <div>
-                  <div className="text-[10px] text-stone-500 uppercase tracking-wider">Secondary Desk:</div>
-                  <a href={`mailto:${COMPANY_CONTACT_DETAILS.secondaryEmail}`} className="font-mono text-[#E5C788] hover:text-white transition-colors">
-                    {COMPANY_CONTACT_DETAILS.secondaryEmail}
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3 text-stone-300">
-                <Phone className="w-4 h-4 text-[#C7A86D] shrink-0 mt-0.5" />
-                <div>
-                  <div className="text-[10px] text-stone-500 uppercase tracking-wider">Direct Support Line:</div>
-                  <a href={`tel:${COMPANY_CONTACT_DETAILS.phone}`} className="font-mono text-[#E5C788] hover:text-white transition-colors">
-                    {COMPANY_CONTACT_DETAILS.phone}
+                  <div className="text-[10px] text-stone-500 uppercase tracking-wider">Owner Email:</div>
+                  <a href={`mailto:${COMPANY_CONTACT_DETAILS.ownerEmail}`} className="font-mono text-[#E5C788] hover:text-white transition-colors">
+                    {COMPANY_CONTACT_DETAILS.ownerEmail}
                   </a>
                 </div>
               </div>

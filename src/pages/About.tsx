@@ -115,16 +115,12 @@ export const About: React.FC<AboutProps> = ({ onOpenConsultation }) => {
           For technical partnership inquiries, platform scoping, or commercial integration reviews, contact our systems desk directly:
         </p>
         <div className="flex flex-wrap items-center justify-center gap-6 text-xs text-[#E5C788] pt-2 font-mono">
-          <a href={`mailto:${COMPANY_CONTACT_DETAILS.email}`} className="hover:text-white transition-colors">
-            {COMPANY_CONTACT_DETAILS.email}
+          <a href={`mailto:${COMPANY_CONTACT_DETAILS.companyEmail}`} className="hover:text-white transition-colors">
+            {COMPANY_CONTACT_DETAILS.companyEmail}
           </a>
           <span className="text-[#C7A86D]/40">•</span>
-          <a href={`mailto:${COMPANY_CONTACT_DETAILS.secondaryEmail}`} className="hover:text-white transition-colors">
-            {COMPANY_CONTACT_DETAILS.secondaryEmail}
-          </a>
-          <span className="text-[#C7A86D]/40">•</span>
-          <a href={`tel:${COMPANY_CONTACT_DETAILS.phone}`} className="hover:text-white transition-colors">
-            {COMPANY_CONTACT_DETAILS.phone}
+          <a href={`mailto:${COMPANY_CONTACT_DETAILS.ownerEmail}`} className="hover:text-white transition-colors">
+            {COMPANY_CONTACT_DETAILS.ownerEmail}
           </a>
         </div>
         <div className="pt-4">

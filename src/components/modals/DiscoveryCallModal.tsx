@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, Clock, CheckCircle2, ArrowRight, ShieldCheck, Sparkles, Building, Mail, User, Globe, Phone, FileText } from 'lucide-react';
+import { X, Calendar, Clock, CheckCircle2, ArrowRight, ShieldCheck, Sparkles, Building, Mail, User, Globe, FileText } from 'lucide-react';
 import { VITTORIS_SERVICES, COMPANY_CONTACT_DETAILS } from '../../data/vittorisData';
 
 interface DiscoveryCallModalProps {
@@ -328,39 +328,19 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-medium text-slate-300 mb-1.5 uppercase tracking-wider">
-                      Direct Phone / WhatsApp
-                    </label>
-                    <div className="relative">
-                      <Phone className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        placeholder="+1 (555) 000-0000"
-                        className="w-full bg-[#141414] border border-white/10 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#C7A86D] transition-colors"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-slate-300 mb-1.5 uppercase tracking-wider">
-                      Preferred Channel
-                    </label>
-                    <select
-                      name="preferredChannel"
-                      value={formData.preferredChannel}
-                      onChange={handleInputChange}
-                      className="w-full bg-[#141414] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-[#C7A86D] transition-colors"
-                    >
-                      <option value="Email">Email Calendar Invite (Google Meet / Zoom)</option>
-                      <option value="WhatsApp">WhatsApp Executive Briefing</option>
-                      <option value="Phone">Direct Phone Call</option>
-                    </select>
-                  </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-300 mb-1.5 uppercase tracking-wider">
+                    Preferred Session Delivery
+                  </label>
+                  <select
+                    name="preferredChannel"
+                    value={formData.preferredChannel}
+                    onChange={handleInputChange}
+                    className="w-full bg-[#141414] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#C7A86D] transition-colors"
+                  >
+                    <option value="Email">Email Calendar Invite (Google Meet / Zoom)</option>
+                    <option value="Virtual Diagnostic">Executive Virtual Briefing</option>
+                  </select>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-[#C7A86D]/10 border border-[#C7A86D]/25 text-xs text-slate-300 flex items-start gap-2">
@@ -434,7 +414,7 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-[#141414] border border-[#C7A86D]/20 text-[11px] text-slate-400 text-left max-w-lg mx-auto">
-                  Direct team contacts: <strong className="text-white">{COMPANY_CONTACT_DETAILS.email}</strong> or <strong className="text-white">{COMPANY_CONTACT_DETAILS.directSupport}</strong>.
+                  Direct team contacts: <strong className="text-white">{COMPANY_CONTACT_DETAILS.companyEmail}</strong> or <strong className="text-white">{COMPANY_CONTACT_DETAILS.ownerEmail}</strong>.
                 </div>
 
                 <div className="pt-2">
