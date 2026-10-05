@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
-import Lenis from 'lenis';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { DiscoveryCallModal } from './components/modals/DiscoveryCallModal';
@@ -13,53 +12,49 @@ import { HowItWorks } from './pages/HowItWorks';
 import { About } from './pages/About';
 import { Contact } from './pages/Contact';
 
-// Scroll to top on route change
+import { useSmoothScroll } from './hooks/useSmoothScroll';
+import { ScrollTrigger } from './utils/gsapConfig';
+import { GsapMouseFollower } from './components/animations/GsapMouseFollower';
+
+// Scroll to top on route change & refresh GSAP triggers
 function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 150);
+    return () => clearTimeout(timer);
   }, [pathname]);
 
   return null;
 }
 
 function App() {
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [theme, setTheme] = useState<'dark' | 'eye-protection' | 'light'>('dark');
   const [isDiscoveryOpen, setIsDiscoveryOpen] = useState(false);
   const [selectedServiceSlug, setSelectedServiceSlug] = useState<string | undefined>(undefined);
 
-  // Initialize smooth scrolling with Lenis
-  useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: 'vertical',
-      smoothWheel: true
-    });
+  // Initialize unified Lenis smooth scrolling with GSAP ScrollTrigger
+  useSmoothScroll();
 
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
-
-    return () => {
-      lenis.destroy();
-    };
-  }, []);
-
-  const toggleTheme = () => {
-    const nextTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(nextTheme);
-    if (nextTheme === 'light') {
+  const applyTheme = (targetTheme: 'dark' | 'eye-protection' | 'light') => {
+    setTheme(targetTheme);
+    document.documentElement.classList.remove('dark', 'light-mode', 'eye-protection-mode');
+    if (targetTheme === 'light') {
       document.documentElement.classList.add('light-mode');
-      document.documentElement.classList.remove('dark');
+    } else if (targetTheme === 'eye-protection') {
+      document.documentElement.classList.add('eye-protection-mode');
     } else {
-      document.documentElement.classList.remove('light-mode');
       document.documentElement.classList.add('dark');
     }
+  };
+
+  const toggleTheme = () => {
+    if (theme === 'dark') applyTheme('eye-protection');
+    else if (theme === 'eye-protection') applyTheme('light');
+    else applyTheme('dark');
   };
 
   const handleOpenDiscovery = (serviceSlug?: string) => {
@@ -74,7 +69,8 @@ function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <ScrollToTop />
-      <div className="min-h-screen flex flex-col bg-[#0B0B0B] text-[#F5F2EB] transition-colors duration-500 font-sans selection:bg-[#C7A86D] selection:text-black">
+      <div className="min-h-screen flex flex-col bg-[#0B0B0B] text-[#F5F2EB] transition-colors duration-500 font-sans selection:bg-[#C7A86D] selection:text-black relative">
+        <GsapMouseFollower />
         <Navbar
           onOpenConsultation={() => handleOpenDiscovery()}
           theme={theme}
@@ -135,6 +131,7 @@ function App() {
 
         {/* Global Discovery Call Modal */}
         <DiscoveryCallModal
+          key={isDiscoveryOpen ? 'discovery-modal-open' : 'discovery-modal-closed'}
           isOpen={isDiscoveryOpen}
           onClose={handleCloseDiscovery}
           initialServiceSlug={selectedServiceSlug}

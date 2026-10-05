@@ -42,7 +42,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenConsultation }) => {
               className="px-6 py-3.5 rounded-full bg-transparent hover:bg-[#C7A86D]/10 border border-[#C7A86D]/30 text-white hover:text-[#C7A86D] text-xs font-semibold uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2"
             >
               <Sparkles className="w-3.5 h-3.5 text-[#C7A86D]" />
-              <span>Explore All 10 Services</span>
+              <span>Explore Services</span>
             </Link>
           </div>
         </div>

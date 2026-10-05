@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Sun, Moon, Menu, X, ChevronDown, Sparkles, ArrowRight } from 'lucide-react';
+import { Sun, Moon, Menu, X, ChevronDown, Sparkles, ArrowRight, Eye } from 'lucide-react';
 import { VittorisLogo } from '../common/VittorisLogo';
 import { VITTORIS_SERVICES } from '../../data/vittorisData';
 
 interface NavbarProps {
   onOpenConsultation: () => void;
-  theme: 'dark' | 'light';
+  theme: 'dark' | 'eye-protection' | 'light';
   onToggleTheme: () => void;
 }
 
@@ -146,11 +146,28 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* Theme toggle */}
               <button
                 onClick={onToggleTheme}
-                className="p-2 rounded-full border border-[#C7A86D]/20 text-slate-400 hover:text-[#C7A86D] hover:border-[#C7A86D]/50 transition-colors"
-                title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+                className="px-3 py-1.5 rounded-full border border-[#C7A86D]/20 text-slate-300 hover:text-[#C7A86D] hover:border-[#C7A86D]/50 transition-all flex items-center gap-1.5 text-[10px] uppercase tracking-wider cursor-pointer"
+                title={`Current: ${theme === 'dark' ? 'Dark Mode' : theme === 'eye-protection' ? 'Eye Protection Mode' : 'Light Mode'}. Click to toggle.`}
                 aria-label="Toggle visual theme"
               >
-                {theme === 'dark' ? <Sun className="w-3.5 h-3.5 text-[#C7A86D]" /> : <Moon className="w-3.5 h-3.5 text-slate-300" />}
+                {theme === 'dark' && (
+                  <>
+                    <Moon className="w-3.5 h-3.5 text-[#C7A86D]" />
+                    <span className="text-slate-400">Dark</span>
+                  </>
+                )}
+                {theme === 'eye-protection' && (
+                  <>
+                    <Eye className="w-3.5 h-3.5 text-amber-400" />
+                    <span className="text-amber-300 font-semibold">Eye Care</span>
+                  </>
+                )}
+                {theme === 'light' && (
+                  <>
+                    <Sun className="w-3.5 h-3.5 text-amber-500" />
+                    <span className="text-slate-600 font-semibold">Light</span>
+                  </>
+                )}
               </button>
 
               {/* Book Discovery Call Button */}
@@ -169,7 +186,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="p-2 rounded-full border border-[#C7A86D]/20 text-slate-400 hover:text-[#C7A86D] transition-colors"
                 aria-label="Toggle theme"
               >
-                {theme === 'dark' ? <Sun className="w-4 h-4 text-[#C7A86D]" /> : <Moon className="w-4 h-4 text-slate-300" />}
+                {theme === 'dark' && <Moon className="w-4 h-4 text-[#C7A86D]" />}
+                {theme === 'eye-protection' && <Eye className="w-4 h-4 text-amber-400" />}
+                {theme === 'light' && <Sun className="w-4 h-4 text-amber-500" />}
               </button>
 
               <button

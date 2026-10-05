@@ -35,6 +35,30 @@
     --border-divider: rgba(0, 0, 0, 0.06);
   }
 
+  /* Eye Protection Mode: Warm Sepia / Amber low-blue-light spectrum */
+  .eye-protection-mode {
+    --bg-body: #16130F;
+    --text-body: #F4EADA;
+    --bg-card: rgba(29, 24, 19, 0.88);
+    --bg-card-hover: rgba(40, 33, 26, 0.95);
+    --border-card: rgba(212, 175, 55, 0.15);
+    --border-card-hover: rgba(212, 175, 55, 0.45);
+    --text-muted: rgba(220, 203, 180, 0.72);
+    --border-nav: rgba(212, 175, 55, 0.22);
+    --bg-nav: rgba(22, 19, 15, 0.92);
+    --bg-section-muted: rgba(212, 175, 55, 0.04);
+    --border-divider: rgba(212, 175, 55, 0.12);
+    --gold-primary: #D4AF37;
+    --gold-bright: #F5DEB3;
+    --gold-deep: #AA7C2D;
+    --gold-glow: rgba(212, 175, 55, 0.25);
+  }
+
+  .eye-protection-mode img,
+  .eye-protection-mode video {
+    filter: sepia(0.12) brightness(0.96);
+  }
+
   body {
     background-color: var(--bg-body);
     color: var(--text-body);
@@ -107,4 +131,33 @@
     radial-gradient(at 15% 15%, rgba(199, 168, 109, 0.05) 0px, transparent 45%),
     radial-gradient(at 85% 20%, rgba(212, 175, 55, 0.04) 0px, transparent 45%),
     radial-gradient(at 50% 85%, rgba(163, 131, 71, 0.04) 0px, transparent 50%);
+}
+
+/* GSAP 3D Typography & Smooth Shimmer */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+@keyframes goldShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.text-gold-shimmer {
+  background: linear-gradient(
+    90deg,
+    #C7A86D 0%,
+    #FFF4D0 25%,
+    #C7A86D 50%,
+    #A38347 75%,
+    #C7A86D 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: goldShimmer 7s ease-in-out infinite;
 }

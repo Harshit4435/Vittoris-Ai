@@ -14,6 +14,11 @@ import {
 } from 'lucide-react';
 import { VITTORIS_SERVICES, VITTORIS_ENGAGEMENT_PHASES } from '../data/vittorisData';
 import emblemImg from '../assets/branding/vittoris-emblem.png';
+import { GsapTextReveal } from '../components/animations/GsapTextReveal';
+import { GsapShimmerText } from '../components/animations/GsapShimmerText';
+import { GsapMagnetic } from '../components/animations/GsapMagnetic';
+import { GsapScrollFade } from '../components/animations/GsapScrollFade';
+import { GsapCounter } from '../components/animations/GsapCounter';
 
 interface HomeProps {
   onOpenConsultation: () => void;
@@ -28,68 +33,102 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
         <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-[#C7A86D]/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="text-center max-w-4xl mx-auto relative z-10 space-y-6">
-          {/* Official Emblem Mark with ambient glow */}
+          {/* Official Emblem Mark with ambient glow & magnetic hover */}
           <div className="flex justify-center mb-1">
-            <div className="relative group">
-              <div className="absolute inset-0 bg-[#7F56D9]/25 rounded-full blur-2xl group-hover:bg-[#7F56D9]/45 transition-all duration-500 scale-125 pointer-events-none" />
-              <img 
-                src={emblemImg} 
-                alt="Vittoris Official Emblem" 
-                className="relative z-10 w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-[0_8px_24px_rgba(127,86,217,0.45)] transition-transform duration-300 group-hover:scale-105"
-              />
-            </div>
+            <GsapMagnetic strength={0.25}>
+              <div className="relative group cursor-pointer">
+                <div className="absolute inset-0 bg-[#7F56D9]/25 rounded-full blur-2xl group-hover:bg-[#7F56D9]/45 transition-all duration-500 scale-125 pointer-events-none" />
+                <img 
+                  src={emblemImg} 
+                  alt="Vittoris Official Emblem" 
+                  className="relative z-10 w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-[0_8px_24px_rgba(127,86,217,0.45)] transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+            </GsapMagnetic>
           </div>
 
           {/* Eyebrow badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C7A86D]/10 border border-[#C7A86D]/30 text-[#C7A86D] text-[10px] font-medium tracking-[0.25em] uppercase">
-            <Sparkles className="w-3.5 h-3.5 text-[#E5C788]" />
-            <span>AI-Powered Growth and AI Services for Modern Businesses</span>
+          <div className="flex justify-center">
+            <GsapMagnetic strength={0.15}>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C7A86D]/10 border border-[#C7A86D]/30 text-[#C7A86D] text-[10px] font-medium tracking-[0.25em] uppercase shadow-[0_2px_12px_rgba(199,168,109,0.1)]">
+                <Sparkles className="w-3.5 h-3.5 text-[#E5C788]" />
+                <span>AI-Powered Growth and AI Services for Modern Businesses</span>
+              </div>
+            </GsapMagnetic>
           </div>
 
-          {/* Main Title in Playfair Display serif */}
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif font-normal text-white tracking-tight leading-[1.08]">
-            Turn AI Into Your <br />
-            <span className="italic text-[#C7A86D]">
-              Competitive Advantage.
-            </span>
-          </h1>
+          {/* Main Title with GSAP 3D Word Reveal and Metallic Gold Shimmer */}
+          <div className="space-y-1">
+            <GsapTextReveal
+              as="h1"
+              className="text-4xl sm:text-6xl lg:text-7xl font-serif font-normal text-white tracking-tight leading-[1.08]"
+              delay={0.1}
+              duration={1.15}
+              stagger={0.06}
+              scrollTrigger={false}
+            >
+              Turn AI Into Your
+            </GsapTextReveal>
+            <GsapTextReveal
+              as="div"
+              className="text-4xl sm:text-6xl lg:text-7xl font-serif font-normal tracking-tight leading-[1.08]"
+              delay={0.35}
+              duration={1.2}
+              stagger={0.07}
+              scrollTrigger={false}
+            >
+              <GsapShimmerText as="span">
+                Competitive Advantage.
+              </GsapShimmerText>
+            </GsapTextReveal>
+          </div>
 
           {/* Subtitle */}
-          <p className="text-base sm:text-lg text-stone-300 max-w-2xl mx-auto font-light leading-relaxed">
-            Vittoris combines AI-powered client acquisition, conversational setters, and custom operational infrastructure to generate qualified sales pipeline while eliminating the friction of chasing cold leads.
-          </p>
+          <GsapScrollFade delay={0.3} y={20}>
+            <p className="text-base sm:text-lg text-stone-300 max-w-2xl mx-auto font-light leading-relaxed">
+              Vittoris combines AI-powered client acquisition, conversational setters, and custom operational infrastructure to generate qualified sales pipeline while eliminating the friction of chasing cold leads.
+            </p>
+          </GsapScrollFade>
 
-          {/* CTA Group */}
-          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button
-              onClick={onOpenConsultation}
-              className="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-[#C7A86D] via-[#D4AF37] to-[#B39355] text-black font-semibold text-xs tracking-wider uppercase transition-all duration-300 shadow-[0_4px_20px_rgba(199,168,109,0.3)] hover:shadow-[0_4px_25px_rgba(199,168,109,0.5)] flex items-center justify-center gap-2 group"
-            >
-              <Zap className="w-4 h-4 text-black" />
-              <span>Book a Discovery Call</span>
-              <ArrowRight className="w-4 h-4 text-black group-hover:translate-x-1 transition-transform" />
-            </button>
+          {/* CTA Group with Magnetic Hover Physics */}
+          <GsapScrollFade delay={0.4} y={18}>
+            <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <GsapMagnetic strength={0.2}>
+                <button
+                  onClick={onOpenConsultation}
+                  className="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-[#C7A86D] via-[#D4AF37] to-[#B39355] text-black font-semibold text-xs tracking-wider uppercase transition-all duration-300 shadow-[0_4px_20px_rgba(199,168,109,0.3)] hover:shadow-[0_4px_25px_rgba(199,168,109,0.5)] flex items-center justify-center gap-2 group cursor-pointer"
+                >
+                  <Zap className="w-4 h-4 text-black" />
+                  <span>Book a Discovery Call</span>
+                  <ArrowRight className="w-4 h-4 text-black group-hover:translate-x-1 transition-transform" />
+                </button>
+              </GsapMagnetic>
 
-            <Link
-              to="/services"
-              className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#111111]/80 hover:bg-[#111111] border border-[#C7A86D]/30 hover:border-[#C7A86D] text-stone-300 hover:text-white font-medium text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2"
-            >
-              <span>Explore All 10 Services</span>
-            </Link>
-          </div>
+              <GsapMagnetic strength={0.15}>
+                <Link
+                  to="/services"
+                  className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#111111]/80 hover:bg-[#111111] border border-[#C7A86D]/30 hover:border-[#C7A86D] text-stone-300 hover:text-white font-medium text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2"
+                >
+                  <span>Explore Services</span>
+                </Link>
+              </GsapMagnetic>
+            </div>
+          </GsapScrollFade>
 
           {/* Micro trust indicators */}
-          <div className="pt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-stone-400 font-light">
-            <span className="flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-[#C7A86D]" /> Strictly Verified Decision-Makers
-            </span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-[#E5C788]" /> Zero Cost on Unqualified Leads
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Cpu className="w-4 h-4 text-[#C7A86D]" /> Permanent Asset Ownership
-            </span>
-          </div>
+          <GsapScrollFade delay={0.5} y={15}>
+            <div className="pt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-stone-400 font-light">
+              <span className="flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-[#C7A86D]" /> Strictly Verified Decision-Makers
+              </span>
+              <span className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-[#E5C788]" /> Zero Cost on Unqualified Leads
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Cpu className="w-4 h-4 text-[#C7A86D]" /> Permanent Asset Ownership
+              </span>
+            </div>
+          </GsapScrollFade>
         </div>
 
         {/* Hero Architectural Pipeline Console */}
@@ -221,6 +260,44 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
             </div>
           </div>
         </div>
+
+        {/* Live Operational Metrics Ribbon with GSAP Counter */}
+        <GsapScrollFade delay={0.1} y={30} className="mt-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 sm:p-8 rounded-3xl bg-[#0F0F0F] border border-[#C7A86D]/25 shadow-2xl">
+            <div className="text-center space-y-1 border-r border-white/5 last:border-none">
+              <div className="text-2xl sm:text-4xl font-serif font-bold text-white font-mono flex items-center justify-center">
+                <GsapCounter end={100} suffix="%" />
+              </div>
+              <span className="text-[10px] sm:text-[11px] text-stone-400 font-light block uppercase tracking-wider">
+                Pre-Qualified Standard
+              </span>
+            </div>
+            <div className="text-center space-y-1 border-r border-white/5 last:border-none">
+              <div className="text-2xl sm:text-4xl font-serif font-bold text-[#E5C788] font-mono flex items-center justify-center">
+                <GsapCounter end={60} prefix="< " suffix="s" />
+              </div>
+              <span className="text-[10px] sm:text-[11px] text-stone-400 font-light block uppercase tracking-wider">
+                Speed-to-Lead Response
+              </span>
+            </div>
+            <div className="text-center space-y-1 border-r border-white/5 last:border-none">
+              <div className="text-2xl sm:text-4xl font-serif font-bold text-white font-mono flex items-center justify-center">
+                <GsapCounter end={85} suffix="%+" />
+              </div>
+              <span className="text-[10px] sm:text-[11px] text-stone-400 font-light block uppercase tracking-wider">
+                Show-Up Attendance Target
+              </span>
+            </div>
+            <div className="text-center space-y-1">
+              <div className="text-2xl sm:text-4xl font-serif font-bold text-[#C7A86D] font-mono flex items-center justify-center">
+                <GsapCounter end={10} suffix="x" />
+              </div>
+              <span className="text-[10px] sm:text-[11px] text-stone-400 font-light block uppercase tracking-wider">
+                Capital Efficiency vs SDR
+              </span>
+            </div>
+          </div>
+        </GsapScrollFade>
       </section>
 
       {/* 2. CORE FRICTION & VALUE PROPOSITION */}
@@ -229,20 +306,23 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
           {/* Ambient Glow */}
           <div className="absolute top-0 right-0 w-80 h-80 bg-[#C7A86D]/5 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="max-w-3xl mb-10 relative z-10">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#C7A86D] block mb-2">
+          <div className="max-w-3xl mb-10 relative z-10 space-y-3">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#C7A86D] block">
               The Modern Operational Dilemma
             </span>
-            <h2 className="text-2xl sm:text-4xl font-serif font-normal text-white tracking-tight">
-              Across Modern Service & High-Ticket Sectors, Operations Face The Same <span className="italic text-[#C7A86D]">Friction.</span>
-            </h2>
-            <p className="text-sm sm:text-base text-stone-300 font-light mt-3 leading-relaxed">
+            <GsapTextReveal
+              as="h2"
+              className="text-2xl sm:text-4xl font-serif font-normal text-white tracking-tight"
+            >
+              Across Modern Service & High-Ticket Sectors, Operations Face The Same Friction.
+            </GsapTextReveal>
+            <p className="text-sm sm:text-base text-stone-300 font-light leading-relaxed">
               We don't sell software subscriptions and walk away. We engineer and deploy autonomous systems directly tied to verifiable booked revenue.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
-            <div className="p-6 rounded-2xl bg-[#0E0E0E] border border-[#C7A86D]/20 space-y-3">
+          <GsapScrollFade staggerChildren={0.12} className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+            <div className="p-6 rounded-2xl bg-[#0E0E0E] border border-[#C7A86D]/20 space-y-3 hover:border-[#C7A86D]/50 transition-all duration-300">
               <div className="w-9 h-9 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center font-mono font-medium text-xs">
                 01
               </div>
@@ -252,7 +332,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-[#0E0E0E] border border-[#C7A86D]/20 space-y-3">
+            <div className="p-6 rounded-2xl bg-[#0E0E0E] border border-[#C7A86D]/20 space-y-3 hover:border-[#C7A86D]/50 transition-all duration-300">
               <div className="w-9 h-9 rounded-full bg-[#C7A86D]/15 border border-[#C7A86D]/30 text-[#E5C788] flex items-center justify-center font-mono font-medium text-xs">
                 02
               </div>
@@ -262,7 +342,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-[#0E0E0E] border border-[#C7A86D]/20 space-y-3">
+            <div className="p-6 rounded-2xl bg-[#0E0E0E] border border-[#C7A86D]/20 space-y-3 hover:border-[#C7A86D]/50 transition-all duration-300">
               <div className="w-9 h-9 rounded-full bg-[#C7A86D]/15 border border-[#C7A86D]/30 text-[#E5C788] flex items-center justify-center font-mono font-medium text-xs">
                 03
               </div>
@@ -271,28 +351,31 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
                 Deals drop out of the funnel simply because human teams cannot maintain sub-minute response times and omnichannel reminders.
               </p>
             </div>
-          </div>
+          </GsapScrollFade>
         </div>
       </section>
 
       {/* 3. FEATURED SERVICES ECOSYSTEM */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div>
-            <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#C7A86D] block mb-2">
+          <div className="space-y-2">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#C7A86D] block">
               Engineered Enterprise Infrastructure
             </span>
-            <h2 className="text-3xl sm:text-4xl font-serif font-normal text-white tracking-tight">
-              A Complete <span className="italic text-[#C7A86D]">AI-Powered</span> Business Platform
-            </h2>
-            <p className="text-sm text-stone-400 font-light mt-2 max-w-2xl">
+            <GsapTextReveal
+              as="h2"
+              className="text-3xl sm:text-4xl font-serif font-normal text-white tracking-tight"
+            >
+              A Complete AI-Powered Business Platform
+            </GsapTextReveal>
+            <p className="text-sm text-stone-400 font-light max-w-2xl">
               Vittoris is not a point tool. We deploy an integrated architecture spanning client acquisition, conversational voice & chat agents, document intelligence, and back-office automations.
             </p>
           </div>
 
           <Link
             to="/services"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-[#C7A86D] hover:text-[#E5C788] uppercase tracking-[0.18em] group transition-colors"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-[#C7A86D] hover:text-[#E5C788] uppercase tracking-[0.18em] group transition-colors shrink-0"
           >
             <span>View All 10 Service Categories</span>
             <ArrowRight className="w-4 h-4 text-[#C7A86D] group-hover:translate-x-1 transition-transform" />
@@ -300,11 +383,11 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
         </div>
 
         {/* 6 Featured Service Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <GsapScrollFade staggerChildren={0.08} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {VITTORIS_SERVICES.slice(0, 6).map((srv) => (
             <div
               key={srv.slug}
-              className="luxury-card rounded-3xl p-6 sm:p-8 flex flex-col justify-between group relative overflow-hidden transition-all duration-300"
+              className="luxury-card rounded-3xl p-6 sm:p-8 flex flex-col justify-between group relative overflow-hidden transition-all duration-300 hover:border-[#C7A86D]/50 hover:shadow-[0_8px_30px_rgba(199,168,109,0.12)]"
             >
               <div className="space-y-4 relative z-10">
                 <div className="flex items-center justify-between">
@@ -343,7 +426,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
               </div>
             </div>
           ))}
-        </div>
+        </GsapScrollFade>
       </section>
 
       {/* 4. SPEED-TO-LEAD & APPOINTMENT TRANSFORMATION */}
@@ -352,20 +435,23 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
           {/* Ambient Glow */}
           <div className="absolute top-0 right-0 w-80 h-80 bg-[#C7A86D]/5 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="max-w-3xl relative z-10">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#C7A86D] block mb-2">
+          <div className="max-w-3xl relative z-10 space-y-2">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#C7A86D] block">
               Zero Lead Leakage
             </span>
-            <h2 className="text-3xl sm:text-4xl font-serif font-normal text-white tracking-tight">
-              How The Platform Transforms a Lead Into a <span className="italic text-[#C7A86D]">Qualified Appointment</span>
-            </h2>
+            <GsapTextReveal
+              as="h2"
+              className="text-3xl sm:text-4xl font-serif font-normal text-white tracking-tight"
+            >
+              How The Platform Transforms a Lead Into a Qualified Appointment
+            </GsapTextReveal>
             <p className="text-sm text-stone-300 font-light mt-2">
               From initial ad click or inbound inquiry to confirmed calendar slot—in under three minutes, without requiring manual sales intervention.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 relative z-10">
-            <div className="p-5 rounded-2xl bg-[#0E0E0E] border border-[#C7A86D]/20 space-y-2">
+          <GsapScrollFade staggerChildren={0.08} className="grid grid-cols-1 md:grid-cols-4 gap-4 relative z-10">
+            <div className="p-5 rounded-2xl bg-[#0E0E0E] border border-[#C7A86D]/20 space-y-2 hover:border-[#C7A86D]/50 transition-colors">
               <div className="text-xs font-mono text-[#E5C788]">01 / Instant Contact</div>
               <h3 className="text-base font-serif font-normal text-white">Sub-Minute Engagement</h3>
               <p className="text-xs text-stone-400 font-light leading-relaxed">
@@ -373,7 +459,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#0E0E0E] border border-[#C7A86D]/20 space-y-2">
+            <div className="p-5 rounded-2xl bg-[#0E0E0E] border border-[#C7A86D]/20 space-y-2 hover:border-[#C7A86D]/50 transition-colors">
               <div className="text-xs font-mono text-[#E5C788]">02 / Deep Screening</div>
               <h3 className="text-base font-serif font-normal text-white">Authority & Budget Check</h3>
               <p className="text-xs text-stone-400 font-light leading-relaxed">
@@ -381,7 +467,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#0E0E0E] border border-[#C7A86D]/20 space-y-2">
+            <div className="p-5 rounded-2xl bg-[#0E0E0E] border border-[#C7A86D]/20 space-y-2 hover:border-[#C7A86D]/50 transition-colors">
               <div className="text-xs font-mono text-[#E5C788]">03 / Direct Injection</div>
               <h3 className="text-base font-serif font-normal text-white">Calendar Synchronization</h3>
               <p className="text-xs text-stone-400 font-light leading-relaxed">
@@ -389,32 +475,35 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#0E0E0E] border border-[#C7A86D]/20 space-y-2">
+            <div className="p-5 rounded-2xl bg-[#0E0E0E] border border-[#C7A86D]/20 space-y-2 hover:border-[#C7A86D]/50 transition-colors">
               <div className="text-xs font-mono text-[#E5C788]">04 / Attendance Protocol</div>
               <h3 className="text-base font-serif font-normal text-white">Show-Up Protection</h3>
               <p className="text-xs text-stone-400 font-light leading-relaxed">
                 Multi-channel briefing notes and automated confirmations ensure 85%+ meeting show-up rates.
               </p>
             </div>
-          </div>
+          </GsapScrollFade>
         </div>
       </section>
 
       {/* 5. MANUAL VS AUTOMATED OPERATIONS COMPARISON */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="text-center max-w-3xl mx-auto">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#C7A86D] block mb-2">
+        <div className="text-center max-w-3xl mx-auto space-y-2">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#C7A86D] block">
             The Automation Multiplier
           </span>
-          <h2 className="text-3xl sm:text-4xl font-serif font-normal text-white tracking-tight">
-            Manual Administration vs. <span className="italic text-[#C7A86D]">Automated Processing</span>
-          </h2>
-          <p className="text-sm text-stone-400 font-light mt-2">
+          <GsapTextReveal
+            as="h2"
+            className="text-3xl sm:text-4xl font-serif font-normal text-white tracking-tight"
+          >
+            Manual Administration vs. Automated Processing
+          </GsapTextReveal>
+          <p className="text-sm text-stone-400 font-light">
             Comparing typical manual clerical overhead with Vittoris bespoke AI operational infrastructure.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <GsapScrollFade staggerChildren={0.12} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left: Traditional Manual */}
           <div className="p-6 sm:p-8 rounded-3xl bg-stone-900/60 border border-stone-800 space-y-4">
             <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-rose-400/90 flex items-center gap-2">
@@ -443,6 +532,7 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
           {/* Right: Vittoris AI System */}
           <div className="p-6 sm:p-8 rounded-3xl bg-[#0E0E0E] border border-[#C7A86D]/30 space-y-4 shadow-[0_4px_25px_rgba(199,168,109,0.08)]">
             <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#E5C788] flex items-center gap-2">
+              <Sparkles className="w-3.5 h-3.5 text-[#C7A86D]" />
               <span>Vittoris AI-Powered System</span>
             </div>
             <ul className="space-y-3 text-xs text-stone-200 font-light">
@@ -464,28 +554,31 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
               </li>
             </ul>
           </div>
-        </div>
+        </GsapScrollFade>
       </section>
 
       {/* 6. THE 5-PHASE IMPLEMENTATION FRAMEWORK */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        <div className="text-center max-w-3xl mx-auto">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#C7A86D] block mb-2">
+        <div className="text-center max-w-3xl mx-auto space-y-2">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#C7A86D] block">
             Methodical Implementation
           </span>
-          <h2 className="text-3xl sm:text-4xl font-serif font-normal text-white tracking-tight">
-            How Engagements <span className="italic text-[#C7A86D]">Begin & Scale</span>
-          </h2>
-          <p className="text-sm text-stone-400 font-light mt-2">
+          <GsapTextReveal
+            as="h2"
+            className="text-3xl sm:text-4xl font-serif font-normal text-white tracking-tight"
+          >
+            How Engagements Begin & Scale
+          </GsapTextReveal>
+          <p className="text-sm text-stone-400 font-light">
             A 5-phase engineering roadmap ensuring systems solve actual operational bottlenecks rather than burning cash on experimental tools.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <GsapScrollFade staggerChildren={0.08} className="grid grid-cols-1 md:grid-cols-5 gap-4">
           {VITTORIS_ENGAGEMENT_PHASES.map((phase) => (
             <div
               key={phase.step}
-              className="luxury-card rounded-2xl p-5 space-y-2.5 relative flex flex-col justify-between group"
+              className="luxury-card rounded-2xl p-5 space-y-2.5 relative flex flex-col justify-between group hover:border-[#C7A86D]/50 transition-all duration-300"
             >
               <div>
                 <span className="text-xs font-mono font-medium text-[#E5C788] px-2.5 py-0.5 rounded-full bg-[#C7A86D]/10 border border-[#C7A86D]/25 inline-block mb-1">
@@ -503,40 +596,50 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
               </div>
             </div>
           ))}
-        </div>
+        </GsapScrollFade>
       </section>
 
       {/* 7. FINAL CALL TO ACTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="p-8 sm:p-14 rounded-3xl bg-gradient-to-r from-[#14120D] via-[#111111] to-[#14120D] border border-[#C7A86D]/30 text-center space-y-6 relative overflow-hidden shadow-[0_8px_30px_rgba(199,168,109,0.12)]">
-          <div className="max-w-2xl mx-auto space-y-3">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#C7A86D]">
-              Schedule Your Diagnostic
-            </span>
-            <h2 className="text-3xl sm:text-5xl font-serif font-normal text-white tracking-tight">
-              Ready to Scale Your <span className="italic text-[#C7A86D]">Sales Pipeline</span>?
-            </h2>
-            <p className="text-sm text-stone-300 font-light">
-              Review existing pipeline flow, closing metrics, and quarterly targets with our systems architect. Strictly zero-risk exploratory session.
-            </p>
-          </div>
+        <GsapScrollFade delay={0.1} y={30}>
+          <div className="p-8 sm:p-14 rounded-3xl bg-gradient-to-r from-[#14120D] via-[#111111] to-[#14120D] border border-[#C7A86D]/30 text-center space-y-6 relative overflow-hidden shadow-[0_8px_30px_rgba(199,168,109,0.12)]">
+            <div className="max-w-2xl mx-auto space-y-3">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#C7A86D]">
+                Schedule Your Diagnostic
+              </span>
+              <GsapTextReveal
+                as="h2"
+                className="text-3xl sm:text-5xl font-serif font-normal text-white tracking-tight"
+              >
+                Ready to Scale Your Sales Pipeline?
+              </GsapTextReveal>
+              <p className="text-sm text-stone-300 font-light">
+                Review existing pipeline flow, closing metrics, and quarterly targets with our systems architect. Strictly zero-risk exploratory session.
+              </p>
+            </div>
 
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button
-              onClick={onOpenConsultation}
-              className="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-[#C7A86D] via-[#D4AF37] to-[#B39355] text-black font-semibold text-xs tracking-wider uppercase transition-all duration-300 shadow-[0_4px_20px_rgba(199,168,109,0.3)] hover:shadow-[0_4px_25px_rgba(199,168,109,0.5)] flex items-center justify-center gap-2"
-            >
-              <Zap className="w-4 h-4 text-black" />
-              <span>Book a Discovery Call</span>
-            </button>
-            <Link
-              to="/contact"
-              className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#111111]/80 hover:bg-[#111111] border border-[#C7A86D]/30 hover:border-[#C7A86D] text-stone-300 hover:text-white font-medium text-xs tracking-wider uppercase transition-all"
-            >
-              <span>Contact Systems Desk</span>
-            </Link>
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <GsapMagnetic strength={0.25}>
+                <button
+                  onClick={onOpenConsultation}
+                  className="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-[#C7A86D] via-[#D4AF37] to-[#B39355] text-black font-semibold text-xs tracking-wider uppercase transition-all duration-300 shadow-[0_4px_20px_rgba(199,168,109,0.3)] hover:shadow-[0_4px_25px_rgba(199,168,109,0.5)] flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Zap className="w-4 h-4 text-black" />
+                  <span>Book a Discovery Call</span>
+                </button>
+              </GsapMagnetic>
+
+              <GsapMagnetic strength={0.15}>
+                <Link
+                  to="/contact"
+                  className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#111111]/80 hover:bg-[#111111] border border-[#C7A86D]/30 hover:border-[#C7A86D] text-stone-300 hover:text-white font-medium text-xs tracking-wider uppercase transition-all"
+                >
+                  <span>Contact Systems Desk</span>
+                </Link>
+              </GsapMagnetic>
+            </div>
           </div>
-        </div>
+        </GsapScrollFade>
       </section>
     </div>
   );
