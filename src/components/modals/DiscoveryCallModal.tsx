@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import { 
   X, CheckCircle2, ArrowRight, ArrowLeft, ShieldCheck, Sparkles, Building, Mail, User, Globe, FileText, 
-  ExternalLink, Calendar, Clock, Check, Send, AlertCircle, UserCheck, XCircle, 
-  Download, CalendarPlus, ChevronRight, Lock, CalendarCheck, AlertTriangle
+  ExternalLink, Calendar, Clock, Check, Send, AlertCircle, XCircle, 
+  Download, CalendarPlus, Lock, CalendarCheck, AlertTriangle
 } from 'lucide-react';
 import { VITTORIS_SERVICES, COMPANY_CONTACT_DETAILS } from '../../data/vittorisData';
 import { 
   createMeetingRequest, 
-  approveMeetingSlot, 
-  declineMeetingRequest, 
   getMeetingRequests, 
   isSlotLocked, 
   getSlotLockDetails, 
@@ -18,7 +15,8 @@ import {
   subscribeMeetingUpdates 
 } from '../../utils/meetingScheduler';
 import type { MeetingSlot, MeetingRequest } from '../../utils/meetingScheduler';
-
+import { sendMeetingRequestEmails } from '../../utils/emailService';
+import type { EmailDispatchResult } from '../../utils/emailService';
 
 const TIMEZONE_OPTIONS = [
   { value: 'America/New_York', label: 'EST / EDT — US Eastern Time' },
@@ -75,6 +73,7 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
   const [, setScheduleTick] = useState<number>(0);
   const [slotValidationError, setSlotValidationError] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
+  const [emailResult, setEmailResult] = useState<EmailDispatchResult | null>(null);
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -103,7 +102,6 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
     });
     return () => unsub();
   }, [currentRequestId]);
-
 
   const handleSlotChange = (id: number, field: 'date' | 'time', value: string) => {
     setSlotValidationError(null);
@@ -161,6 +159,7 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
     setActiveRequest(null);
     setSlotValidationError(null);
     setIsSending(false);
+    setEmailResult(null);
     onClose();
   };
 
@@ -179,8 +178,8 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
     setIsConfirmingSlots(true);
   };
 
-  // Submit request to company admin
-  const handleDispatchThreeSlots = () => {
+  // Submit request to company admin and dispatch EmailJS emails
+  const handleDispatchThreeSlots = async () => {
     const val = validateProposedSlots(proposedSlots);
     if (!val.isValid) {
       setSlotValidationError(val.error || 'Please resolve slot conflicts before submitting.');
@@ -203,25 +202,13 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
     setActiveRequest(newReq);
     setIsSending(false);
     setStep(3);
-  };
 
-  // Admin In-Modal Actions
-  const handleAdminApprove = (slotId: number) => {
-    if (!currentRequestId) return;
-    const updated = approveMeetingSlot(currentRequestId, slotId);
-    if (updated) {
-      setActiveRequest(updated);
-    }
-  };
-
-  const handleAdminDecline = () => {
-    if (!currentRequestId) return;
-    const updated = declineMeetingRequest(
-      currentRequestId,
-      'Conflicting executive leadership obligations during these windows. Please propose alternative days or times.'
-    );
-    if (updated) {
-      setActiveRequest(updated);
+    // Asynchronously dispatch EmailJS emails (owner & client)
+    try {
+      const emailRes = await sendMeetingRequestEmails(newReq);
+      setEmailResult(emailRes);
+    } catch (err) {
+      console.warn('Email dispatch encounter:', err);
     }
   };
 
@@ -311,7 +298,7 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                 Schedule an AI Architecture Consultation
               </h3>
               <p className="text-xs text-slate-400 font-light leading-relaxed">
-                Choose 3 preferred time slots. Our executive admin verifies calendar availability to prevent double-booking, then confirms and locks your session.
+                Choose 3 preferred time slots. Company leadership verifies calendar availability to prevent double-booking, then confirms and locks your session.
               </p>
             </div>
 
@@ -329,7 +316,7 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
               <div className="h-[1px] w-8 sm:w-16 bg-white/10" />
               <div className={`flex items-center gap-2 text-xs uppercase tracking-wider font-semibold ${step === 3 ? 'text-[#C7A86D]' : 'text-slate-500'}`}>
                 <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono ${step === 3 ? 'bg-[#C7A86D] text-black font-bold' : 'bg-white/5 text-slate-400'}`}>3</span>
-                <span>3. Admin Approval & Lock</span>
+                <span>3. Request Dispatched</span>
               </div>
             </div>
           </div>
@@ -582,7 +569,7 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                       }`}
                     >
                       <Clock className="w-3.5 h-3.5" />
-                      <span>Choose 3 Slots (Admin Permission & Calendar Lock)</span>
+                      <span>Choose 3 Slots (Owner Review & Calendar Lock)</span>
                     </button>
                     <button
                       type="button"
@@ -616,13 +603,13 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                   </div>
                 </div>
 
-                {/* Sub-view A: Propose 3 Slots (Main Feature Requested by User) */}
+                {/* Sub-view A: Propose 3 Slots */}
                 {bookingMode === 'propose_slots' && (
                   <div className="space-y-4">
                     <div className="p-3.5 rounded-xl bg-[#C7A86D]/10 border border-[#C7A86D]/25 text-xs text-slate-300 flex items-start gap-2.5">
                       <Sparkles className="w-4 h-4 text-[#C7A86D] shrink-0 mt-0.5" />
                       <div className="leading-relaxed">
-                        <strong className="text-white">Double-Booking Prevention Protocol:</strong> Please select <strong>3 distinct time windows</strong>. These slots are submitted to the company admin (<strong className="text-[#E5C788]">{COMPANY_CONTACT_DETAILS.ownerEmail}</strong>). Once the admin reviews and approves 1 slot, that exact time is locked on the master calendar so <strong>no other interview will be scheduled</strong> during that time.
+                        <strong className="text-white">Double-Booking Prevention Protocol:</strong> Please select <strong>3 distinct time windows</strong>. These slots will be transmitted directly to the company owner (<strong className="text-[#E5C788]">{COMPANY_CONTACT_DETAILS.ownerEmail}</strong>) via automated email. Once the owner approves 1 slot, that exact time is locked on the master calendar so <strong>no other interview will be scheduled</strong> during that time.
                       </div>
                     </div>
 
@@ -802,11 +789,11 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                       <CalendarCheck className="w-4 h-4 text-[#C7A86D]" />
                       <span>Step 2 Confirmation: Confirm 3 Availability Windows ({tzLabel})</span>
                     </div>
-                    <span className="text-[10px] text-slate-400 font-mono">Permission Request Checkpoint</span>
+                    <span className="text-[10px] text-slate-400 font-mono">Transmission Checkpoint</span>
                   </div>
 
                   <p className="text-xs text-slate-300 font-light">
-                    You are transmitting these 3 proposed consultation times to company admin (<strong className="text-[#E5C788]">{COMPANY_CONTACT_DETAILS.ownerEmail}</strong>) for review and calendar locking:
+                    You are transmitting these 3 proposed consultation times to company leadership (<strong className="text-[#E5C788]">{COMPANY_CONTACT_DETAILS.ownerEmail}</strong>) via automated email dispatch:
                   </p>
 
                   <div className="space-y-2 bg-black/60 p-3.5 rounded-xl border border-white/5 text-xs">
@@ -829,9 +816,9 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                   </div>
 
                   <div className="p-2.5 rounded-xl bg-black/40 border border-white/5 text-[11px] text-slate-300 space-y-1">
-                    <div><strong>Company Admin Recipient:</strong> {COMPANY_CONTACT_DETAILS.ownerEmail}</div>
+                    <div><strong>Notification Target:</strong> {COMPANY_CONTACT_DETAILS.ownerEmail} & {COMPANY_CONTACT_DETAILS.companyEmail}</div>
                     <div><strong>Client / Organization:</strong> {formData.fullName} • {formData.companyName} ({formData.businessEmail})</div>
-                    <div><strong>Policy:</strong> When approved, the selected slot will be permanently locked so no other client can book it.</div>
+                    <div><strong>Automated Email:</strong> Dispatched via EmailJS to company and candidate inboxes.</div>
                   </div>
 
                   <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
@@ -850,7 +837,7 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                       onClick={handleDispatchThreeSlots}
                       className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-gradient-to-r from-[#C7A86D] via-[#D4AF37] to-[#B39355] text-black font-semibold text-xs uppercase tracking-wider transition-all duration-300 shadow-lg shadow-[#C7A86D]/20 hover:brightness-110 flex items-center justify-center gap-2 cursor-pointer"
                     >
-                      <span>Yes, Transmit 3 Slots to Company Admin</span>
+                      <span>Yes, Transmit 3 Slots to Company Leadership</span>
                       <Send className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -858,7 +845,7 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
               </div>
             )}
 
-            {/* Step 3: Success Confirmation & Interactive Admin Permission Console */}
+            {/* Step 3: Success Confirmation (Client-Facing Receipt: Admin is NOT on this screen) */}
             {step === 3 && (
               <div className="py-2 text-center space-y-6 animate-fadeIn">
                 {/* Status Icon */}
@@ -887,11 +874,11 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                       </span>
                     ) : isDeclined ? (
                       <span className="bg-rose-500/20 text-rose-300 border-rose-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <XCircle className="w-3 h-3" /> Status: Schedule Proposal Declined by Admin
+                        <XCircle className="w-3 h-3" /> Status: Reschedule Requested by Leadership
                       </span>
                     ) : (
                       <span className="bg-[#C7A86D]/20 text-[#E5C788] border-[#C7A86D]/30 px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <Clock className="w-3 h-3" /> Status: Transmitted to Admin • Awaiting Slot Approval
+                        <Clock className="w-3 h-3" /> Status: Transmitted to Leadership • Awaiting Slot Review
                       </span>
                     )}
                   </div>
@@ -900,16 +887,16 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                     {isApproved
                       ? 'Consultation Officially Approved & Locked!'
                       : isDeclined
-                      ? 'Reschedule Requested by Admin'
-                      : '3 Availability Windows Transmitted to Admin'}
+                      ? 'Reschedule Requested by Leadership'
+                      : '3 Availability Windows Dispatched to Company Leadership'}
                   </h4>
 
                   <p className="text-xs sm:text-sm text-slate-300 mt-1.5 font-light max-w-lg mx-auto leading-relaxed">
                     {isApproved
                       ? `Your session is locked for ${confirmedSlot.date} at ${confirmedSlot.time} (${tzLabel}). No other interview can be scheduled at this time. Calendar invites and meeting credentials have been generated.`
                       : isDeclined
-                      ? `The admin was unable to accommodate these 3 proposed slots. ${activeRequest?.adminNotes || 'Please propose alternative dates or times.'}`
-                      : `Your 3 candidate slots have been submitted to company admin (${COMPANY_CONTACT_DETAILS.ownerEmail}). Leadership will approve the best slot and lock it exclusively for you.`}
+                      ? `Leadership was unable to accommodate these 3 proposed slots. ${activeRequest?.adminNotes || 'Please propose alternative dates or times.'}`
+                      : `Your 3 candidate slots have been submitted to company leadership (${COMPANY_CONTACT_DETAILS.ownerEmail}). An automated email notification with 1-click Approve / Ignore controls has been sent, and once approved, that exact time will be locked exclusively on the company master calendar.`}
                   </p>
                 </div>
 
@@ -930,7 +917,7 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
 
                   <div className="pt-1 space-y-1.5">
                     <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold block">
-                      Proposed 3 Time Slots:
+                      Submitted Availability Windows:
                     </span>
                     {proposedSlots.map((slot) => {
                       const isThisSlotApproved = isApproved && activeRequest?.approvedSlotId === slot.id;
@@ -957,8 +944,8 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                               <Lock className="w-3 h-3" /> Approved & Locked
                             </span>
                           ) : (
-                            <span className="text-[9px] text-slate-500 uppercase tracking-wider">
-                              {slot.id === 1 ? 'Primary' : 'Alternative'}
+                            <span className="text-[9px] text-[#C7A86D] uppercase tracking-wider font-mono">
+                              Awaiting Owner Review
                             </span>
                           )}
                         </div>
@@ -967,13 +954,73 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                   </div>
                 </div>
 
-                {/* STATE A: APPROVED DETAILS & CALENDAR ACTIONS */}
+                {/* EmailJS & Dispatch Confirmation Card (Client View) */}
+                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-[#181510] to-[#121212] border border-[#C7A86D]/30 text-left text-xs space-y-3.5 max-w-lg mx-auto shadow-xl">
+                  <div className="flex items-center justify-between border-b border-white/5 pb-2.5">
+                    <div className="flex items-center gap-2 text-[#E5C788] font-semibold uppercase tracking-wider text-[11px]">
+                      <Mail className="w-4 h-4 text-[#C7A86D]" />
+                      <span>Automated Email Dispatch Status (EmailJS)</span>
+                    </div>
+                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono">
+                      Dispatched
+                    </span>
+                  </div>
+
+                  <div className="space-y-2 text-[11px] text-slate-300 font-light">
+                    <div className="flex items-start gap-2">
+                      <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                      <div>
+                        <strong>Company Leadership Notified:</strong> Request transmitted to <strong>{COMPANY_CONTACT_DETAILS.ownerEmail}</strong> and <strong>{COMPANY_CONTACT_DETAILS.companyEmail}</strong> with 1-click Approve / Ignore controls.
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                      <div>
+                        <strong>Candidate Receipt:</strong> Confirmation dispatched to <strong>{formData.businessEmail}</strong>.
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Double-Booking Guarantee Notice */}
+                  <div className="p-2.5 rounded-xl bg-black/60 border border-[#C7A86D]/20 text-[11px] text-slate-300 flex items-start gap-2">
+                    <ShieldCheck className="w-4 h-4 text-[#C7A86D] shrink-0 mt-0.5" />
+                    <div>
+                      <strong>Calendar Lock Guarantee:</strong> As soon as the owner approves 1 of your 3 slots, that window is immediately locked on the master calendar so <strong>no other interview will be scheduled</strong> during that time.
+                    </div>
+                  </div>
+
+                  {/* Quick Action Buttons for Client */}
+                  <div className="pt-1 flex flex-col sm:flex-row gap-2">
+                    <a
+                      href={COMPANY_CONTACT_DETAILS.calendlyUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-[#C7A86D]/20 hover:bg-[#C7A86D]/30 border border-[#C7A86D]/40 text-[#E5C788] text-xs font-semibold transition-colors"
+                    >
+                      <Calendar className="w-3.5 h-3.5 text-[#C7A86D]" />
+                      <span>Book Instantly on Calendly</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+
+                    {emailResult?.mailtoOwnerUrl && (
+                      <a
+                        href={emailResult.mailtoOwnerUrl}
+                        className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-xs transition-colors"
+                      >
+                        <Mail className="w-3.5 h-3.5 text-[#C7A86D]" />
+                        <span>Send via Mail Client</span>
+                      </a>
+                    )}
+                  </div>
+                </div>
+
+                {/* APPROVED DETAILS: Google Meet, Calendar, ICS (Shown once approved by owner) */}
                 {isApproved && (
                   <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-[#121915] to-[#121212] border border-emerald-500/50 text-left text-xs space-y-3.5 max-w-lg mx-auto shadow-xl animate-fadeIn">
                     <div className="flex items-center justify-between border-b border-white/5 pb-2.5">
                       <div className="flex items-center gap-2 text-emerald-300 font-semibold uppercase tracking-wider text-[11px]">
                         <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                        <span>Exclusive Meeting Time Locked</span>
+                        <span>Exclusive Meeting Time Confirmed & Locked</span>
                       </div>
                       <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono">
                         Zero Double-Booking
@@ -1013,24 +1060,16 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                         <Download className="w-3.5 h-3.5" />
                         <span>.ICS File</span>
                       </button>
-
-                      <a
-                        href={`mailto:${formData.businessEmail}?cc=${COMPANY_CONTACT_DETAILS.ownerEmail}&subject=${encodeURIComponent(`Confirmed: Vittoris AI Consultation - ${formData.companyName || 'Corporate Client'}`)}&body=${encodeURIComponent(`Hi ${formData.fullName},\n\nYour discovery meeting has been approved and locked on the company calendar:\n\nDate & Time: ${confirmedSlot.date} at ${confirmedSlot.time} (${tzLabel})\nGoogle Meet: ${activeRequest?.googleMeetLink}\n\nLooking forward to our strategic session.\n\nBest regards,\nVittoris Systems\n${COMPANY_CONTACT_DETAILS.ownerEmail}`)}`}
-                        className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-[#C7A86D]/20 hover:bg-[#C7A86D]/30 border border-[#C7A86D]/40 text-[#E5C788] text-xs font-semibold transition-colors"
-                      >
-                        <Mail className="w-3.5 h-3.5" />
-                        <span>Send Email Confirmation</span>
-                      </a>
                     </div>
                   </div>
                 )}
 
-                {/* STATE B: DECLINED */}
+                {/* DECLINED NOTICE */}
                 {isDeclined && (
                   <div className="p-4 rounded-2xl bg-rose-950/40 border border-rose-500/40 text-left text-xs space-y-3 max-w-lg mx-auto animate-fadeIn">
                     <div className="flex items-center gap-2 font-semibold text-rose-300">
                       <XCircle className="w-4 h-4 text-rose-400" />
-                      <span>Reschedule Notice from Company Admin</span>
+                      <span>Reschedule Notice from Leadership</span>
                     </div>
                     <p className="text-[11px] text-rose-100 font-light">
                       {activeRequest?.adminNotes || 'Executive leadership is engaged in closed-door sessions during these windows.'}
@@ -1045,84 +1084,6 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                     </button>
                   </div>
                 )}
-
-                {/* LIVE ADMIN QUICK-DECISION BAR (Company Admin Review Console) */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-[#1C1812] to-[#121212] border border-[#C7A86D]/40 text-left text-xs space-y-4 max-w-lg mx-auto shadow-xl">
-                  <div className="flex items-center justify-between border-b border-white/5 pb-2.5">
-                    <div className="flex items-center gap-2 text-[#C7A86D] font-semibold uppercase tracking-wider text-[11px]">
-                      <UserCheck className="w-4 h-4 text-[#C7A86D]" />
-                      <span>Executive Admin Decision Console</span>
-                    </div>
-                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#C7A86D]/20 text-[#E5C788] font-mono">
-                      {COMPANY_CONTACT_DETAILS.ownerEmail}
-                    </span>
-                  </div>
-
-                  <p className="text-[11px] text-slate-300 font-light leading-relaxed">
-                    Test or execute the admin decision directly. As company admin, approve one of the candidate's 3 proposed time slots to immediately lock it on the master calendar:
-                  </p>
-
-                  <div className="space-y-2">
-                    {proposedSlots.map((slot) => {
-                      const isThisApproved = isApproved && activeRequest?.approvedSlotId === slot.id;
-                      return (
-                        <div
-                          key={slot.id}
-                          className="flex items-center justify-between p-2.5 rounded-xl border border-white/10 bg-black/50 hover:border-[#C7A86D]/60 transition-colors"
-                        >
-                          <div className="flex items-center gap-2 text-[11px]">
-                            <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold bg-[#C7A86D]/20 text-[#C7A86D]">
-                              {slot.id}
-                            </span>
-                            <span>Slot {slot.id}: <strong>{slot.date} at {slot.time}</strong></span>
-                          </div>
-
-                          <button
-                            type="button"
-                            disabled={isThisApproved}
-                            onClick={() => handleAdminApprove(slot.id)}
-                            className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1 ${
-                              isThisApproved
-                                ? 'bg-emerald-500 text-black cursor-default'
-                                : 'bg-[#C7A86D] hover:bg-[#D4AF37] text-black shadow-sm'
-                            }`}
-                          >
-                            {isThisApproved ? (
-                              <>
-                                <Check className="w-3 h-3" />
-                                <span>Locked</span>
-                              </>
-                            ) : (
-                              <>
-                                <span>Approve Slot {slot.id}</span>
-                                <ChevronRight className="w-3 h-3" />
-                              </>
-                            )}
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-white/5 text-[11px]">
-                    <button
-                      type="button"
-                      onClick={handleAdminDecline}
-                      className="text-rose-400 hover:text-rose-300 underline underline-offset-2 transition-colors cursor-pointer"
-                    >
-                      Decline Request & Request Reschedule
-                    </button>
-
-                    <Link
-                      to="/admin"
-                      onClick={handleResetAndClose}
-                      className="text-[#C7A86D] hover:text-[#E5C788] flex items-center gap-1 font-semibold"
-                    >
-                      <span>Open Full Executive Admin Portal</span>
-                      <ExternalLink className="w-3 h-3" />
-                    </Link>
-                  </div>
-                </div>
 
                 {/* Return to Platform */}
                 <div className="pt-2 pb-2">

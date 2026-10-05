@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   ShieldCheck, Calendar, Clock, CheckCircle2, XCircle, AlertTriangle, 
   User, Mail, Lock, Unlock, ExternalLink, 
@@ -32,21 +32,54 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onOpenConsultation }) 
   const [selectedSlotForApproval, setSelectedSlotForApproval] = useState<{ [reqId: string]: number }>({});
   const [actionSuccessNotice, setActionSuccessNotice] = useState<string | null>(null);
 
+  const showNotification = useCallback((msg: string) => {
+    setActionSuccessNotice(msg);
+    setTimeout(() => {
+      setActionSuccessNotice(null);
+    }, 4500);
+  }, []);
+
   useEffect(() => {
+    // Process 1-click action links received from owner email (EmailJS or mailto)
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const action = params.get('action');
+      const reqId = params.get('reqId');
+      const slotStr = params.get('slot');
+
+      if (action && reqId) {
+        if (action === 'approve') {
+          const slotNum = slotStr ? parseInt(slotStr, 10) : 1;
+          const updated = approveMeetingSlot(reqId, slotNum);
+          if (updated && updated.approvedSlot) {
+            const approved = updated.approvedSlot;
+            const clientName = updated.client.companyName || updated.client.fullName;
+            setTimeout(() => {
+              showNotification(
+                `✓ Email Action Executed: Slot ${slotNum} (${approved.date} at ${approved.time}) approved & locked exclusively on company calendar for ${clientName}!`
+              );
+            }, 50);
+          }
+        } else if (action === 'ignore' || action === 'decline') {
+          const updated = declineMeetingRequest(reqId, 'Ignored / declined via owner email 1-click action link.');
+          if (updated) {
+            setTimeout(() => {
+              showNotification('✓ Email Action Executed: Request marked as ignored/declined.');
+            }, 50);
+          }
+        }
+
+        // Clean query params so refresh doesn't re-trigger
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    }
+
     const unsubscribe = subscribeMeetingUpdates(() => {
       setRequests(getMeetingRequests());
       setLockedSlots(getLockedSlots());
     });
     return () => unsubscribe();
-  }, []);
-
-
-  const showNotification = (msg: string) => {
-    setActionSuccessNotice(msg);
-    setTimeout(() => {
-      setActionSuccessNotice(null);
-    }, 4500);
-  };
+  }, [showNotification]);
 
   const handleApprove = (requestId: string, slotId: number) => {
     const updated = approveMeetingSlot(requestId, slotId);
@@ -147,6 +180,17 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onOpenConsultation }) 
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
+            <a
+              href={COMPANY_CONTACT_DETAILS.calendlyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center gap-2 transition-all shadow-sm"
+            >
+              <Calendar className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Open Owner Calendly Portal</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+
             {onOpenConsultation && (
               <button
                 onClick={onOpenConsultation}
@@ -165,6 +209,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onOpenConsultation }) 
               <span>Reset Demo Scenario</span>
             </button>
           </div>
+
         </div>
 
         {/* Executive Metric Cards */}
