@@ -81,10 +81,10 @@ export const Footer: React.FC<FooterProps> = ({ onOpenConsultation }) => {
             </div>
           </div>
 
-          {/* Column 2: All 10 Services */}
+          {/* Column 2: Explore Services */}
           <div className="lg:col-span-4 space-y-3">
             <div className="text-xs font-serif font-bold text-[#C7A86D] uppercase tracking-[0.2em] flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#C7A86D]" /> All 10 AI Services
+              <span className="w-1.5 h-1.5 rounded-full bg-[#C7A86D]" /> Explore Services
             </div>
             <ul className="grid grid-cols-1 gap-1.5 text-xs">
               {VITTORIS_SERVICES.map((srv) => (

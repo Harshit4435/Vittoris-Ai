@@ -52,10 +52,10 @@ export const ServiceDetail: React.FC<ServiceDetailProps> = ({ onOpenConsultation
       <div className="flex items-center justify-between text-xs text-stone-400 border-b border-[#C7A86D]/15 pb-4">
         <Link to="/services" className="flex items-center gap-1.5 hover:text-[#E5C788] transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back to All 10 Services</span>
+          <span>Back to Explore Services</span>
         </Link>
         <span className="font-mono text-[#E5C788]">
-          Service {service.number} of 10
+          Service {service.number}
         </span>
       </div>
 

@@ -31,7 +31,7 @@ export const Services: React.FC<ServicesProps> = ({ onOpenConsultation }) => {
       <div className="text-center max-w-3xl mx-auto space-y-4">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C7A86D]/10 border border-[#C7A86D]/30 text-[#C7A86D] text-[10px] font-medium uppercase tracking-[0.25em]">
           <Sparkles className="w-3.5 h-3.5 text-[#E5C788]" />
-          <span>Complete 10-Service Directory</span>
+          <span>Explore Services Directory</span>
         </div>
         <h1 className="text-3xl sm:text-5xl font-serif font-normal text-white tracking-tight">
           AI Systems & <span className="italic text-[#C7A86D]">Performance Acquisition</span> Architecture
@@ -55,7 +55,7 @@ export const Services: React.FC<ServicesProps> = ({ onOpenConsultation }) => {
                   : 'text-stone-400 hover:text-white hover:bg-white/5 font-normal'
               }`}
             >
-              {cat === 'All' ? 'All 10 Services' : cat}
+              {cat === 'All' ? 'Explore Services' : cat}
             </button>
           ))}
         </div>

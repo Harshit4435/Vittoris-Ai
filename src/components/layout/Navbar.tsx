@@ -97,7 +97,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <div className="absolute top-full left-0 w-[540px] mt-2 p-4 bg-[#111111] border border-[#C7A86D]/25 rounded-2xl shadow-2xl shadow-black/90 grid grid-cols-2 gap-2 z-50 backdrop-blur-2xl">
                     <div className="col-span-2 pb-2 mb-2 border-b border-white/10 flex items-center justify-between">
                       <span className="text-[10px] font-semibold text-[#C7A86D] uppercase tracking-[0.2em] flex items-center gap-1.5">
-                        <Sparkles className="w-3 h-3 text-[#C7A86D]" /> Complete 10-Service Ecosystem
+                        <Sparkles className="w-3 h-3 text-[#C7A86D]" /> Explore Services
                       </span>
                       <Link
                         to="/services"
@@ -222,8 +222,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center justify-between py-3.5 border-b border-white/5 text-xs tracking-[0.25em] uppercase text-[#C7A86D]"
               >
-                <span>Services (All 10 Categories)</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#C7A86D]/20 text-[#C7A86D] font-mono">10</span>
+                <span>Explore Services</span>
+                <ArrowRight className="w-3.5 h-3.5 text-[#C7A86D]" />
               </Link>
 
               {navLinks.map((link) => (

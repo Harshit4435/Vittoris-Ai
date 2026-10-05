@@ -32,29 +32,46 @@ function ScrollToTop() {
 }
 
 function App() {
-  const [theme, setTheme] = useState<'dark' | 'eye-protection' | 'light'>('dark');
+  const [theme, setTheme] = useState<'dark' | 'eye-protection' | 'light'>(() => {
+    try {
+      const saved = localStorage.getItem('vittoris_theme');
+      if (saved === 'light' || saved === 'eye-protection' || saved === 'dark') {
+        return saved;
+      }
+    } catch {
+      // fallback
+    }
+    return 'dark';
+  });
   const [isDiscoveryOpen, setIsDiscoveryOpen] = useState(false);
   const [selectedServiceSlug, setSelectedServiceSlug] = useState<string | undefined>(undefined);
 
   // Initialize unified Lenis smooth scrolling with GSAP ScrollTrigger
   useSmoothScroll();
 
-  const applyTheme = (targetTheme: 'dark' | 'eye-protection' | 'light') => {
-    setTheme(targetTheme);
+  // Synchronize document theme class and persistence whenever theme changes
+  useEffect(() => {
     document.documentElement.classList.remove('dark', 'light-mode', 'eye-protection-mode');
-    if (targetTheme === 'light') {
+    if (theme === 'light') {
       document.documentElement.classList.add('light-mode');
-    } else if (targetTheme === 'eye-protection') {
+    } else if (theme === 'eye-protection') {
       document.documentElement.classList.add('eye-protection-mode');
     } else {
       document.documentElement.classList.add('dark');
     }
-  };
+    try {
+      localStorage.setItem('vittoris_theme', theme);
+    } catch {
+      // fallback
+    }
+  }, [theme]);
 
   const toggleTheme = () => {
-    if (theme === 'dark') applyTheme('eye-protection');
-    else if (theme === 'eye-protection') applyTheme('light');
-    else applyTheme('dark');
+    setTheme((prev) => {
+      if (prev === 'dark') return 'eye-protection';
+      if (prev === 'eye-protection') return 'light';
+      return 'dark';
+    });
   };
 
   const handleOpenDiscovery = (serviceSlug?: string) => {
@@ -69,7 +86,7 @@ function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <ScrollToTop />
-      <div className="min-h-screen flex flex-col bg-[#0B0B0B] text-[#F5F2EB] transition-colors duration-500 font-sans selection:bg-[#C7A86D] selection:text-black relative">
+      <div className="min-h-screen flex flex-col bg-[var(--bg-body)] text-[var(--text-body)] transition-colors duration-500 font-sans selection:bg-[#C7A86D] selection:text-black relative app-root">
         <GsapMouseFollower />
         <Navbar
           onOpenConsultation={() => handleOpenDiscovery()}

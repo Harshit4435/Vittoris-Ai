@@ -3,60 +3,19 @@
 @layer base {
   :root {
     --bg-body: #0b0b0b;
-    --text-body: #ffffff;
-    --bg-card: rgba(17, 17, 17, 0.72);
-    --bg-card-hover: rgba(26, 26, 26, 0.88);
-    --border-card: rgba(255, 255, 255, 0.06);
-    --border-card-hover: rgba(199, 168, 109, 0.35);
+    --text-body: #f5f2eb;
+    --text-heading: #ffffff;
     --text-muted: rgba(236, 236, 236, 0.65);
-    --border-nav: rgba(199, 168, 109, 0.12);
-    --bg-nav: rgba(11, 11, 11, 0.85);
-    --bg-section-muted: rgba(255, 255, 255, 0.02);
-    --border-divider: rgba(255, 255, 255, 0.06);
+    --border-card: rgba(255, 255, 255, 0.07);
+    --border-card-hover: rgba(199, 168, 109, 0.4);
+    --border-nav: rgba(199, 168, 109, 0.15);
+    --bg-nav: rgba(11, 11, 11, 0.88);
     
-    /* Luxury Gold Palette inspired by Prapti Luxe */
+    /* Luxury Gold Palette */
     --gold-primary: #c7a86d;
     --gold-bright: #e5c788;
     --gold-deep: #a38347;
     --gold-glow: rgba(199, 168, 109, 0.2);
-  }
-
-  .light-mode {
-    --bg-body: #f8f8f8;
-    --text-body: #0b0b0b;
-    --bg-card: rgba(255, 255, 255, 0.85);
-    --bg-card-hover: rgba(245, 245, 245, 0.95);
-    --border-card: rgba(11, 11, 11, 0.08);
-    --border-card-hover: rgba(199, 168, 109, 0.45);
-    --text-muted: rgba(11, 11, 11, 0.65);
-    --border-nav: rgba(199, 168, 109, 0.18);
-    --bg-nav: rgba(248, 248, 248, 0.9);
-    --bg-section-muted: rgba(0, 0, 0, 0.02);
-    --border-divider: rgba(0, 0, 0, 0.06);
-  }
-
-  /* Eye Protection Mode: Warm Sepia / Amber low-blue-light spectrum */
-  .eye-protection-mode {
-    --bg-body: #16130F;
-    --text-body: #F4EADA;
-    --bg-card: rgba(29, 24, 19, 0.88);
-    --bg-card-hover: rgba(40, 33, 26, 0.95);
-    --border-card: rgba(212, 175, 55, 0.15);
-    --border-card-hover: rgba(212, 175, 55, 0.45);
-    --text-muted: rgba(220, 203, 180, 0.72);
-    --border-nav: rgba(212, 175, 55, 0.22);
-    --bg-nav: rgba(22, 19, 15, 0.92);
-    --bg-section-muted: rgba(212, 175, 55, 0.04);
-    --border-divider: rgba(212, 175, 55, 0.12);
-    --gold-primary: #D4AF37;
-    --gold-bright: #F5DEB3;
-    --gold-deep: #AA7C2D;
-    --gold-glow: rgba(212, 175, 55, 0.25);
-  }
-
-  .eye-protection-mode img,
-  .eye-protection-mode video {
-    filter: sepia(0.12) brightness(0.96);
   }
 
   body {
@@ -75,14 +34,14 @@
 
 /* Custom Luxury Gold Scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
   background: #0b0b0b;
 }
 ::-webkit-scrollbar-thumb {
   background: rgba(199, 168, 109, 0.35);
-  border-radius: 2px;
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(199, 168, 109, 0.65);
@@ -113,16 +72,16 @@
 
 /* Glass Panels with subtle luxury warmth */
 .luxury-card {
-  background: rgba(17, 17, 17, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(17, 17, 17, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .luxury-card:hover {
-  background: rgba(23, 23, 23, 0.9);
-  border-color: rgba(199, 168, 109, 0.35);
+  background: rgba(23, 23, 23, 0.92);
+  border-color: rgba(199, 168, 109, 0.4);
 }
 
 /* Subtle gold ambient mesh */
@@ -160,4 +119,317 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: goldShimmer 7s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   THEME 1: LIGHT MODE (Crisp White / Alabaster Luxury Interface)
+   ========================================================================== */
+html.light-mode {
+  --bg-body: #ffffff;
+  --text-body: #111827;
+}
+
+html.light-mode body,
+html.light-mode .app-root {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
+/* Background dark utility classes overriden for Light Mode */
+html.light-mode .bg-\[\#0B0B0B\],
+html.light-mode .bg-\[\#0B0B0B\]\/90,
+html.light-mode .bg-\[\#0B0B0B\]\/95,
+html.light-mode .bg-\[\#0E0E0E\],
+html.light-mode .bg-\[\#0E0E0E\]\/80,
+html.light-mode .bg-\[\#0F0F0F\],
+html.light-mode .bg-\[\#111111\],
+html.light-mode .bg-\[\#111111\]\/80,
+html.light-mode .bg-\[\#141414\],
+html.light-mode .bg-\[\#14120D\],
+html.light-mode .bg-\[\#181510\],
+html.light-mode .bg-\[\#231E16\] {
+  background-color: #ffffff !important;
+}
+
+/* Gradients for cards in Light Mode */
+html.light-mode .from-\[\#121915\],
+html.light-mode .from-\[\#14120D\],
+html.light-mode .from-\[\#141414\],
+html.light-mode .from-\[\#181510\],
+html.light-mode .from-\[\#1C1812\],
+html.light-mode .from-\[\#0F0F0F\] {
+  --tw-gradient-from: #ffffff !important;
+}
+
+html.light-mode .via-\[\#0F0F0F\],
+html.light-mode .via-\[\#111111\] {
+  --tw-gradient-via: #fafafa !important;
+}
+
+html.light-mode .to-\[\#0E0E0E\],
+html.light-mode .to-\[\#121212\],
+html.light-mode .to-\[\#14120D\],
+html.light-mode .to-\[\#141414\] {
+  --tw-gradient-to: #f4f4f5 !important;
+}
+
+/* Header & Scrolled Navigation */
+html.light-mode header {
+  background-color: rgba(255, 255, 255, 0.94) !important;
+  border-bottom: 1px solid rgba(199, 168, 109, 0.22) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+}
+
+html.light-mode header.bg-transparent {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Footer in Light Mode */
+html.light-mode footer {
+  background-color: #f8fafc !important;
+  border-top-color: rgba(199, 168, 109, 0.22) !important;
+  color: #475569 !important;
+}
+
+/* Luxury Card in Light Mode */
+html.light-mode .luxury-card {
+  background-color: #ffffff !important;
+  border-color: rgba(199, 168, 109, 0.26) !important;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(199, 168, 109, 0.08) !important;
+}
+
+html.light-mode .luxury-card:hover {
+  background-color: #ffffff !important;
+  border-color: #c7a86d !important;
+  box-shadow: 0 16px 36px -5px rgba(199, 168, 109, 0.2) !important;
+}
+
+/* Typography in Light Mode */
+html.light-mode .text-white {
+  color: #0f172a !important;
+}
+
+html.light-mode .text-slate-100,
+html.light-mode .text-stone-100,
+html.light-mode .text-slate-200,
+html.light-mode .text-stone-200 {
+  color: #1e293b !important;
+}
+
+html.light-mode .text-slate-300,
+html.light-mode .text-stone-300 {
+  color: #334155 !important;
+}
+
+html.light-mode .text-slate-400,
+html.light-mode .text-stone-400 {
+  color: #475569 !important;
+}
+
+html.light-mode .text-slate-500,
+html.light-mode .text-stone-500 {
+  color: #64748b !important;
+}
+
+/* Borders in Light Mode */
+html.light-mode .border-white\/5,
+html.light-mode .border-white\/10,
+html.light-mode .border-white\/15,
+html.light-mode .border-white\/20,
+html.light-mode .border-white\/25 {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Form Controls in Light Mode */
+html.light-mode input,
+html.light-mode textarea,
+html.light-mode select {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: rgba(199, 168, 109, 0.35) !important;
+}
+
+html.light-mode input::placeholder,
+html.light-mode textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Shimmer & Metallic Gold on Light Mode */
+html.light-mode .text-gold-shimmer {
+  background: linear-gradient(
+    90deg,
+    #9E7B3B 0%,
+    #D4AF37 25%,
+    #9E7B3B 50%,
+    #6E511D 75%,
+    #9E7B3B 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+html.light-mode .gold-text-gradient {
+  background: linear-gradient(135deg, #a37c35 0%, #c7a86d 50%, #7c581a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Scrollbar for Light Mode */
+html.light-mode ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+html.light-mode ::-webkit-scrollbar-thumb {
+  background: rgba(199, 168, 109, 0.45);
+}
+
+/* ==========================================================================
+   THEME 2: EYE PROTECTION MODE (Warm Amber / Sepia Low-Blue-Light Spectrum)
+   ========================================================================== */
+html.eye-protection-mode {
+  --bg-body: #17130e;
+  --text-body: #f7efe4;
+}
+
+html.eye-protection-mode body,
+html.eye-protection-mode .app-root {
+  background-color: #17130e !important;
+  color: #f7efe4 !important;
+}
+
+/* Deep warm amber surfaces for Eye Protection */
+html.eye-protection-mode .bg-\[\#0B0B0B\],
+html.eye-protection-mode .bg-\[\#0B0B0B\]\/90,
+html.eye-protection-mode .bg-\[\#0B0B0B\]\/95,
+html.eye-protection-mode .bg-\[\#0E0E0E\],
+html.eye-protection-mode .bg-\[\#0E0E0E\]\/80,
+html.eye-protection-mode .bg-\[\#0F0F0F\] {
+  background-color: #1a1510 !important;
+}
+
+html.eye-protection-mode .bg-\[\#111111\],
+html.eye-protection-mode .bg-\[\#111111\]\/80,
+html.eye-protection-mode .bg-\[\#141414\],
+html.eye-protection-mode .bg-\[\#14120D\],
+html.eye-protection-mode .bg-\[\#181510\],
+html.eye-protection-mode .bg-\[\#231E16\] {
+  background-color: #231c15 !important;
+}
+
+/* Gradients in Eye Protection Mode */
+html.eye-protection-mode .from-\[\#121915\],
+html.eye-protection-mode .from-\[\#14120D\],
+html.eye-protection-mode .from-\[\#141414\],
+html.eye-protection-mode .from-\[\#181510\],
+html.eye-protection-mode .from-\[\#1C1812\],
+html.eye-protection-mode .from-\[\#0F0F0F\] {
+  --tw-gradient-from: #231c15 !important;
+}
+
+html.eye-protection-mode .via-\[\#0F0F0F\],
+html.eye-protection-mode .via-\[\#111111\] {
+  --tw-gradient-via: #1c1711 !important;
+}
+
+html.eye-protection-mode .to-\[\#0E0E0E\],
+html.eye-protection-mode .to-\[\#121212\],
+html.eye-protection-mode .to-\[\#14120D\],
+html.eye-protection-mode .to-\[\#141414\] {
+  --tw-gradient-to: #231c15 !important;
+}
+
+/* Header & Scrolled Navigation */
+html.eye-protection-mode header {
+  background-color: rgba(23, 19, 14, 0.94) !important;
+  border-bottom: 1px solid rgba(229, 199, 136, 0.22) !important;
+  box-shadow: 0 4px 24px rgba(10, 8, 6, 0.6) !important;
+}
+
+html.eye-protection-mode header.bg-transparent {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Footer in Eye Protection Mode */
+html.eye-protection-mode footer {
+  background-color: #130f0a !important;
+  border-top-color: rgba(229, 199, 136, 0.2) !important;
+  color: #c4b59e !important;
+}
+
+/* Luxury Cards in Eye Protection Mode */
+html.eye-protection-mode .luxury-card {
+  background-color: rgba(35, 28, 21, 0.88) !important;
+  border-color: rgba(229, 199, 136, 0.22) !important;
+  box-shadow: 0 10px 30px rgba(12, 9, 6, 0.6) !important;
+}
+
+html.eye-protection-mode .luxury-card:hover {
+  background-color: rgba(44, 35, 27, 0.96) !important;
+  border-color: rgba(229, 199, 136, 0.5) !important;
+}
+
+/* Typography in Eye Protection Mode */
+html.eye-protection-mode .text-white {
+  color: #fbf5eb !important;
+}
+
+html.eye-protection-mode .text-slate-100,
+html.eye-protection-mode .text-stone-100,
+html.eye-protection-mode .text-slate-200,
+html.eye-protection-mode .text-stone-200 {
+  color: #ede3d4 !important;
+}
+
+html.eye-protection-mode .text-slate-300,
+html.eye-protection-mode .text-stone-300 {
+  color: #ded0be !important;
+}
+
+html.eye-protection-mode .text-slate-400,
+html.eye-protection-mode .text-stone-400 {
+  color: #c4b49e !important;
+}
+
+html.eye-protection-mode .text-slate-500,
+html.eye-protection-mode .text-stone-500 {
+  color: #9c8c76 !important;
+}
+
+/* Borders in Eye Protection Mode */
+html.eye-protection-mode .border-white\/5,
+html.eye-protection-mode .border-white\/10,
+html.eye-protection-mode .border-white\/15,
+html.eye-protection-mode .border-white\/20,
+html.eye-protection-mode .border-white\/25 {
+  border-color: rgba(229, 199, 136, 0.12) !important;
+}
+
+/* Form Controls in Eye Protection Mode */
+html.eye-protection-mode input,
+html.eye-protection-mode textarea,
+html.eye-protection-mode select {
+  background-color: #1a1510 !important;
+  color: #f7efe4 !important;
+  border-color: rgba(229, 199, 136, 0.3) !important;
+}
+
+html.eye-protection-mode input::placeholder,
+html.eye-protection-mode textarea::placeholder {
+  color: #8c7e6c !important;
+}
+
+/* Warm Tone Media Filtering in Eye Protection Mode */
+html.eye-protection-mode img,
+html.eye-protection-mode video {
+  filter: sepia(0.14) brightness(0.96);
+}
+
+/* Scrollbar for Eye Protection Mode */
+html.eye-protection-mode ::-webkit-scrollbar-track {
+  background: #17130e;
+}
+html.eye-protection-mode ::-webkit-scrollbar-thumb {
+  background: rgba(229, 199, 136, 0.4);
 }
