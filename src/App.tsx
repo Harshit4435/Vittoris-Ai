@@ -46,6 +46,11 @@ function App() {
   });
   const [isDiscoveryOpen, setIsDiscoveryOpen] = useState(false);
   const [selectedServiceSlug, setSelectedServiceSlug] = useState<string | undefined>(undefined);
+  const [initialClientData, setInitialClientData] = useState<{
+    fullName?: string;
+    businessEmail?: string;
+    companyName?: string;
+  } | undefined>(undefined);
 
   // Initialize unified Lenis smooth scrolling with GSAP ScrollTrigger
   useSmoothScroll();
@@ -75,13 +80,18 @@ function App() {
     });
   };
 
-  const handleOpenDiscovery = (serviceSlug?: string) => {
+  const handleOpenDiscovery = (
+    serviceSlug?: string,
+    clientData?: { fullName?: string; businessEmail?: string; companyName?: string }
+  ) => {
     setSelectedServiceSlug(serviceSlug);
+    setInitialClientData(clientData);
     setIsDiscoveryOpen(true);
   };
 
   const handleCloseDiscovery = () => {
     setIsDiscoveryOpen(false);
+    setInitialClientData(undefined);
   };
 
   return (
@@ -127,7 +137,7 @@ function App() {
             />
             <Route
               path="/contact"
-              element={<Contact onOpenConsultation={() => handleOpenDiscovery()} />}
+              element={<Contact onOpenConsultation={handleOpenDiscovery} />}
             />
             <Route
               path="/admin"
@@ -157,6 +167,7 @@ function App() {
           isOpen={isDiscoveryOpen}
           onClose={handleCloseDiscovery}
           initialServiceSlug={selectedServiceSlug}
+          initialClientData={initialClientData}
         />
       </div>
     </BrowserRouter>

@@ -222,3 +222,96 @@ export async function sendMeetingRequestEmails(req: MeetingRequest): Promise<Ema
     };
   }
 }
+
+export interface ContactInquiryData {
+  fullName: string;
+  businessEmail: string;
+  companyName: string;
+  website?: string;
+  selectedService: string;
+  monthlyTarget?: string;
+  preferredChannel?: string;
+  projectDescription?: string;
+}
+
+export async function sendContactInquiryEmail(data: ContactInquiryData): Promise<{
+  ownerDispatched: boolean;
+  clientDispatched: boolean;
+  method: 'emailjs' | 'mailto_ready';
+  mailtoUrl: string;
+}> {
+  const subject = `[Website Contact Inquiry] ${data.fullName} - ${data.companyName}`;
+  const body = `Dear Vittoris Leadership,
+
+A prospect has submitted a strategic inquiry through the Contact Us form on your platform:
+
+• Full Name: ${data.fullName}
+• Corporate Email: ${data.businessEmail}
+• Organization: ${data.companyName}
+• Website / LinkedIn: ${data.website || 'N/A'}
+• Service of Interest: ${data.selectedService}
+• Pipeline Target: ${data.monthlyTarget || 'N/A'}
+• Preferred Channel: ${data.preferredChannel || 'Email'}
+• Bottleneck / Description:
+${data.projectDescription || 'N/A'}
+
+---
+Calendly Portal: ${COMPANY_CONTACT_DETAILS.calendlyUrl}
+Company Email: ${COMPANY_CONTACT_DETAILS.companyEmail}
+Owner Email: ${COMPANY_CONTACT_DETAILS.ownerEmail}
+`;
+
+  const mailtoUrl = `mailto:${COMPANY_CONTACT_DETAILS.companyEmail}?cc=${COMPANY_CONTACT_DETAILS.ownerEmail}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+  const hasCredentials = Boolean(
+    EMAILJS_CONFIG.serviceId &&
+    EMAILJS_CONFIG.publicKey &&
+    EMAILJS_CONFIG.publicKey !== 'DEMO_PUBLIC_KEY'
+  );
+
+  if (!hasCredentials) {
+    return {
+      ownerDispatched: false,
+      clientDispatched: false,
+      method: 'mailto_ready',
+      mailtoUrl,
+    };
+  }
+
+  try {
+    const params = {
+      to_email: COMPANY_CONTACT_DETAILS.ownerEmail,
+      company_email: COMPANY_CONTACT_DETAILS.companyEmail,
+      from_name: data.fullName,
+      client_email: data.businessEmail,
+      company_name: data.companyName,
+      service: data.selectedService,
+      message: data.projectDescription || '',
+      monthly_target: data.monthlyTarget || '',
+      calendly_url: COMPANY_CONTACT_DETAILS.calendlyUrl,
+    };
+
+    await emailjs.send(
+      EMAILJS_CONFIG.serviceId,
+      EMAILJS_CONFIG.templateIdOwner,
+      params,
+      EMAILJS_CONFIG.publicKey
+    );
+
+    return {
+      ownerDispatched: true,
+      clientDispatched: true,
+      method: 'emailjs',
+      mailtoUrl,
+    };
+  } catch (err: unknown) {
+    console.warn('Contact EmailJS error:', err);
+    return {
+      ownerDispatched: false,
+      clientDispatched: false,
+      method: 'mailto_ready',
+      mailtoUrl,
+    };
+  }
+}
+

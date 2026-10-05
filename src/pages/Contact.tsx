@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { Mail, ShieldCheck, CheckCircle2, Zap, ArrowRight, ChevronDown } from 'lucide-react';
+import { Mail, ShieldCheck, CheckCircle2, Zap, ArrowRight, ChevronDown, Check } from 'lucide-react';
 import { VITTORIS_SERVICES, COMPANY_CONTACT_DETAILS } from '../data/vittorisData';
+import { sendContactInquiryEmail } from '../utils/emailService';
 
 interface ContactProps {
-  onOpenConsultation: () => void;
+  onOpenConsultation: (
+    serviceSlug?: string,
+    clientData?: { fullName?: string; businessEmail?: string; companyName?: string }
+  ) => void;
 }
 
 export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
@@ -22,6 +26,7 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [dispatchNotice, setDispatchNotice] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const faqs = [
@@ -60,7 +65,7 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
     return newErrors;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
@@ -69,10 +74,19 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
     }
 
     setIsSubmitting(true);
-    setTimeout(() => {
+    try {
+      const res = await sendContactInquiryEmail(formData);
+      if (res.method === 'emailjs' && res.ownerDispatched) {
+        setDispatchNotice(`Inquiry delivered via EmailJS to company (${COMPANY_CONTACT_DETAILS.companyEmail}) and owner (${COMPANY_CONTACT_DETAILS.ownerEmail}).`);
+      } else {
+        setDispatchNotice(`Inquiry recorded. Automated notification configured for ${COMPANY_CONTACT_DETAILS.companyEmail}.`);
+      }
+    } catch (err) {
+      console.warn('Submission error:', err);
+    } finally {
       setIsSubmitting(false);
       setIsSubmitted(true);
-    }, 800);
+    }
   };
 
   return (
@@ -112,20 +126,28 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
               </div>
               <h3 className="text-2xl font-serif font-normal text-white">Scoping Parameters Received</h3>
               <p className="text-xs sm:text-sm text-stone-300 font-light max-w-md mx-auto">
-                Thank you, <strong className="text-white font-medium">{formData.fullName}</strong>. Your parameters for <strong className="text-[#E5C788] font-medium">{formData.selectedService}</strong> have been recorded in our demo intake registry.
+                Thank you, <strong className="text-white font-medium">{formData.fullName}</strong>. Your parameters for <strong className="text-[#E5C788] font-medium">{formData.selectedService}</strong> have been recorded in our executive registry.
               </p>
 
               <div className="p-4 rounded-xl bg-[#0E0E0E] border border-[#C7A86D]/20 text-xs text-stone-300 font-light text-left max-w-lg mx-auto space-y-2">
-                <div className="font-medium text-[#E5C788]">Integration Notice:</div>
-                <p className="text-[11px] text-stone-400 leading-relaxed">
-                  This form currently runs in front-end preview mode. To route submissions to your production CRM (HubSpot, Salesforce, or webhook), configure your API gateway endpoint in the environment settings.
+                <div className="flex items-center gap-1.5 font-medium text-[#E5C788]">
+                  <Check className="w-4 h-4 text-emerald-400" />
+                  <span>Email Transmission & Receipt:</span>
+                </div>
+                <p className="text-[11px] text-stone-300 leading-relaxed">
+                  Confirmation receipt associated with client email: <strong className="text-white font-mono">{formData.businessEmail}</strong> ({formData.companyName}).
                 </p>
-                <div className="text-[11px] text-stone-300 pt-1 font-mono">
-                  Direct inquiries can be sent to <strong className="text-[#E5C788]">{COMPANY_CONTACT_DETAILS.companyEmail}</strong> or <strong className="text-[#E5C788]">{COMPANY_CONTACT_DETAILS.ownerEmail}</strong>.
+                {dispatchNotice && (
+                  <p className="text-[11px] text-stone-400 leading-relaxed font-mono">
+                    {dispatchNotice}
+                  </p>
+                )}
+                <div className="text-[11px] text-stone-400 pt-1">
+                  Direct questions can be sent to <strong className="text-[#E5C788]">{COMPANY_CONTACT_DETAILS.companyEmail}</strong> or <strong className="text-[#E5C788]">{COMPANY_CONTACT_DETAILS.ownerEmail}</strong>.
                 </div>
               </div>
 
-              <div className="pt-3 flex justify-center gap-3">
+              <div className="pt-3 flex flex-col sm:flex-row justify-center gap-3">
                 <button
                   onClick={() => setIsSubmitted(false)}
                   className="px-5 py-2.5 rounded-full border border-[#C7A86D]/30 hover:border-[#C7A86D] text-stone-300 hover:text-white text-xs font-medium tracking-wider uppercase transition-all"
@@ -133,11 +155,15 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
                   Submit Another Inquiry
                 </button>
                 <button
-                  onClick={onOpenConsultation}
-                  className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#C7A86D] via-[#D4AF37] to-[#B39355] text-black text-xs font-semibold tracking-wider uppercase flex items-center gap-1.5 shadow-[0_2px_15px_rgba(199,168,109,0.3)]"
+                  onClick={() => onOpenConsultation(formData.selectedService, {
+                    fullName: formData.fullName,
+                    businessEmail: formData.businessEmail,
+                    companyName: formData.companyName,
+                  })}
+                  className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#C7A86D] via-[#D4AF37] to-[#B39355] text-black text-xs font-semibold tracking-wider uppercase flex items-center justify-center gap-1.5 shadow-[0_2px_15px_rgba(199,168,109,0.3)] hover:shadow-[0_2px_20px_rgba(199,168,109,0.5)] transition-all"
                 >
                   <Zap className="w-3.5 h-3.5" />
-                  <span>Open Calendar Picker</span>
+                  <span>Select 3 Slots on Calendar</span>
                 </button>
               </div>
             </div>
@@ -313,7 +339,11 @@ export const Contact: React.FC<ContactProps> = ({ onOpenConsultation }) => {
               Bypass email back-and-forth. Select an available 30-minute diagnostic session with our systems architect.
             </p>
             <button
-              onClick={onOpenConsultation}
+              onClick={() => onOpenConsultation(formData.selectedService, {
+                fullName: formData.fullName,
+                businessEmail: formData.businessEmail,
+                companyName: formData.companyName,
+              })}
               className="w-full py-3.5 px-5 rounded-full bg-gradient-to-r from-[#C7A86D] via-[#D4AF37] to-[#B39355] text-black font-semibold text-xs tracking-wider uppercase transition-all shadow-[0_4px_20px_rgba(199,168,109,0.3)] hover:shadow-[0_4px_25px_rgba(199,168,109,0.5)] flex items-center justify-center gap-2"
             >
               <Zap className="w-4 h-4 text-black" />

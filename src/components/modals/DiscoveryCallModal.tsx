@@ -45,12 +45,18 @@ interface DiscoveryCallModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialServiceSlug?: string;
+  initialClientData?: {
+    fullName?: string;
+    businessEmail?: string;
+    companyName?: string;
+  };
 }
 
 export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
   isOpen,
   onClose,
   initialServiceSlug,
+  initialClientData,
 }) => {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [isReviewingStep1, setIsReviewingStep1] = useState(false);
@@ -76,9 +82,9 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
   const [emailResult, setEmailResult] = useState<EmailDispatchResult | null>(null);
 
   const [formData, setFormData] = useState({
-    fullName: '',
-    businessEmail: '',
-    companyName: '',
+    fullName: initialClientData?.fullName || '',
+    businessEmail: initialClientData?.businessEmail || '',
+    companyName: initialClientData?.companyName || '',
     website: '',
     selectedService: initialServiceSlug || 'pay-per-appointment',
     currentRevenue: '$50k - $250k / mo',
