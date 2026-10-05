@@ -1,11 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { 
   X, CheckCircle2, ArrowRight, ArrowLeft, ShieldCheck, Sparkles, Building, Mail, User, Globe, FileText, 
-  ExternalLink, Calendar, Clock, Check, Send, AlertCircle, RefreshCw, UserCheck, XCircle, 
-  Download, CalendarPlus, ChevronRight, CheckSquare, Square, Lock, CalendarCheck
+  ExternalLink, Calendar, Clock, Check, Send, AlertCircle, UserCheck, XCircle, 
+  Download, CalendarPlus, ChevronRight, Lock, CalendarCheck, AlertTriangle
 } from 'lucide-react';
 import { VITTORIS_SERVICES, COMPANY_CONTACT_DETAILS } from '../../data/vittorisData';
+import { 
+  createMeetingRequest, 
+  approveMeetingSlot, 
+  declineMeetingRequest, 
+  getMeetingRequests, 
+  isSlotLocked, 
+  getSlotLockDetails, 
+  validateProposedSlots, 
+  subscribeMeetingUpdates 
+} from '../../utils/meetingScheduler';
+import type { MeetingSlot, MeetingRequest } from '../../utils/meetingScheduler';
+
 
 const TIMEZONE_OPTIONS = [
   { value: 'America/New_York', label: 'EST / EDT — US Eastern Time' },
@@ -24,6 +37,12 @@ const TIME_SLOT_OPTIONS = [
   '06:00 PM', '06:30 PM', '07:00 PM'
 ];
 
+const getFutureDate = (daysAhead: number): string => {
+  const d = new Date();
+  d.setDate(d.getDate() + daysAhead);
+  return d.toISOString().split('T')[0];
+};
+
 interface DiscoveryCallModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -38,21 +57,23 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [isReviewingStep1, setIsReviewingStep1] = useState(false);
   const [isConfirmingSlots, setIsConfirmingSlots] = useState(false);
-  const [bookingMode, setBookingMode] = useState<'instant_calendly' | 'propose_slots'>('instant_calendly');
+  const [bookingMode, setBookingMode] = useState<'propose_slots' | 'instant_calendly'>('propose_slots');
   const [selectedTimezone, setSelectedTimezone] = useState<string>(
     COMPANY_CONTACT_DETAILS.defaultTimezone || 'America/New_York'
   );
 
-  const [proposedSlots, setProposedSlots] = useState([
-    { id: 1, label: 'Slot 1 (Primary Preference)', date: '2026-10-08', time: '10:00 AM' },
-    { id: 2, label: 'Slot 2 (Alternative 1)', date: '2026-10-09', time: '02:00 PM' },
-    { id: 3, label: 'Slot 3 (Alternative 2)', date: '2026-10-10', time: '11:30 AM' },
+  // 3 distinct candidate slots
+  const [proposedSlots, setProposedSlots] = useState<MeetingSlot[]>([
+    { id: 1, label: 'Slot 1 (Primary Preference)', date: getFutureDate(2), time: '10:00 AM' },
+    { id: 2, label: 'Slot 2 (Alternative 1)', date: getFutureDate(3), time: '02:00 PM' },
+    { id: 3, label: 'Slot 3 (Alternative 2)', date: getFutureDate(5), time: '11:30 AM' },
   ]);
 
-  // Owner Decision States:
-  const [selectedSlotForDecision, setSelectedSlotForDecision] = useState<number | null>(null);
-  const [ownerDecisionStatus, setOwnerDecisionStatus] = useState<'pending' | 'confirming' | 'confirmed' | 'declined'>('pending');
-  const [ownerPermissionGranted, setOwnerPermissionGranted] = useState(false);
+  // Request & Schedule State
+  const [currentRequestId, setCurrentRequestId] = useState<string | null>(null);
+  const [activeRequest, setActiveRequest] = useState<MeetingRequest | null>(null);
+  const [, setScheduleTick] = useState<number>(0);
+  const [slotValidationError, setSlotValidationError] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -68,15 +89,31 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
     notes: '',
   });
 
+  // Sync locked slots and active request updates when schedule changes
+  useEffect(() => {
+    const unsub = subscribeMeetingUpdates(() => {
+      setScheduleTick(t => t + 1);
+      if (currentRequestId) {
+        const allReqs = getMeetingRequests();
+        const match = allReqs.find(r => r.id === currentRequestId);
+        if (match) {
+          setActiveRequest(match);
+        }
+      }
+    });
+    return () => unsub();
+  }, [currentRequestId]);
+
 
   const handleSlotChange = (id: number, field: 'date' | 'time', value: string) => {
+    setSlotValidationError(null);
     setProposedSlots(prev =>
       prev.map(slot => (slot.id === id ? { ...slot, [field]: value } : slot))
     );
   };
 
   const getCalendlyUrl = (specificDate?: string) => {
-    const raw = COMPANY_CONTACT_DETAILS.calendlyUrl || 'https://calendly.com/udayzayn/meetings';
+    const raw = COMPANY_CONTACT_DETAILS.calendlyUrl || 'https://calendly.com/tharshit2257/meetings';
     try {
       const url = new URL(raw);
       url.searchParams.set('hide_landing_page_details', '1');
@@ -105,7 +142,6 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
     const handleCalendlyMessage = (e: MessageEvent) => {
       if (e.data && typeof e.data.event === 'string' && e.data.event.indexOf('calendly.event_scheduled') === 0) {
         setBookingMode('instant_calendly');
-        setOwnerDecisionStatus('confirmed');
         setStep(3);
       }
     };
@@ -121,27 +157,88 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
     setStep(1);
     setIsReviewingStep1(false);
     setIsConfirmingSlots(false);
-    setOwnerDecisionStatus('pending');
-    setSelectedSlotForDecision(null);
-    setOwnerPermissionGranted(false);
+    setCurrentRequestId(null);
+    setActiveRequest(null);
+    setSlotValidationError(null);
     setIsSending(false);
     onClose();
   };
 
   // Helper variables
   const tzLabel = TIMEZONE_OPTIONS.find(t => t.value === selectedTimezone)?.label.split('—')[0].trim() || 'EST';
-  const currentSlot = proposedSlots.find(s => s.id === selectedSlotForDecision) || proposedSlots[0];
   const selectedServiceObj = VITTORIS_SERVICES.find(s => s.slug === formData.selectedService) || VITTORIS_SERVICES[0];
 
-  const getGoogleCalendarUrl = (slot: { date: string; time: string }) => {
-    const title = `Vittoris AI Architecture Consultation - ${formData.companyName || 'Corporate Client'}`;
-    const details = `Confirmed AI Architecture Diagnostic Session with ${formData.fullName || 'Candidate'}.\n\nConfirmed Time: ${slot.date} at ${slot.time} (${tzLabel})\nPlatform: Google Meet (https://meet.google.com/vit-arch-call)\nOwner Email: ${COMPANY_CONTACT_DETAILS.ownerEmail}\nClient Email: ${formData.businessEmail}\nCalendly: ${COMPANY_CONTACT_DETAILS.calendlyUrl}`;
-    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&details=${encodeURIComponent(details)}&location=${encodeURIComponent('Google Meet (https://meet.google.com/vit-arch-call)')}`;
+  // Validate slots before proceeding to checkpoint
+  const handleProceedToSlotConfirm = () => {
+    const val = validateProposedSlots(proposedSlots);
+    if (!val.isValid) {
+      setSlotValidationError(val.error || 'Please resolve slot conflicts before proceeding.');
+      return;
+    }
+    setSlotValidationError(null);
+    setIsConfirmingSlots(true);
   };
 
-  const handleDownloadIcs = (slot: { date: string; time: string }) => {
+  // Submit request to company admin
+  const handleDispatchThreeSlots = () => {
+    const val = validateProposedSlots(proposedSlots);
+    if (!val.isValid) {
+      setSlotValidationError(val.error || 'Please resolve slot conflicts before submitting.');
+      setIsConfirmingSlots(false);
+      return;
+    }
+
+    setSlotValidationError(null);
+    setIsConfirmingSlots(false);
+    setIsSending(true);
+
+    const newReq = createMeetingRequest({
+      client: formData,
+      timezone: selectedTimezone,
+      timezoneLabel: tzLabel,
+      proposedSlots: proposedSlots,
+    });
+
+    setCurrentRequestId(newReq.id);
+    setActiveRequest(newReq);
+    setIsSending(false);
+    setStep(3);
+  };
+
+  // Admin In-Modal Actions
+  const handleAdminApprove = (slotId: number) => {
+    if (!currentRequestId) return;
+    const updated = approveMeetingSlot(currentRequestId, slotId);
+    if (updated) {
+      setActiveRequest(updated);
+    }
+  };
+
+  const handleAdminDecline = () => {
+    if (!currentRequestId) return;
+    const updated = declineMeetingRequest(
+      currentRequestId,
+      'Conflicting executive leadership obligations during these windows. Please propose alternative days or times.'
+    );
+    if (updated) {
+      setActiveRequest(updated);
+    }
+  };
+
+  // Calendar Helpers
+  const confirmedSlot = activeRequest?.approvedSlot || proposedSlots[0];
+  const isApproved = activeRequest?.status === 'approved';
+  const isDeclined = activeRequest?.status === 'declined';
+
+  const getGoogleCalendarUrl = (slot: MeetingSlot) => {
+    const title = `Confirmed: Vittoris AI Consultation - ${formData.companyName || 'Executive Session'}`;
+    const details = `Confirmed AI Diagnostic Consultation with ${formData.fullName || 'Candidate'}.\n\nConfirmed Slot: ${slot.date} at ${slot.time} (${tzLabel})\nPlatform: Google Meet (${activeRequest?.googleMeetLink || 'https://meet.google.com/vit-session-call'})\nCompany Admin: ${COMPANY_CONTACT_DETAILS.ownerEmail}\nClient Email: ${formData.businessEmail}\nDouble-Booking Status: Exclusively Locked on Master Calendar`;
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&details=${encodeURIComponent(details)}&location=${encodeURIComponent('Google Meet')}`;
+  };
+
+  const handleDownloadIcs = (slot: MeetingSlot) => {
     const title = `Vittoris Consultation - ${formData.companyName || 'Client'}`;
-    const description = `Vittoris AI Architecture Consultation with ${formData.fullName || 'Candidate'}.\nConfirmed: ${slot.date} at ${slot.time} (${tzLabel}).\nGoogle Meet: https://meet.google.com/vit-arch-call\nOwner: ${COMPANY_CONTACT_DETAILS.ownerEmail}`;
+    const description = `Vittoris AI Architecture Consultation with ${formData.fullName || 'Candidate'}.\nConfirmed Time: ${slot.date} at ${slot.time} (${tzLabel}).\nGoogle Meet: ${activeRequest?.googleMeetLink || 'https://meet.google.com/vit-session-call'}\nCompany Admin: ${COMPANY_CONTACT_DETAILS.ownerEmail}\nLocked: Exclusive Session`;
     const icsContent = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
@@ -149,7 +246,7 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
       'BEGIN:VEVENT',
       `SUMMARY:${title}`,
       `DESCRIPTION:${description}`,
-      'LOCATION:Google Meet: https://meet.google.com/vit-arch-call',
+      'LOCATION:Google Meet',
       'STATUS:CONFIRMED',
       'END:VEVENT',
       'END:VCALENDAR'
@@ -159,20 +256,11 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `vittoris-discovery-${slot.date}.ics`;
+    link.download = `vittoris-meeting-${slot.date}.ics`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-  };
-
-  const handleConfirmSchedule = () => {
-    if (!ownerPermissionGranted) return;
-    setIsSending(true);
-    setTimeout(() => {
-      setIsSending(false);
-      setOwnerDecisionStatus('confirmed');
-    }, 450);
   };
 
   if (!isOpen) return null;
@@ -192,7 +280,7 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
           className="fixed inset-0 bg-black/85 backdrop-blur-md"
         />
 
-        {/* Modal Window: Fixed max height & flex col so header/close button never disappear */}
+        {/* Modal Window */}
         <motion.div
           initial={{ opacity: 0, scale: 0.96, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -223,7 +311,7 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                 Schedule an AI Architecture Consultation
               </h3>
               <p className="text-xs text-slate-400 font-light leading-relaxed">
-                Review your current sales funnel, examine operational bottlenecks, and evaluate fit for Vittoris outcome-driven systems.
+                Choose 3 preferred time slots. Our executive admin verifies calendar availability to prevent double-booking, then confirms and locks your session.
               </p>
             </div>
 
@@ -231,22 +319,22 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
             <div className="flex items-center justify-between pt-1">
               <div className={`flex items-center gap-2 text-xs uppercase tracking-wider font-semibold ${step >= 1 ? 'text-[#C7A86D]' : 'text-slate-500'}`}>
                 <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono ${step >= 1 ? 'bg-[#C7A86D] text-black font-bold' : 'bg-white/5 text-slate-400'}`}>1</span>
-                <span>Scoping</span>
+                <span>1. Scoping</span>
               </div>
               <div className="h-[1px] w-8 sm:w-16 bg-white/10" />
               <div className={`flex items-center gap-2 text-xs uppercase tracking-wider font-semibold ${step >= 2 ? 'text-[#C7A86D]' : 'text-slate-500'}`}>
                 <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono ${step >= 2 ? 'bg-[#C7A86D] text-black font-bold' : 'bg-white/5 text-slate-400'}`}>2</span>
-                <span>Calendar (EST)</span>
+                <span>2. Choose 3 Slots</span>
               </div>
               <div className="h-[1px] w-8 sm:w-16 bg-white/10" />
               <div className={`flex items-center gap-2 text-xs uppercase tracking-wider font-semibold ${step === 3 ? 'text-[#C7A86D]' : 'text-slate-500'}`}>
                 <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono ${step === 3 ? 'bg-[#C7A86D] text-black font-bold' : 'bg-white/5 text-slate-400'}`}>3</span>
-                <span>Owner Permission</span>
+                <span>3. Admin Approval & Lock</span>
               </div>
             </div>
           </div>
 
-          {/* Scrollable Modal Content (data-lenis-prevent and overscroll-contain) */}
+          {/* Scrollable Modal Content */}
           <div 
             className="flex-1 overflow-y-auto overscroll-contain p-5 sm:p-7 space-y-6"
             data-lenis-prevent
@@ -378,7 +466,7 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                       rows={2}
                       value={formData.notes}
                       onChange={handleInputChange}
-                      placeholder="e.g., Reps spend too much time chasing unvetted leads; need automated booking & document intelligence."
+                      placeholder="e.g., Need bespoke pay-per-meeting acquisition system and AI document ingestion pipeline."
                       className="w-full bg-[#141414] border border-white/10 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#C7A86D] transition-colors"
                     />
                   </div>
@@ -394,14 +482,14 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                     type="submit"
                     className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-[#C7A86D] via-[#D4AF37] to-[#B39355] text-black font-semibold text-xs uppercase tracking-wider transition-all duration-300 shadow-lg shadow-[#C7A86D]/20 hover:brightness-110 cursor-pointer"
                   >
-                    <span>Proceed to Calendar</span>
+                    <span>Proceed to 3-Slot Selection</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
               </form>
             )}
 
-            {/* Step 1 Checkpoint: Explicit Confirmation of Scoping Details */}
+            {/* Step 1 Checkpoint: Review Scoping Details */}
             {step === 1 && isReviewingStep1 && (
               <div className="space-y-4 animate-fadeIn">
                 <div className="p-4 rounded-2xl bg-[#181510] border border-[#C7A86D]/50 text-left space-y-3.5 shadow-xl">
@@ -414,7 +502,7 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                   </div>
 
                   <p className="text-xs text-slate-300 font-light">
-                    Please confirm that your scoping parameters are accurate before proceeding to the availability calendar:
+                    Please confirm that your scoping parameters are accurate before proceeding to the 3-slot availability selection:
                   </p>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 bg-black/60 p-3.5 rounded-xl border border-white/5 text-xs">
@@ -469,7 +557,7 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                       }}
                       className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-gradient-to-r from-[#C7A86D] via-[#D4AF37] to-[#B39355] text-black font-semibold text-xs uppercase tracking-wider transition-all duration-300 shadow-lg shadow-[#C7A86D]/20 hover:brightness-110 flex items-center justify-center gap-2 cursor-pointer"
                     >
-                      <span>Confirm Details & Select Slots</span>
+                      <span>Confirm & Choose 3 Slots</span>
                       <ArrowRight className="w-4 h-4" />
                     </button>
                   </div>
@@ -477,25 +565,13 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
               </div>
             )}
 
-            {/* Step 2: Scheduling (3-Slot Proposal or Instant Calendly) */}
+            {/* Step 2: Choose 3 Time Slots (Company Admin Permission Flow) */}
             {step === 2 && !isConfirmingSlots && (
               <div className="space-y-5 animate-fadeIn">
                 {/* Mode Selector & Timezone Bar */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-2xl bg-[#141414] border border-[#C7A86D]/25">
                   {/* Mode switcher tabs */}
                   <div className="flex items-center gap-1.5 p-1 bg-black/50 rounded-xl border border-white/5 text-[11px]">
-                    <button
-                      type="button"
-                      onClick={() => setBookingMode('instant_calendly')}
-                      className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
-                        bookingMode === 'instant_calendly'
-                          ? 'bg-[#C7A86D] text-black font-semibold shadow-sm'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      <Calendar className="w-3.5 h-3.5" />
-                      <span>Instant Calendly Sync (Live Confirmation)</span>
-                    </button>
                     <button
                       type="button"
                       onClick={() => setBookingMode('propose_slots')}
@@ -506,7 +582,19 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                       }`}
                     >
                       <Clock className="w-3.5 h-3.5" />
-                      <span>Propose 3 Slots (Owner Review)</span>
+                      <span>Choose 3 Slots (Admin Permission & Calendar Lock)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBookingMode('instant_calendly')}
+                      className={`px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                        bookingMode === 'instant_calendly'
+                          ? 'bg-[#C7A86D] text-black font-semibold shadow-sm'
+                          : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      <Calendar className="w-3.5 h-3.5" />
+                      <span>Direct Calendly</span>
                     </button>
                   </div>
 
@@ -528,64 +616,106 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                   </div>
                 </div>
 
-                {/* Sub-view A: Propose 3 Slots */}
+                {/* Sub-view A: Propose 3 Slots (Main Feature Requested by User) */}
                 {bookingMode === 'propose_slots' && (
                   <div className="space-y-4">
-                    <div className="p-3.5 rounded-xl bg-[#C7A86D]/10 border border-[#C7A86D]/25 text-xs text-slate-300 flex items-start gap-2">
+                    <div className="p-3.5 rounded-xl bg-[#C7A86D]/10 border border-[#C7A86D]/25 text-xs text-slate-300 flex items-start gap-2.5">
                       <Sparkles className="w-4 h-4 text-[#C7A86D] shrink-0 mt-0.5" />
-                      <div>
-                        <strong className="text-white">Owner Decision Protocol:</strong> Please provide 3 convenient time windows. These will be forwarded directly to the owner (<strong className="text-[#E5C788]">{COMPANY_CONTACT_DETAILS.ownerEmail}</strong>). The owner selects one of your 3 slots and grants booking permission, and both parties immediately receive the official calendar invite & meeting credentials.
+                      <div className="leading-relaxed">
+                        <strong className="text-white">Double-Booking Prevention Protocol:</strong> Please select <strong>3 distinct time windows</strong>. These slots are submitted to the company admin (<strong className="text-[#E5C788]">{COMPANY_CONTACT_DETAILS.ownerEmail}</strong>). Once the admin reviews and approves 1 slot, that exact time is locked on the master calendar so <strong>no other interview will be scheduled</strong> during that time.
                       </div>
                     </div>
 
-                    {/* 3 Slot Input Cards */}
+                    {/* Validation Error Banner */}
+                    {slotValidationError && (
+                      <div className="p-3.5 rounded-xl bg-rose-950/70 border border-rose-500/60 text-rose-200 text-xs flex items-center gap-2.5 animate-fadeIn">
+                        <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                        <span>{slotValidationError}</span>
+                      </div>
+                    )}
+
+                    {/* 3 Slot Selection Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-                      {proposedSlots.map((slot) => (
-                        <div
-                          key={slot.id}
-                          className="p-4 rounded-2xl bg-[#141414] border border-white/10 hover:border-[#C7A86D]/40 transition-colors space-y-3 relative overflow-hidden"
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-semibold tracking-wider uppercase text-[#C7A86D] flex items-center gap-1">
-                              <Clock className="w-3 h-3" /> Slot {slot.id}
-                            </span>
-                            <span className="text-[9px] px-2 py-0.5 rounded-full bg-white/5 text-slate-400 font-mono">
-                              {slot.id === 1 ? 'Primary' : slot.id === 2 ? 'Backup 1' : 'Backup 2'}
-                            </span>
-                          </div>
+                      {proposedSlots.map((slot) => {
+                        const isConflict = isSlotLocked(slot.date, slot.time);
+                        const lockInfo = isConflict ? getSlotLockDetails(slot.date, slot.time) : undefined;
 
-                          <div className="space-y-2">
-                            <div>
-                              <label className="block text-[10px] uppercase tracking-wider text-slate-400 mb-1">
-                                Date
-                              </label>
-                              <input
-                                type="date"
-                                value={slot.date}
-                                onChange={(e) => handleSlotChange(slot.id, 'date', e.target.value)}
-                                className="w-full bg-black/60 border border-white/10 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-[#C7A86D]"
-                              />
+                        return (
+                          <div
+                            key={slot.id}
+                            className={`p-4 rounded-2xl bg-[#141414] border transition-colors space-y-3 relative overflow-hidden ${
+                              isConflict
+                                ? 'border-rose-500/70 bg-rose-950/20'
+                                : 'border-white/10 hover:border-[#C7A86D]/40'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] font-semibold tracking-wider uppercase text-[#C7A86D] flex items-center gap-1">
+                                <Clock className="w-3 h-3" /> Slot {slot.id}
+                              </span>
+                              <span className="text-[9px] px-2 py-0.5 rounded-full bg-white/5 text-slate-400 font-mono">
+                                {slot.id === 1 ? 'Primary Preference' : slot.id === 2 ? 'Backup 1' : 'Backup 2'}
+                              </span>
                             </div>
 
-                            <div>
-                              <label className="block text-[10px] uppercase tracking-wider text-slate-400 mb-1">
-                                Time ({tzLabel})
-                              </label>
-                              <select
-                                value={slot.time}
-                                onChange={(e) => handleSlotChange(slot.id, 'time', e.target.value)}
-                                className="w-full bg-black/60 border border-white/10 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-[#C7A86D]"
-                              >
-                                {TIME_SLOT_OPTIONS.map((timeOpt) => (
-                                  <option key={timeOpt} value={timeOpt} className="bg-[#141414] text-white">
-                                    {timeOpt}
-                                  </option>
-                                ))}
-                              </select>
+                            <div className="space-y-2">
+                              <div>
+                                <label className="block text-[10px] uppercase tracking-wider text-slate-400 mb-1">
+                                  Date
+                                </label>
+                                <input
+                                  type="date"
+                                  value={slot.date}
+                                  onChange={(e) => handleSlotChange(slot.id, 'date', e.target.value)}
+                                  className="w-full bg-black/60 border border-white/10 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-[#C7A86D]"
+                                />
+                              </div>
+
+                              <div>
+                                <label className="block text-[10px] uppercase tracking-wider text-slate-400 mb-1">
+                                  Time ({tzLabel})
+                                </label>
+                                <select
+                                  value={slot.time}
+                                  onChange={(e) => handleSlotChange(slot.id, 'time', e.target.value)}
+                                  className="w-full bg-black/60 border border-white/10 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-[#C7A86D]"
+                                >
+                                  {TIME_SLOT_OPTIONS.map((timeOpt) => {
+                                    const optionLocked = isSlotLocked(slot.date, timeOpt);
+                                    return (
+                                      <option 
+                                        key={timeOpt} 
+                                        value={timeOpt} 
+                                        className={optionLocked ? 'bg-[#2A1010] text-rose-300' : 'bg-[#141414] text-white'}
+                                      >
+                                        {timeOpt} {optionLocked ? '(Locked by Interview)' : ''}
+                                      </option>
+                                    );
+                                  })}
+                                </select>
+                              </div>
                             </div>
+
+                            {/* Collision Alert Indicator */}
+                            {isConflict ? (
+                              <div className="p-2 rounded-lg bg-rose-950/70 border border-rose-500/50 text-[10px] text-rose-200 space-y-0.5">
+                                <div className="font-semibold flex items-center gap-1 text-rose-300">
+                                  <Lock className="w-3 h-3 text-rose-400" />
+                                  <span>Slot Unavailable</span>
+                                </div>
+                                <div>
+                                  Confirmed interview already locked {lockInfo?.companyName ? `for ${lockInfo.companyName}` : ''}. Please pick another time.
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="text-[10px] text-emerald-400/80 font-mono flex items-center gap-1">
+                                <Check className="w-3 h-3" />
+                                <span>Window currently available</span>
+                              </div>
+                            )}
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
 
                     <div className="flex items-center justify-between pt-2">
@@ -599,10 +729,10 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
 
                       <button
                         type="button"
-                        onClick={() => setIsConfirmingSlots(true)}
+                        onClick={handleProceedToSlotConfirm}
                         className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-[#C7A86D] via-[#D4AF37] to-[#B39355] text-black font-semibold text-xs uppercase tracking-wider transition-all duration-300 shadow-lg shadow-[#C7A86D]/25 hover:brightness-110 cursor-pointer"
                       >
-                        <span>Submit 3 Slots for Owner Review</span>
+                        <span>Review & Submit 3 Slots</span>
                         <Send className="w-3.5 h-3.5" />
                       </button>
                     </div>
@@ -615,7 +745,7 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-xl bg-[#141414] border border-[#C7A86D]/20 text-xs">
                       <div className="flex items-center gap-2 text-stone-300">
                         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                        <span>Owner Live Calendar Sync • Formatted for <strong>{tzLabel}</strong></span>
+                        <span>Admin Live Calendar Sync • Formatted for <strong>{tzLabel}</strong></span>
                       </div>
                       <a
                         href={getCalendlyUrl()}
@@ -663,7 +793,7 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
               </div>
             )}
 
-            {/* Step 2 Checkpoint: Explicit Confirmation of the 3 Selected Slots */}
+            {/* Step 2 Checkpoint: Confirm the 3 Selected Slots */}
             {step === 2 && isConfirmingSlots && (
               <div className="space-y-4 animate-fadeIn">
                 <div className="p-4 rounded-2xl bg-[#181510] border border-[#C7A86D]/50 text-left space-y-3.5 shadow-xl">
@@ -672,11 +802,11 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                       <CalendarCheck className="w-4 h-4 text-[#C7A86D]" />
                       <span>Step 2 Confirmation: Confirm 3 Availability Windows ({tzLabel})</span>
                     </div>
-                    <span className="text-[10px] text-slate-400 font-mono">Dispatch Checkpoint</span>
+                    <span className="text-[10px] text-slate-400 font-mono">Permission Request Checkpoint</span>
                   </div>
 
                   <p className="text-xs text-slate-300 font-light">
-                    Are you ready to send these 3 proposed consultation times to the owner (<strong className="text-[#E5C788]">{COMPANY_CONTACT_DETAILS.ownerEmail}</strong>) for review and permission approval?
+                    You are transmitting these 3 proposed consultation times to company admin (<strong className="text-[#E5C788]">{COMPANY_CONTACT_DETAILS.ownerEmail}</strong>) for review and calendar locking:
                   </p>
 
                   <div className="space-y-2 bg-black/60 p-3.5 rounded-xl border border-white/5 text-xs">
@@ -699,9 +829,9 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                   </div>
 
                   <div className="p-2.5 rounded-xl bg-black/40 border border-white/5 text-[11px] text-slate-300 space-y-1">
-                    <div><strong>Recipient:</strong> {COMPANY_CONTACT_DETAILS.ownerEmail}</div>
-                    <div><strong>Calendly Account:</strong> {COMPANY_CONTACT_DETAILS.calendlyUrl}</div>
-                    <div><strong>Client / Candidate:</strong> {formData.fullName} ({formData.businessEmail})</div>
+                    <div><strong>Company Admin Recipient:</strong> {COMPANY_CONTACT_DETAILS.ownerEmail}</div>
+                    <div><strong>Client / Organization:</strong> {formData.fullName} • {formData.companyName} ({formData.businessEmail})</div>
+                    <div><strong>Policy:</strong> When approved, the selected slot will be permanently locked so no other client can book it.</div>
                   </div>
 
                   <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
@@ -711,18 +841,16 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                       className="w-full sm:w-auto px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                     >
                       <ArrowLeft className="w-3.5 h-3.5" />
-                      <span>Modify Proposed Slots</span>
+                      <span>Modify Slots</span>
                     </button>
 
                     <button
                       type="button"
-                      onClick={() => {
-                        setIsConfirmingSlots(false);
-                        setStep(3);
-                      }}
+                      disabled={isSending}
+                      onClick={handleDispatchThreeSlots}
                       className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-gradient-to-r from-[#C7A86D] via-[#D4AF37] to-[#B39355] text-black font-semibold text-xs uppercase tracking-wider transition-all duration-300 shadow-lg shadow-[#C7A86D]/20 hover:brightness-110 flex items-center justify-center gap-2 cursor-pointer"
                     >
-                      <span>Yes, Confirm & Send to Owner</span>
+                      <span>Yes, Transmit 3 Slots to Company Admin</span>
                       <Send className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -730,20 +858,20 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
               </div>
             )}
 
-            {/* Step 3: Success Confirmation & Interactive Owner Action */}
+            {/* Step 3: Success Confirmation & Interactive Admin Permission Console */}
             {step === 3 && (
               <div className="py-2 text-center space-y-6 animate-fadeIn">
                 {/* Status Icon */}
                 <div className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto transition-all ${
-                  ownerDecisionStatus === 'confirmed'
+                  isApproved
                     ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-400'
-                    : ownerDecisionStatus === 'declined'
+                    : isDeclined
                     ? 'bg-rose-500/15 border border-rose-500/40 text-rose-400'
                     : 'bg-[#C7A86D]/15 border border-[#C7A86D]/40 text-[#C7A86D]'
                 }`}>
-                  {ownerDecisionStatus === 'confirmed' ? (
+                  {isApproved ? (
                     <CheckCircle2 className="w-7 h-7" />
-                  ) : ownerDecisionStatus === 'declined' ? (
+                  ) : isDeclined ? (
                     <XCircle className="w-7 h-7" />
                   ) : (
                     <Clock className="w-7 h-7 animate-pulse" />
@@ -753,39 +881,35 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                 {/* Status Heading */}
                 <div>
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider mb-2 border">
-                    {ownerDecisionStatus === 'confirmed' ? (
+                    {isApproved ? (
                       <span className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <Check className="w-3 h-3" /> Status: Schedule Confirmed & Authorized by Owner
+                        <Lock className="w-3 h-3" /> Status: Approved & Exclusively Locked on Master Calendar
                       </span>
-                    ) : ownerDecisionStatus === 'declined' ? (
+                    ) : isDeclined ? (
                       <span className="bg-rose-500/20 text-rose-300 border-rose-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <X className="w-3 h-3" /> Status: Schedule Proposal Declined
+                        <XCircle className="w-3 h-3" /> Status: Schedule Proposal Declined by Admin
                       </span>
                     ) : (
                       <span className="bg-[#C7A86D]/20 text-[#E5C788] border-[#C7A86D]/30 px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <Clock className="w-3 h-3" /> Status: Transmitted • Awaiting Owner Permission
+                        <Clock className="w-3 h-3" /> Status: Transmitted to Admin • Awaiting Slot Approval
                       </span>
                     )}
                   </div>
 
                   <h4 className="text-2xl font-serif text-white">
-                    {ownerDecisionStatus === 'confirmed'
-                      ? 'Meeting Officially Confirmed!'
-                      : ownerDecisionStatus === 'declined'
-                      ? 'Schedule Request Declined'
-                      : bookingMode === 'propose_slots'
-                      ? '3 Availability Windows Transmitted to Owner'
-                      : 'Discovery Diagnostic Reserved'}
+                    {isApproved
+                      ? 'Consultation Officially Approved & Locked!'
+                      : isDeclined
+                      ? 'Reschedule Requested by Admin'
+                      : '3 Availability Windows Transmitted to Admin'}
                   </h4>
 
                   <p className="text-xs sm:text-sm text-slate-300 mt-1.5 font-light max-w-lg mx-auto leading-relaxed">
-                    {ownerDecisionStatus === 'confirmed'
-                      ? `The meeting is locked for ${currentSlot.date} at ${currentSlot.time} (${tzLabel}). Calendar invites have been prepared for ${formData.businessEmail || 'candidate'} and ${COMPANY_CONTACT_DETAILS.ownerEmail}.`
-                      : ownerDecisionStatus === 'declined'
-                      ? 'The owner was unable to accept these 3 time slots and has requested new availability windows.'
-                      : bookingMode === 'propose_slots'
-                      ? `Your 3 candidate slots have been submitted to the owner (${COMPANY_CONTACT_DETAILS.ownerEmail}). Review the decision console below to approve or decline the schedule.`
-                      : "Your session is coordinated directly with the owner's Calendly. A calendar invitation and video link have been dispatched to your email."}
+                    {isApproved
+                      ? `Your session is locked for ${confirmedSlot.date} at ${confirmedSlot.time} (${tzLabel}). No other interview can be scheduled at this time. Calendar invites and meeting credentials have been generated.`
+                      : isDeclined
+                      ? `The admin was unable to accommodate these 3 proposed slots. ${activeRequest?.adminNotes || 'Please propose alternative dates or times.'}`
+                      : `Your 3 candidate slots have been submitted to company admin (${COMPANY_CONTACT_DETAILS.ownerEmail}). Leadership will approve the best slot and lock it exclusively for you.`}
                   </p>
                 </div>
 
@@ -796,7 +920,7 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                     <span className="text-white font-medium">{formData.companyName || 'Corporate Client'}</span>
                   </div>
                   <div className="flex justify-between border-b border-white/5 pb-1.5">
-                    <span className="text-slate-400">Candidate / Executive:</span>
+                    <span className="text-slate-400">Executive Contact:</span>
                     <span className="text-white font-medium">{formData.fullName || 'Lead Executive'} ({formData.businessEmail || 'email@company.com'})</span>
                   </div>
                   <div className="flex justify-between border-b border-white/5 pb-1.5">
@@ -804,341 +928,201 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                     <span className="text-[#C7A86D] font-mono">{TIMEZONE_OPTIONS.find(t => t.value === selectedTimezone)?.label}</span>
                   </div>
 
-                  {bookingMode === 'propose_slots' && (
-                    <div className="pt-1 space-y-1.5">
-                      <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold block">
-                        Proposed Candidate Slots:
-                      </span>
-                      {proposedSlots.map((slot) => {
-                        const isConfirmed = ownerDecisionStatus === 'confirmed' && selectedSlotForDecision === slot.id;
-                        return (
-                          <div
-                            key={slot.id}
-                            className={`p-2 rounded-xl border text-[11px] flex items-center justify-between transition-all ${
-                              isConfirmed
-                                ? 'bg-emerald-950/50 border-emerald-500/70 text-emerald-200 shadow-sm'
-                                : 'bg-black/40 border-white/5 text-slate-300'
-                            }`}
-                          >
-                            <span className="flex items-center gap-2">
-                              <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold ${
-                                isConfirmed ? 'bg-emerald-400 text-black' : 'bg-white/10 text-slate-300'
-                              }`}>
-                                {slot.id}
-                              </span>
-                              <span className="font-mono">{slot.date} at {slot.time}</span>
-                            </span>
-                            {isConfirmed ? (
-                              <span className="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider flex items-center gap-1">
-                                <Check className="w-3 h-3" /> Selected Slot
-                              </span>
-                            ) : (
-                              <span className="text-[9px] text-slate-500 uppercase tracking-wider">
-                                {slot.id === 1 ? 'Primary' : 'Alternative'}
-                              </span>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-
-                {/* THE OWNER DECISION CONSOLE */}
-                {bookingMode === 'propose_slots' && (
-                  <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-[#1C1812] to-[#121212] border border-[#C7A86D]/40 text-left text-xs space-y-4 max-w-lg mx-auto shadow-xl">
-                    <div className="flex items-center justify-between border-b border-white/5 pb-2.5">
-                      <div className="flex items-center gap-2 text-[#C7A86D] font-semibold uppercase tracking-wider text-[11px]">
-                        <UserCheck className="w-4 h-4 text-[#C7A86D]" />
-                        <span>Owner Decision & Permission Console</span>
-                      </div>
-                      <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#C7A86D]/20 text-[#E5C788] font-mono">
-                        {COMPANY_CONTACT_DETAILS.ownerEmail}
-                      </span>
-                    </div>
-
-                    {/* Owner Calendly Live Availability Portal Link */}
-                    <div className="p-3 rounded-xl bg-black/60 border border-[#C7A86D]/25 flex items-center justify-between gap-3">
-                      <div className="space-y-0.5">
-                        <span className="text-[10px] uppercase tracking-wider text-[#C7A86D] font-semibold block flex items-center gap-1">
-                          <Calendar className="w-3 h-3" /> Owner Calendly System
-                        </span>
-                        <span className="text-[11px] text-slate-300 font-mono">calendly.com/udayzayn/meetings</span>
-                      </div>
-                      <a
-                        href={COMPANY_CONTACT_DETAILS.calendlyUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-3 py-1.5 rounded-lg bg-[#C7A86D]/20 hover:bg-[#C7A86D]/30 border border-[#C7A86D]/40 text-[#E5C788] text-[11px] font-semibold transition-colors flex items-center gap-1.5 shrink-0"
-                      >
-                        <span>Verify / Block</span>
-                        <ExternalLink className="w-3.5 h-3.5" />
-                      </a>
-                    </div>
-
-                    {/* STATE 1: PENDING DECISION (Owner picks which slot to accept or decline) */}
-                    {ownerDecisionStatus === 'pending' && (
-                      <div className="space-y-3">
-                        <p className="text-[11px] text-slate-300 font-light leading-relaxed">
-                          As the owner (<strong className="text-white">{COMPANY_CONTACT_DETAILS.ownerEmail}</strong>), select which candidate slot you wish to approve and grant booking permission for:
-                        </p>
-
-                        <div className="space-y-2">
-                          {proposedSlots.map((slot) => (
-                            <button
-                              key={slot.id}
-                              type="button"
-                              onClick={() => {
-                                setSelectedSlotForDecision(slot.id);
-                                setOwnerDecisionStatus('confirming');
-                                setOwnerPermissionGranted(false);
-                              }}
-                              className="w-full p-2.5 rounded-xl border border-white/10 bg-black/50 text-slate-300 hover:border-[#C7A86D] hover:bg-[#C7A86D]/10 hover:text-white transition-all flex items-center justify-between cursor-pointer group"
-                            >
-                              <div className="flex items-center gap-2">
-                                <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold bg-[#C7A86D]/20 text-[#C7A86D] group-hover:bg-[#C7A86D] group-hover:text-black transition-colors">
-                                  {slot.id}
-                                </span>
-                                <span>Slot {slot.id}: <strong>{slot.date} at {slot.time}</strong> ({tzLabel})</span>
-                              </div>
-                              <span className="text-[10px] font-semibold tracking-wide uppercase px-2 py-0.5 rounded bg-white/5 text-[#E5C788] group-hover:bg-[#C7A86D] group-hover:text-black transition-all flex items-center gap-1">
-                                <span>Review & Permit</span>
-                                <ChevronRight className="w-3 h-3" />
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-
-                        <div className="pt-1 text-center">
-                          <button
-                            type="button"
-                            onClick={() => setOwnerDecisionStatus('declined')}
-                            className="text-[11px] text-rose-400/80 hover:text-rose-300 underline underline-offset-2 transition-colors cursor-pointer"
-                          >
-                            Decline All Proposed Slots & Request New Times
-                          </button>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* STATE 2: CONFIRMING DIALOG (Explicit Owner Permission & Send Schedule Confirmation) */}
-                    {ownerDecisionStatus === 'confirming' && (
-                      <div className="p-4 rounded-xl bg-[#231E16] border border-[#C7A86D]/60 space-y-3.5 animate-fadeIn">
-                        <div className="flex items-center gap-2 text-[#E5C788] font-semibold text-xs">
-                          <Lock className="w-4 h-4 text-[#C7A86D]" />
-                          <span>Owner Authorization & Permission Checkpoint</span>
-                        </div>
-
-                        <div className="p-3 rounded-lg bg-black/60 border border-white/5 text-[11px] text-slate-300 space-y-1.5 font-mono">
-                          <div><strong>Selected Slot {currentSlot.id}:</strong> {currentSlot.date} at {currentSlot.time} ({tzLabel})</div>
-                          <div><strong>Candidate:</strong> {formData.fullName || 'Candidate'} ({formData.businessEmail || 'Email'})</div>
-                          <div><strong>Owner Account:</strong> {COMPANY_CONTACT_DETAILS.ownerEmail}</div>
-                          <div><strong>Calendly Account:</strong> {COMPANY_CONTACT_DETAILS.calendlyUrl}</div>
-                          <div><strong>Video Link:</strong> Google Meet (https://meet.google.com/vit-arch-call)</div>
-                        </div>
-
-                        {/* Explicit Owner Permission Toggle */}
-                        <div 
-                          onClick={() => setOwnerPermissionGranted(!ownerPermissionGranted)}
-                          className={`p-3 rounded-xl border flex items-start gap-2.5 cursor-pointer transition-colors ${
-                            ownerPermissionGranted 
-                              ? 'bg-emerald-950/40 border-emerald-500/60 text-emerald-200' 
-                              : 'bg-black/50 border-white/10 text-slate-300 hover:border-[#C7A86D]/50'
+                  <div className="pt-1 space-y-1.5">
+                    <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold block">
+                      Proposed 3 Time Slots:
+                    </span>
+                    {proposedSlots.map((slot) => {
+                      const isThisSlotApproved = isApproved && activeRequest?.approvedSlotId === slot.id;
+                      return (
+                        <div
+                          key={slot.id}
+                          className={`p-2 rounded-xl border text-[11px] flex items-center justify-between transition-all ${
+                            isThisSlotApproved
+                              ? 'bg-emerald-950/60 border-emerald-500 text-emerald-200 shadow-sm'
+                              : 'bg-black/40 border-white/5 text-slate-300'
                           }`}
                         >
-                          <div className="mt-0.5 text-[#C7A86D]">
-                            {ownerPermissionGranted ? (
-                              <CheckSquare className="w-4 h-4 text-emerald-400" />
-                            ) : (
-                              <Square className="w-4 h-4 text-slate-400" />
-                            )}
-                          </div>
-                          <div className="text-xs space-y-0.5">
-                            <span className="font-semibold block text-white">Grant Owner Permission</span>
-                            <span className="text-[11px] text-slate-400 font-light block">
-                              I authorize this meeting time on my schedule and permit sending official calendar invites and notifications to both inboxes.
+                          <span className="flex items-center gap-2">
+                            <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold ${
+                              isThisSlotApproved ? 'bg-emerald-400 text-black' : 'bg-white/10 text-slate-300'
+                            }`}>
+                              {slot.id}
                             </span>
-                          </div>
+                            <span className="font-mono">{slot.date} at {slot.time}</span>
+                          </span>
+
+                          {isThisSlotApproved ? (
+                            <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1">
+                              <Lock className="w-3 h-3" /> Approved & Locked
+                            </span>
+                          ) : (
+                            <span className="text-[9px] text-slate-500 uppercase tracking-wider">
+                              {slot.id === 1 ? 'Primary' : 'Alternative'}
+                            </span>
+                          )}
                         </div>
-
-                        <div className="flex items-center gap-2 pt-1">
-                          <button
-                            type="button"
-                            disabled={!ownerPermissionGranted || isSending}
-                            onClick={handleConfirmSchedule}
-                            className={`flex-1 py-2.5 px-4 rounded-xl text-xs uppercase tracking-wider font-semibold transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer ${
-                              ownerPermissionGranted && !isSending
-                                ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-black shadow-emerald-500/20'
-                                : 'bg-white/10 text-slate-500 border border-white/5 cursor-not-allowed'
-                            }`}
-                          >
-                            {isSending ? (
-                              <>
-                                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                                <span>Sending Schedule...</span>
-                              </>
-                            ) : (
-                              <>
-                                <Check className="w-4 h-4" />
-                                <span>Grant Permission & Send Schedule</span>
-                              </>
-                            )}
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setOwnerDecisionStatus('pending');
-                              setSelectedSlotForDecision(null);
-                              setOwnerPermissionGranted(false);
-                            }}
-                            className="py-2.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs transition-colors cursor-pointer"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* STATE 3: CONFIRMED SUCCESS (Official confirmation actions) */}
-                    {ownerDecisionStatus === 'confirmed' && (
-                      <div className="p-4 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-emerald-200 text-xs space-y-3 animate-fadeIn">
-                        <div className="flex items-center gap-2 font-semibold text-emerald-300 text-xs">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                          <span>Schedule Confirmed for {currentSlot.date} at {currentSlot.time} ({tzLabel})</span>
-                        </div>
-
-                        <p className="text-[11px] text-emerald-100/90 font-light leading-relaxed">
-                          The schedule has been authorized and locked. Both <strong>{COMPANY_CONTACT_DETAILS.ownerEmail}</strong> and <strong>{formData.businessEmail || 'candidate'}</strong> have been notified.
-                        </p>
-
-                        {/* Calendar & Email Actions */}
-                        <div className="pt-2 flex flex-col sm:flex-row gap-2">
-                          <a
-                            href={getCalendlyUrl(currentSlot.date)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-[#C7A86D] via-[#D4AF37] to-[#B39355] text-black font-semibold text-xs hover:brightness-110 transition-all shadow-md"
-                          >
-                            <ExternalLink className="w-3.5 h-3.5" />
-                            <span>Lock on Calendly (Creates Real Event)</span>
-                          </a>
-
-                          <a
-                            href={`mailto:${formData.businessEmail || 'candidate@company.com'}?cc=${COMPANY_CONTACT_DETAILS.ownerEmail}&subject=${encodeURIComponent(`Confirmed: Vittoris AI Architecture Consultation - ${formData.companyName || 'Corporate Client'}`)}&body=${encodeURIComponent(`Hi ${formData.fullName || 'there'},\n\nYour discovery meeting with Vittoris has been confirmed:\n\nDate & Time: ${currentSlot.date} at ${currentSlot.time} (${tzLabel})\nMeeting Link: https://meet.google.com/vit-arch-call\n\nLooking forward to our session.\n\nBest regards,\nUday | Vittoris Systems\n${COMPANY_CONTACT_DETAILS.ownerEmail}`)}`}
-                            className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-500 text-black font-semibold text-xs hover:bg-emerald-400 transition-colors shadow-sm"
-                          >
-                            <Mail className="w-3.5 h-3.5" />
-                            <span>Send Notification Email</span>
-                          </a>
-
-                          <a
-                            href={getGoogleCalendarUrl(currentSlot)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-xs transition-colors"
-                          >
-                            <CalendarPlus className="w-3.5 h-3.5 text-[#E5C788]" />
-                            <span>Add to Google Cal</span>
-                          </a>
-
-                          <button
-                            type="button"
-                            onClick={() => handleDownloadIcs(currentSlot)}
-                            className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-xs transition-colors cursor-pointer"
-                          >
-                            <Download className="w-3.5 h-3.5" />
-                            <span>.ICS File</span>
-                          </button>
-                        </div>
-
-                        {/* Calendly Automated Notification Note */}
-                        <div className="p-3 rounded-xl bg-black/60 border border-[#C7A86D]/30 text-[11px] text-slate-300 space-y-1 text-left">
-                          <div className="flex items-center gap-1.5 text-[#E5C788] font-semibold text-[10px] uppercase tracking-wider">
-                            <AlertCircle className="w-3.5 h-3.5 text-[#C7A86D]" />
-                            <span>How Calendly Automated Notifications Work:</span>
-                          </div>
-                          <p className="font-light text-slate-300 leading-relaxed">
-                            Calendly's servers only generate automatic emails to <strong>{COMPANY_CONTACT_DETAILS.ownerEmail}</strong> when an appointment is booked through their booking system. Click <strong>"Lock on Calendly"</strong> above to register the event in 1 click, or click <strong>"Send Notification Email"</strong> to dispatch the confirmation directly.
-                          </p>
-                        </div>
-
-                        <div className="pt-1 text-right">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setOwnerDecisionStatus('pending');
-                              setSelectedSlotForDecision(null);
-                              setOwnerPermissionGranted(false);
-                            }}
-                            className="text-[10px] text-emerald-300/70 hover:text-emerald-200 underline transition-colors cursor-pointer"
-                          >
-                            Change Selection / Re-test
-                          </button>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* STATE 4: DECLINED */}
-                    {ownerDecisionStatus === 'declined' && (
-                      <div className="p-3.5 rounded-xl bg-rose-950/50 border border-rose-500/40 text-rose-200 text-xs space-y-2.5 animate-fadeIn">
-                        <div className="flex items-center gap-1.5 font-semibold text-rose-300">
-                          <XCircle className="w-4 h-4 text-rose-400" />
-                          <span>Schedule Proposal Declined</span>
-                        </div>
-                        <p className="text-[11px] text-rose-100/90 font-light">
-                          Candidate has been notified that these slots cannot be accommodated.
-                        </p>
-                        <button
-                          type="button"
-                          onClick={() => setOwnerDecisionStatus('pending')}
-                          className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[11px] transition-colors cursor-pointer"
-                        >
-                          Pick a Slot Instead
-                        </button>
-                      </div>
-                    )}
+                      );
+                    })}
                   </div>
-                )}
+                </div>
 
-                {/* Instant Calendly Confirmation Actions */}
-                {bookingMode === 'instant_calendly' && (
-                  <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-[#121915] to-[#121212] border border-emerald-500/40 text-left text-xs space-y-3.5 max-w-lg mx-auto shadow-xl animate-fadeIn">
+                {/* STATE A: APPROVED DETAILS & CALENDAR ACTIONS */}
+                {isApproved && (
+                  <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-[#121915] to-[#121212] border border-emerald-500/50 text-left text-xs space-y-3.5 max-w-lg mx-auto shadow-xl animate-fadeIn">
                     <div className="flex items-center justify-between border-b border-white/5 pb-2.5">
                       <div className="flex items-center gap-2 text-emerald-300 font-semibold uppercase tracking-wider text-[11px]">
                         <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                        <span>Direct Calendly Event Synced</span>
+                        <span>Exclusive Meeting Time Locked</span>
                       </div>
                       <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono">
-                        calendly.com/udayzayn/meetings
+                        Zero Double-Booking
                       </span>
                     </div>
 
                     <p className="text-[11px] text-slate-300 font-light leading-relaxed">
-                      Your appointment has been registered directly on Uday's Calendly calendar. Calendly has dispatched the official confirmation email with Google Meet access credentials to <strong>{formData.businessEmail || 'candidate'}</strong> and <strong>{COMPANY_CONTACT_DETAILS.ownerEmail}</strong>.
+                      Confirmed for <strong>{confirmedSlot.date} at {confirmedSlot.time} ({tzLabel})</strong>. This session is locked on the master schedule for <strong>{formData.fullName || 'Candidate'}</strong> and <strong>{COMPANY_CONTACT_DETAILS.ownerEmail}</strong>.
                     </p>
 
-                    <div className="flex flex-col sm:flex-row gap-2 pt-1">
+                    <div className="flex flex-wrap gap-2 pt-1">
                       <a
-                        href={COMPANY_CONTACT_DETAILS.calendlyUrl}
+                        href={activeRequest?.googleMeetLink || 'https://meet.google.com/vit-session-call'}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-500 text-black font-semibold text-xs hover:bg-emerald-400 transition-colors shadow-sm"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
-                        <span>View on Calendly</span>
+                        <span>Join Google Meet</span>
                       </a>
 
                       <a
-                        href={`mailto:${formData.businessEmail || 'candidate@company.com'}?cc=${COMPANY_CONTACT_DETAILS.ownerEmail}&subject=${encodeURIComponent(`Confirmed: Vittoris AI Architecture Consultation - ${formData.companyName || 'Corporate Client'}`)}&body=${encodeURIComponent(`Hi ${formData.fullName || 'there'},\n\nYour discovery session with Uday (Vittoris Systems) is scheduled through Calendly.\n\nOwner: ${COMPANY_CONTACT_DETAILS.ownerEmail}\nCalendly: ${COMPANY_CONTACT_DETAILS.calendlyUrl}\n\nLooking forward to meeting with you!`)}`}
+                        href={getGoogleCalendarUrl(confirmedSlot)}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-xs transition-colors"
                       >
+                        <CalendarPlus className="w-3.5 h-3.5 text-[#E5C788]" />
+                        <span>Add to Google Cal</span>
+                      </a>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDownloadIcs(confirmedSlot)}
+                        className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-xs transition-colors cursor-pointer"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>.ICS File</span>
+                      </button>
+
+                      <a
+                        href={`mailto:${formData.businessEmail}?cc=${COMPANY_CONTACT_DETAILS.ownerEmail}&subject=${encodeURIComponent(`Confirmed: Vittoris AI Consultation - ${formData.companyName || 'Corporate Client'}`)}&body=${encodeURIComponent(`Hi ${formData.fullName},\n\nYour discovery meeting has been approved and locked on the company calendar:\n\nDate & Time: ${confirmedSlot.date} at ${confirmedSlot.time} (${tzLabel})\nGoogle Meet: ${activeRequest?.googleMeetLink}\n\nLooking forward to our strategic session.\n\nBest regards,\nVittoris Systems\n${COMPANY_CONTACT_DETAILS.ownerEmail}`)}`}
+                        className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-[#C7A86D]/20 hover:bg-[#C7A86D]/30 border border-[#C7A86D]/40 text-[#E5C788] text-xs font-semibold transition-colors"
+                      >
                         <Mail className="w-3.5 h-3.5" />
-                        <span>Send Follow-up Email</span>
+                        <span>Send Email Confirmation</span>
                       </a>
                     </div>
                   </div>
                 )}
+
+                {/* STATE B: DECLINED */}
+                {isDeclined && (
+                  <div className="p-4 rounded-2xl bg-rose-950/40 border border-rose-500/40 text-left text-xs space-y-3 max-w-lg mx-auto animate-fadeIn">
+                    <div className="flex items-center gap-2 font-semibold text-rose-300">
+                      <XCircle className="w-4 h-4 text-rose-400" />
+                      <span>Reschedule Notice from Company Admin</span>
+                    </div>
+                    <p className="text-[11px] text-rose-100 font-light">
+                      {activeRequest?.adminNotes || 'Executive leadership is engaged in closed-door sessions during these windows.'}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setStep(2)}
+                      className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-colors cursor-pointer flex items-center gap-2"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5" />
+                      <span>Choose 3 Different Slots</span>
+                    </button>
+                  </div>
+                )}
+
+                {/* LIVE ADMIN QUICK-DECISION BAR (Company Admin Review Console) */}
+                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-[#1C1812] to-[#121212] border border-[#C7A86D]/40 text-left text-xs space-y-4 max-w-lg mx-auto shadow-xl">
+                  <div className="flex items-center justify-between border-b border-white/5 pb-2.5">
+                    <div className="flex items-center gap-2 text-[#C7A86D] font-semibold uppercase tracking-wider text-[11px]">
+                      <UserCheck className="w-4 h-4 text-[#C7A86D]" />
+                      <span>Executive Admin Decision Console</span>
+                    </div>
+                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#C7A86D]/20 text-[#E5C788] font-mono">
+                      {COMPANY_CONTACT_DETAILS.ownerEmail}
+                    </span>
+                  </div>
+
+                  <p className="text-[11px] text-slate-300 font-light leading-relaxed">
+                    Test or execute the admin decision directly. As company admin, approve one of the candidate's 3 proposed time slots to immediately lock it on the master calendar:
+                  </p>
+
+                  <div className="space-y-2">
+                    {proposedSlots.map((slot) => {
+                      const isThisApproved = isApproved && activeRequest?.approvedSlotId === slot.id;
+                      return (
+                        <div
+                          key={slot.id}
+                          className="flex items-center justify-between p-2.5 rounded-xl border border-white/10 bg-black/50 hover:border-[#C7A86D]/60 transition-colors"
+                        >
+                          <div className="flex items-center gap-2 text-[11px]">
+                            <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold bg-[#C7A86D]/20 text-[#C7A86D]">
+                              {slot.id}
+                            </span>
+                            <span>Slot {slot.id}: <strong>{slot.date} at {slot.time}</strong></span>
+                          </div>
+
+                          <button
+                            type="button"
+                            disabled={isThisApproved}
+                            onClick={() => handleAdminApprove(slot.id)}
+                            className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1 ${
+                              isThisApproved
+                                ? 'bg-emerald-500 text-black cursor-default'
+                                : 'bg-[#C7A86D] hover:bg-[#D4AF37] text-black shadow-sm'
+                            }`}
+                          >
+                            {isThisApproved ? (
+                              <>
+                                <Check className="w-3 h-3" />
+                                <span>Locked</span>
+                              </>
+                            ) : (
+                              <>
+                                <span>Approve Slot {slot.id}</span>
+                                <ChevronRight className="w-3 h-3" />
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-white/5 text-[11px]">
+                    <button
+                      type="button"
+                      onClick={handleAdminDecline}
+                      className="text-rose-400 hover:text-rose-300 underline underline-offset-2 transition-colors cursor-pointer"
+                    >
+                      Decline Request & Request Reschedule
+                    </button>
+
+                    <Link
+                      to="/admin"
+                      onClick={handleResetAndClose}
+                      className="text-[#C7A86D] hover:text-[#E5C788] flex items-center gap-1 font-semibold"
+                    >
+                      <span>Open Full Executive Admin Portal</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </Link>
+                  </div>
+                </div>
 
                 {/* Return to Platform */}
                 <div className="pt-2 pb-2">
@@ -1157,4 +1141,3 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
     </AnimatePresence>
   );
 };
-

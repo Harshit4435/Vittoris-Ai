@@ -949,9 +949,9 @@ export const COMPANY_CONTACT_DETAILS = {
   companyEmail: "company@vittoris.com",
   email: "company@vittoris.com",
   primaryEmail: "company@vittoris.com",
-  ownerEmail: "udayzayn@gmail.com",
-  secondaryEmail: "udayzayn@gmail.com",
-  calendlyUrl: "https://calendly.com/udayzayn/meetings",
+  ownerEmail: "tharshit2257@gmail.com",
+  secondaryEmail: "tharshit2257@gmail.com",
+  calendlyUrl: "https://calendly.com/tharshit2257/meetings",
   defaultTimezone: "America/New_York", // EST / EDT (US Eastern Time) - easily change whenever required
   timezoneLabel: "EST (US Eastern Time)"
 };

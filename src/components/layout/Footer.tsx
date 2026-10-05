@@ -151,6 +151,12 @@ export const Footer: React.FC<FooterProps> = ({ onOpenConsultation }) => {
                   Contact & Diagnostic Intake
                 </Link>
               </li>
+              <li>
+                <Link to="/admin" className="text-[#C7A86D] hover:text-[#E5C788] transition-colors font-medium flex items-center gap-1">
+                  <span>Executive Admin Desk</span>
+                  <span className="text-[9px] px-1.5 py-0.2 rounded bg-[#C7A86D]/20 text-[#E5C788] uppercase tracking-wider font-mono">3-Slot Approvals</span>
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

@@ -11,6 +11,7 @@ import { Industries } from './pages/Industries';
 import { HowItWorks } from './pages/HowItWorks';
 import { About } from './pages/About';
 import { Contact } from './pages/Contact';
+import { AdminPortal } from './pages/AdminPortal';
 
 import { useSmoothScroll } from './hooks/useSmoothScroll';
 import { ScrollTrigger } from './utils/gsapConfig';
@@ -127,6 +128,10 @@ function App() {
             <Route
               path="/contact"
               element={<Contact onOpenConsultation={() => handleOpenDiscovery()} />}
+            />
+            <Route
+              path="/admin"
+              element={<AdminPortal onOpenConsultation={() => handleOpenDiscovery()} />}
             />
 
             {/* Seamless backward compatibility redirects */}
