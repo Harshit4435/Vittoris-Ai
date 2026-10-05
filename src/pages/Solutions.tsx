@@ -60,7 +60,7 @@ export const Solutions: React.FC<SolutionsProps> = ({ onOpenConsultation }) => {
 
             {/* Problem vs System Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-10">
-              <div className="p-5 rounded-2xl bg-stone-900/60 border border-stone-800 space-y-2">
+              <div className="p-5 rounded-2xl bg-stone-900/60 border border-stone-800 space-y-2 friction-card">
                 <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-rose-400/90">
                   The Underlying Operational Friction
                 </div>

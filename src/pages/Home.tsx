@@ -490,8 +490,9 @@ export const Home: React.FC<HomeProps> = ({ onOpenConsultation }) => {
 
         <GsapScrollFade staggerChildren={0.12} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left: Traditional Manual */}
-          <div className="p-6 sm:p-8 rounded-3xl bg-stone-900/60 border border-stone-800 space-y-4">
+          <div className="p-6 sm:p-8 rounded-3xl bg-stone-900/60 border border-stone-800 space-y-4 friction-card">
             <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-rose-400/90 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
               <span>Traditional Manual Workflow</span>
             </div>
             <ul className="space-y-3 text-xs text-stone-300 font-light">

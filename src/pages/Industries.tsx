@@ -54,7 +54,7 @@ export const Industries: React.FC<IndustriesProps> = ({ onOpenConsultation }) =>
               </p>
 
               {/* Friction solved */}
-              <div className="p-4 rounded-2xl bg-stone-900/60 border border-stone-800 text-xs text-stone-300 font-light space-y-1.5">
+              <div className="p-4 rounded-2xl bg-stone-900/60 border border-stone-800 text-xs text-stone-300 font-light space-y-1.5 friction-card">
                 <span className="text-rose-400/90 font-medium block uppercase tracking-wider text-[10px]">Common Sector Friction:</span>
                 {ind.painPoints.map((pt, i) => (
                   <div key={i} className="flex items-start gap-1.5 text-stone-300">
