@@ -946,12 +946,12 @@ export const WHY_CHOOSE_VITTORIS = [
 export const COMPANY_CONTACT_DETAILS = {
   brandName: "VITTORIS",
   tagline: "AI-Powered Growth and AI Services for Modern Businesses",
-  companyEmail: "company@vittoris.com",
-  email: "company@vittoris.com",
-  primaryEmail: "company@vittoris.com",
-  ownerEmail: "tharshit2257@gmail.com",
-  secondaryEmail: "tharshit2257@gmail.com",
-  calendlyUrl: "https://calendly.com/tharshit2257/meetings",
+  companyEmail: import.meta.env.VITE_COMPANY_EMAIL || "company@vittoris.com",
+  email: import.meta.env.VITE_COMPANY_EMAIL || "company@vittoris.com",
+  primaryEmail: import.meta.env.VITE_COMPANY_EMAIL || "company@vittoris.com",
+  ownerEmail: import.meta.env.VITE_OWNER_EMAIL || "tharshit2257@gmail.com",
+  secondaryEmail: import.meta.env.VITE_OWNER_EMAIL || "tharshit2257@gmail.com",
+  calendlyUrl: import.meta.env.VITE_CALENDLY_URL || "https://calendly.com/tharshit2257/meetings",
   defaultTimezone: "America/New_York", // EST / EDT (US Eastern Time) - easily change whenever required
   timezoneLabel: "EST (US Eastern Time)"
 };
@@ -959,7 +959,7 @@ export const COMPANY_CONTACT_DETAILS = {
 export const EMAILJS_CONFIG = {
   serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID || "service_v70aene",
   templateIdOwner: import.meta.env.VITE_EMAILJS_TEMPLATE_OWNER || "template_7u7tez3",
-  templateIdClient: import.meta.env.VITE_EMAILJS_TEMPLATE_CLIENT || "template_client_ack",
+  templateIdClient: import.meta.env.VITE_EMAILJS_TEMPLATE_CLIENT || import.meta.env.VITE_EMAILJS_TEMPLATE_OWNER || "template_7u7tez3",
   publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY || "d7kefRJyGh4blQyYw",
 };
 

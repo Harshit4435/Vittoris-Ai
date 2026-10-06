@@ -32,6 +32,14 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          VITE_EMAILJS_SERVICE_ID: ${{ secrets.VITE_EMAILJS_SERVICE_ID || 'service_v70aene' }}
+          VITE_EMAILJS_TEMPLATE_OWNER: ${{ secrets.VITE_EMAILJS_TEMPLATE_OWNER || 'template_7u7tez3' }}
+          VITE_EMAILJS_TEMPLATE_CLIENT: ${{ secrets.VITE_EMAILJS_TEMPLATE_CLIENT || 'template_7u7tez3' }}
+          VITE_EMAILJS_PUBLIC_KEY: ${{ secrets.VITE_EMAILJS_PUBLIC_KEY || 'd7kefRJyGh4blQyYw' }}
+          VITE_COMPANY_EMAIL: ${{ secrets.VITE_COMPANY_EMAIL || 'company@vittoris.com' }}
+          VITE_OWNER_EMAIL: ${{ secrets.VITE_OWNER_EMAIL || 'tharshit2257@gmail.com' }}
+          VITE_CALENDLY_URL: ${{ secrets.VITE_CALENDLY_URL || 'https://calendly.com/tharshit2257/meetings' }}
 
       - name: Duplicate index.html to 404.html for SPA client-side routing
         run: cp dist/index.html dist/404.html

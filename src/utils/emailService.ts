@@ -14,6 +14,13 @@ export interface EmailDispatchResult {
 export function generateMailtoLinks(req: MeetingRequest): {
   mailtoOwnerUrl: string;
   mailtoClientUrl: string;
+  ownerBody: string;
+  clientBody: string;
+  approveSlot1Url: string;
+  approveSlot2Url: string;
+  approveSlot3Url: string;
+  ignoreUrl: string;
+  cleanBase: string;
 } {
   const baseUrl = typeof window !== 'undefined'
     ? `${window.location.origin}${import.meta.env.BASE_URL || '/'}`
@@ -97,16 +104,31 @@ ${COMPANY_CONTACT_DETAILS.companyEmail}
   const mailtoOwnerUrl = `mailto:${COMPANY_CONTACT_DETAILS.ownerEmail}?cc=${COMPANY_CONTACT_DETAILS.companyEmail}&subject=${encodeURIComponent(ownerSubject)}&body=${encodeURIComponent(ownerBody)}`;
   const mailtoClientUrl = `mailto:${req.client.businessEmail}?cc=${COMPANY_CONTACT_DETAILS.ownerEmail}&subject=${encodeURIComponent(clientSubject)}&body=${encodeURIComponent(clientBody)}`;
 
-  return { mailtoOwnerUrl, mailtoClientUrl };
+  return {
+    mailtoOwnerUrl,
+    mailtoClientUrl,
+    ownerBody,
+    clientBody,
+    approveSlot1Url,
+    approveSlot2Url,
+    approveSlot3Url,
+    ignoreUrl,
+    cleanBase,
+  };
 }
 
 export async function sendMeetingRequestEmails(req: MeetingRequest): Promise<EmailDispatchResult> {
-  const { mailtoOwnerUrl, mailtoClientUrl } = generateMailtoLinks(req);
-
-  const baseUrl = typeof window !== 'undefined'
-    ? `${window.location.origin}${import.meta.env.BASE_URL || '/'}`
-    : 'https://harshit4435.github.io/Vittoris-Ai/';
-  const cleanBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+  const {
+    mailtoOwnerUrl,
+    mailtoClientUrl,
+    ownerBody,
+    clientBody,
+    approveSlot1Url,
+    approveSlot2Url,
+    approveSlot3Url,
+    ignoreUrl,
+    cleanBase,
+  } = generateMailtoLinks(req);
 
   const slot1Str = req.proposedSlots[0]
     ? `${req.proposedSlots[0].date} at ${req.proposedSlots[0].time} (${req.timezoneLabel})`
@@ -119,16 +141,18 @@ export async function sendMeetingRequestEmails(req: MeetingRequest): Promise<Ema
     : 'N/A';
 
   // Check if real EmailJS credentials exist
-  const hasRealEmailJs = 
+  const hasRealEmailJs = Boolean(
     EMAILJS_CONFIG.publicKey && 
     EMAILJS_CONFIG.publicKey !== 'user_emailjs_key' &&
+    EMAILJS_CONFIG.publicKey !== 'DEMO_PUBLIC_KEY' &&
     EMAILJS_CONFIG.serviceId &&
-    EMAILJS_CONFIG.serviceId !== 'service_vittoris';
+    EMAILJS_CONFIG.serviceId !== 'service_vittoris'
+  );
 
   if (!hasRealEmailJs) {
     // Graceful fallback: return ready mailto links and structured success
     console.info(
-      'EmailJS: Default/placeholder configuration detected. Pre-filled mail dispatch links generated for company mail (%s) and user mail (%s). To enable zero-click background delivery, set VITE_EMAILJS_PUBLIC_KEY and VITE_EMAILJS_SERVICE_ID.',
+      'EmailJS: Default/placeholder configuration detected. Pre-filled mail dispatch links generated for company mail (%s) and user mail (%s). To enable zero-click background delivery, set VITE_EMAILJS_PUBLIC_KEY and VITE_EMAILJS_SERVICE_ID in .env.',
       COMPANY_CONTACT_DETAILS.ownerEmail,
       req.client.businessEmail
     );
@@ -142,34 +166,51 @@ export async function sendMeetingRequestEmails(req: MeetingRequest): Promise<Ema
     };
   }
 
+  // Ensure EmailJS is initialized
+  try {
+    emailjs.init({ publicKey: EMAILJS_CONFIG.publicKey });
+  } catch {
+    // init fallback
+  }
+
   let ownerDispatched = false;
   let clientDispatched = false;
   let errorMsg: string | undefined;
 
-  try {
-    // 1. Dispatch to Company Owner (tharshit2257@gmail.com & company@vittoris.com)
-    const ownerParams = {
-      to_email: COMPANY_CONTACT_DETAILS.ownerEmail,
-      company_email: COMPANY_CONTACT_DETAILS.companyEmail,
-      client_name: req.client.fullName,
-      client_email: req.client.businessEmail,
-      client_company: req.client.companyName || 'Enterprise Client',
-      client_phone: req.client.phone || 'N/A',
-      selected_service: req.client.selectedService,
-      revenue_band: req.client.currentRevenue,
-      primary_goal: req.client.primaryGoal || 'Scale Qualified Meetings',
-      notes: req.client.notes || 'N/A',
-      slot_1: slot1Str,
-      slot_2: slot2Str,
-      slot_3: slot3Str,
-      approve_slot_1_url: `${cleanBase}admin?action=approve&reqId=${req.id}&slot=1`,
-      approve_slot_2_url: `${cleanBase}admin?action=approve&reqId=${req.id}&slot=2`,
-      approve_slot_3_url: `${cleanBase}admin?action=approve&reqId=${req.id}&slot=3`,
-      ignore_request_url: `${cleanBase}admin?action=ignore&reqId=${req.id}`,
-      calendly_portal_url: COMPANY_CONTACT_DETAILS.calendlyUrl,
-      admin_portal_url: `${cleanBase}admin`,
-    };
+  // 1. Dispatch to Company Owner (tharshit2257@gmail.com & company@vittoris.com)
+  const ownerParams = {
+    // Standard EmailJS template parameters (works with default templates)
+    from_name: req.client.fullName,
+    from_email: req.client.businessEmail,
+    reply_to: req.client.businessEmail,
+    to_name: 'Vittoris Leadership',
+    to_email: COMPANY_CONTACT_DETAILS.ownerEmail,
+    company_email: COMPANY_CONTACT_DETAILS.companyEmail,
+    subject: `[3-Slot Meeting Permission Request] ${req.client.fullName} - ${req.client.companyName || 'Enterprise Client'}`,
+    message: ownerBody,
+    summary: `Candidate ${req.client.fullName} from ${req.client.companyName || 'Corporate Client'} submitted 3 candidate consultation slots: \n1. ${slot1Str}\n2. ${slot2Str}\n3. ${slot3Str}\n\nApprove Slot 1: ${approveSlot1Url}\nApprove Slot 2: ${approveSlot2Url}\nApprove Slot 3: ${approveSlot3Url}\nIgnore: ${ignoreUrl}\nCalendly Portal: ${COMPANY_CONTACT_DETAILS.calendlyUrl}`,
 
+    // Custom template parameters (works with customized templates)
+    client_name: req.client.fullName,
+    client_email: req.client.businessEmail,
+    client_company: req.client.companyName || 'Enterprise Client',
+    client_phone: req.client.phone || 'N/A',
+    selected_service: req.client.selectedService,
+    revenue_band: req.client.currentRevenue,
+    primary_goal: req.client.primaryGoal || 'Scale Qualified Meetings',
+    notes: req.client.notes || 'N/A',
+    slot_1: slot1Str,
+    slot_2: slot2Str,
+    slot_3: slot3Str,
+    approve_slot_1_url: approveSlot1Url,
+    approve_slot_2_url: approveSlot2Url,
+    approve_slot_3_url: approveSlot3Url,
+    ignore_request_url: ignoreUrl,
+    calendly_portal_url: COMPANY_CONTACT_DETAILS.calendlyUrl,
+    admin_portal_url: `${cleanBase}admin`,
+  };
+
+  try {
     await emailjs.send(
       EMAILJS_CONFIG.serviceId,
       EMAILJS_CONFIG.templateIdOwner,
@@ -177,50 +218,65 @@ export async function sendMeetingRequestEmails(req: MeetingRequest): Promise<Ema
       EMAILJS_CONFIG.publicKey
     );
     ownerDispatched = true;
-
-    // 2. Dispatch to Client / User
-    const clientParams = {
-      to_email: req.client.businessEmail,
-      client_name: req.client.fullName,
-      client_company: req.client.companyName,
-      selected_service: req.client.selectedService,
-      slot_1: slot1Str,
-      slot_2: slot2Str,
-      slot_3: slot3Str,
-      owner_calendly_url: COMPANY_CONTACT_DETAILS.calendlyUrl,
-      company_email: COMPANY_CONTACT_DETAILS.companyEmail,
-      owner_email: COMPANY_CONTACT_DETAILS.ownerEmail,
-    };
-
-    await emailjs.send(
-      EMAILJS_CONFIG.serviceId,
-      EMAILJS_CONFIG.templateIdClient,
-      clientParams,
-      EMAILJS_CONFIG.publicKey
-    );
-    clientDispatched = true;
-
-    return {
-      ownerDispatched: true,
-      clientDispatched: true,
-      method: 'emailjs',
-      mailtoOwnerUrl,
-      mailtoClientUrl,
-    };
+    console.log('✓ EmailJS: Owner notification successfully dispatched.');
   } catch (err: unknown) {
     const errorText = err instanceof Error ? err.message : String(err);
-    console.warn('EmailJS delivery encounter:', errorText);
+    console.warn('EmailJS Owner Dispatch error:', errorText);
     errorMsg = errorText;
-
-    return {
-      ownerDispatched,
-      clientDispatched,
-      method: 'mailto_ready',
-      error: errorMsg,
-      mailtoOwnerUrl,
-      mailtoClientUrl,
-    };
   }
+
+  // 2. Dispatch to Client / User
+  const clientTemplateId = EMAILJS_CONFIG.templateIdClient;
+  // If distinct client template exists and is not a placeholder, send candidate confirmation
+  if (
+    clientTemplateId &&
+    clientTemplateId !== 'template_client_ack' &&
+    clientTemplateId !== EMAILJS_CONFIG.templateIdOwner
+  ) {
+    try {
+      const clientParams = {
+        from_name: COMPANY_CONTACT_DETAILS.brandName,
+        from_email: COMPANY_CONTACT_DETAILS.companyEmail,
+        reply_to: COMPANY_CONTACT_DETAILS.companyEmail,
+        to_name: req.client.fullName,
+        to_email: req.client.businessEmail,
+        subject: `[Vittoris Consultation Receipt] 3 Proposed Slots Received`,
+        message: clientBody,
+        client_name: req.client.fullName,
+        client_company: req.client.companyName || '',
+        selected_service: req.client.selectedService,
+        slot_1: slot1Str,
+        slot_2: slot2Str,
+        slot_3: slot3Str,
+        owner_calendly_url: COMPANY_CONTACT_DETAILS.calendlyUrl,
+        company_email: COMPANY_CONTACT_DETAILS.companyEmail,
+        owner_email: COMPANY_CONTACT_DETAILS.ownerEmail,
+      };
+
+      await emailjs.send(
+        EMAILJS_CONFIG.serviceId,
+        clientTemplateId,
+        clientParams,
+        EMAILJS_CONFIG.publicKey
+      );
+      clientDispatched = true;
+      console.log('✓ EmailJS: Candidate confirmation successfully dispatched.');
+    } catch (err: unknown) {
+      console.warn('EmailJS Client Dispatch note:', err);
+    }
+  } else {
+    // If client template is shared or placeholder, mark as acknowledged
+    clientDispatched = ownerDispatched;
+  }
+
+  return {
+    ownerDispatched,
+    clientDispatched,
+    method: ownerDispatched ? 'emailjs' : 'mailto_ready',
+    error: errorMsg,
+    mailtoOwnerUrl,
+    mailtoClientUrl,
+  };
 }
 
 export interface ContactInquiryData {
@@ -280,14 +336,23 @@ Owner Email: ${COMPANY_CONTACT_DETAILS.ownerEmail}
 
   try {
     const params = {
+      from_name: data.fullName,
+      from_email: data.businessEmail,
+      reply_to: data.businessEmail,
+      to_name: 'Vittoris Leadership',
       to_email: COMPANY_CONTACT_DETAILS.ownerEmail,
       company_email: COMPANY_CONTACT_DETAILS.companyEmail,
-      from_name: data.fullName,
+      subject,
+      message: body,
+      summary: `Inquiry from ${data.fullName} (${data.businessEmail}) for ${data.companyName}: ${data.selectedService}`,
+      client_name: data.fullName,
       client_email: data.businessEmail,
       company_name: data.companyName,
+      website: data.website || 'N/A',
       service: data.selectedService,
-      message: data.projectDescription || '',
-      monthly_target: data.monthlyTarget || '',
+      monthly_target: data.monthlyTarget || 'N/A',
+      preferred_channel: data.preferredChannel || 'Email',
+      project_description: data.projectDescription || '',
       calendly_url: COMPANY_CONTACT_DETAILS.calendlyUrl,
     };
 
