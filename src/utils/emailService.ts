@@ -24,7 +24,7 @@ export function generateMailtoLinks(req: MeetingRequest): {
 } {
   const baseUrl = typeof window !== 'undefined'
     ? `${window.location.origin}${import.meta.env.BASE_URL || '/'}`
-    : 'https://harshit4435.github.io/Vittoris-Ai/';
+    : 'https://vittorisai.github.io/Vittoris-Ai/';
 
   const cleanBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
 
