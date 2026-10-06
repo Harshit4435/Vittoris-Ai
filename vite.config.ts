@@ -6,8 +6,8 @@ const redirectRootPlugin = (): Plugin => ({
   name: 'redirect-root',
   configureServer(server) {
     server.middlewares.use((req, res, next) => {
-      if (req.url === '/' || req.url === '') {
-        res.writeHead(302, { Location: '/solis-lux/' })
+      if (req.url === '/' || req.url === '' || req.url === '/solis-lux' || req.url === '/solis-lux/' || req.url === '/vittoris-ai' || req.url === '/vittoris-ai/') {
+        res.writeHead(302, { Location: '/Vittoris-Ai/' })
         res.end()
         return
       }
@@ -16,8 +16,8 @@ const redirectRootPlugin = (): Plugin => ({
   },
   configurePreviewServer(server) {
     server.middlewares.use((req, res, next) => {
-      if (req.url === '/' || req.url === '') {
-        res.writeHead(302, { Location: '/solis-lux/' })
+      if (req.url === '/' || req.url === '' || req.url === '/solis-lux' || req.url === '/solis-lux/' || req.url === '/vittoris-ai' || req.url === '/vittoris-ai/') {
+        res.writeHead(302, { Location: '/Vittoris-Ai/' })
         res.end()
         return
       }
@@ -28,7 +28,7 @@ const redirectRootPlugin = (): Plugin => ({
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/solis-lux/',
+  base: '/Vittoris-Ai/',
   plugins: [react(), tailwindcss(), redirectRootPlugin()],
   server: {
     port: 3000,

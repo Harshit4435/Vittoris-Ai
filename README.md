@@ -42,8 +42,8 @@
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/Harshit4435/solis-lux.git
-cd solis-lux
+git clone https://github.com/Harshit4435/Vittoris-Ai.git
+cd Vittoris-Ai
 ```
 
 ### 2. Install dependencies

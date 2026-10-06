@@ -17,7 +17,7 @@ export function generateMailtoLinks(req: MeetingRequest): {
 } {
   const baseUrl = typeof window !== 'undefined'
     ? `${window.location.origin}${import.meta.env.BASE_URL || '/'}`
-    : 'https://harshit4435.github.io/solis-lux/';
+    : 'https://harshit4435.github.io/Vittoris-Ai/';
 
   const cleanBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
 
@@ -105,7 +105,7 @@ export async function sendMeetingRequestEmails(req: MeetingRequest): Promise<Ema
 
   const baseUrl = typeof window !== 'undefined'
     ? `${window.location.origin}${import.meta.env.BASE_URL || '/'}`
-    : 'https://harshit4435.github.io/solis-lux/';
+    : 'https://harshit4435.github.io/Vittoris-Ai/';
   const cleanBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
 
   const slot1Str = req.proposedSlots[0]

@@ -957,9 +957,9 @@ export const COMPANY_CONTACT_DETAILS = {
 };
 
 export const EMAILJS_CONFIG = {
-  serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID || "service_vittoris",
-  templateIdOwner: import.meta.env.VITE_EMAILJS_TEMPLATE_OWNER || "template_owner_3slots",
+  serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID || "service_v70aene",
+  templateIdOwner: import.meta.env.VITE_EMAILJS_TEMPLATE_OWNER || "template_7u7tez3",
   templateIdClient: import.meta.env.VITE_EMAILJS_TEMPLATE_CLIENT || "template_client_ack",
-  publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY || "user_emailjs_key",
+  publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY || "d7kefRJyGh4blQyYw",
 };
 
