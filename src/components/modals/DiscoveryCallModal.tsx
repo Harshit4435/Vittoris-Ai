@@ -965,26 +965,46 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                   <div className="flex items-center justify-between border-b border-white/5 pb-2.5">
                     <div className="flex items-center gap-2 text-[#E5C788] font-semibold uppercase tracking-wider text-[11px]">
                       <Mail className="w-4 h-4 text-[#C7A86D]" />
-                      <span>Automated Email Dispatch Status (EmailJS)</span>
+                      <span>Email Transmission Status</span>
                     </div>
-                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono">
-                      Dispatched
-                    </span>
+                    {emailResult?.ownerDispatched ? (
+                      <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono">
+                        ✓ Dispatched via EmailJS
+                      </span>
+                    ) : (
+                      <span className="text-[9px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-mono">
+                        Mail Ready (Manual Dispatch)
+                      </span>
+                    )}
                   </div>
 
                   <div className="space-y-2 text-[11px] text-slate-300 font-light">
-                    <div className="flex items-start gap-2">
-                      <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
-                      <div>
-                        <strong>Company Leadership Notified:</strong> Request transmitted to <strong>{COMPANY_CONTACT_DETAILS.ownerEmail}</strong> and <strong>{COMPANY_CONTACT_DETAILS.companyEmail}</strong> with 1-click Approve / Ignore controls.
+                    {emailResult?.ownerDispatched ? (
+                      <>
+                        <div className="flex items-start gap-2">
+                          <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                          <div>
+                            <strong>Company Leadership Notified:</strong> Request transmitted to <strong>{COMPANY_CONTACT_DETAILS.ownerEmail}</strong> with 1-click Approve / Ignore controls.
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                          <div>
+                            <strong>Candidate Receipt:</strong> Confirmation dispatched to <strong>{formData.businessEmail}</strong>.
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 space-y-1.5 text-amber-200">
+                        <div className="font-semibold text-xs flex items-center gap-1.5">
+                          <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                          <span>Gmail Permission Scope Notice:</span>
+                        </div>
+                        <p className="text-[11px] leading-relaxed text-amber-300/90 font-light">
+                          Your EmailJS Gmail service needs the <em>"Send email on your behalf"</em> scope enabled in the EmailJS dashboard. In the meantime, your request is ready to send in 1 click below:
+                        </p>
                       </div>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
-                      <div>
-                        <strong>Candidate Receipt:</strong> Confirmation dispatched to <strong>{formData.businessEmail}</strong>.
-                      </div>
-                    </div>
+                    )}
                   </div>
 
                   {/* Double-Booking Guarantee Notice */}
@@ -1001,7 +1021,7 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                       href={COMPANY_CONTACT_DETAILS.calendlyUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-[#C7A86D]/20 hover:bg-[#C7A86D]/30 border border-[#C7A86D]/40 text-[#E5C788] text-xs font-semibold transition-colors"
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-[#C7A86D]/20 hover:bg-[#C7A86D]/30 border border-[#C7A86D]/40 text-[#E5C788] text-xs font-semibold transition-colors"
                     >
                       <Calendar className="w-3.5 h-3.5 text-[#C7A86D]" />
                       <span>Book Instantly on Calendly</span>
@@ -1011,10 +1031,14 @@ export const DiscoveryCallModal: React.FC<DiscoveryCallModalProps> = ({
                     {emailResult?.mailtoOwnerUrl && (
                       <a
                         href={emailResult.mailtoOwnerUrl}
-                        className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-xs transition-colors"
+                        className={`inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                          !emailResult?.ownerDispatched
+                            ? 'bg-gradient-to-r from-[#C7A86D] via-[#D4AF37] to-[#B39355] text-black font-semibold shadow-[0_2px_15px_rgba(199,168,109,0.3)]'
+                            : 'bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300'
+                        }`}
                       >
-                        <Mail className="w-3.5 h-3.5 text-[#C7A86D]" />
-                        <span>Send via Mail Client</span>
+                        <Mail className={`w-3.5 h-3.5 ${!emailResult?.ownerDispatched ? 'text-black' : 'text-[#C7A86D]'}`} />
+                        <span>{!emailResult?.ownerDispatched ? 'Send Email to Owner Now' : 'Open in Mail Client'}</span>
                       </a>
                     )}
                   </div>
